@@ -14,6 +14,11 @@ const (
 	SCREEN_HEIGHT = 768
 )
 
+const (
+	FPS        = 60
+	DELAY_TIME = 1000.0 / FPS
+)
+
 type Graphic struct {
 	window   *sdl.Window
 	renderer *sdl.Renderer

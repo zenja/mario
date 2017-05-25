@@ -5,12 +5,13 @@ import (
 
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/level"
+	"github.com/zenja/mario/game"
 )
 
-var G *graphic.Graphic
+var G *game.Game
 
 func quit() {
-	G.DestroyAndQuit()
+	G.Quit()
 }
 
 func must(err error) {
@@ -22,8 +23,8 @@ func must(err error) {
 func main() {
 	defer quit()
 
-	G = graphic.New()
-	l := level.ParseLevelFromFile("assets/levels/level1.txt")
+	G = game.NewGame()
+	G.LoadLevel("assets/levels/level1.txt")
 
 	G.ClearScreen()
 	l.Draw(G, 0, 0)
