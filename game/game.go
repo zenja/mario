@@ -45,14 +45,16 @@ func (game *Game) StartGameLoop() {
 			}
 
 			// render
+			game.gra.ClearScreen()
 			game.currentLevel.Draw(game.gra, game.XCam, game.YCam)
+			game.gra.ShowScreen()
 
 			frameTime := sdl.GetTicks() - frameStart
 
-			if frameTime < graphic.DELAY_TIME {
-				sdl.Delay(graphic.DELAY_TIME - frameTime)
+			if frameTime < graphic.DELAY_TIME_MS {
+				sdl.Delay(graphic.DELAY_TIME_MS - frameTime)
 			}
 		}
-
 	}
+	game.Quit()
 }

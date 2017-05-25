@@ -3,8 +3,6 @@ package main
 import (
 	"log"
 
-	"github.com/zenja/mario/graphic"
-	"github.com/zenja/mario/level"
 	"github.com/zenja/mario/game"
 )
 
@@ -25,10 +23,5 @@ func main() {
 
 	G = game.NewGame()
 	G.LoadLevel("assets/levels/level1.txt")
-
-	G.ClearScreen()
-	l.Draw(G, 0, 0)
-	G.ShowScreen()
-
-	G.Delay(3000)
+	G.StartGameLoop()
 }
