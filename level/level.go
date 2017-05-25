@@ -10,27 +10,25 @@ import (
 )
 
 type Level struct {
-	Objects [][]object.Object
+	Objects []object.Object
 }
 
 func ParseLevel(arr [][]byte) *Level {
-	var objRows [][]object.Object
+	var objs []object.Object
 	var currentX, currentY int32
 	for i, arrRow := range arr {
 		currentX = 0
-		var objRow []object.Object
 		for j, _ := range arrRow {
 			switch arr[i][j] {
 			// Ground
 			case 'G':
-				objRow = append(objRow, object.NewSingleTileObject(graphic.TILE_TYPE_GROUD, currentX, currentY))
+				objs = append(objs, object.NewSingleTileObject(graphic.TILE_TYPE_GROUD, currentX, currentY))
 			}
 			currentX += graphic.TILE_SIZE
 		}
-		objRows = append(objRows, objRow)
 		currentY += graphic.TILE_SIZE
 	}
-	return &Level{Objects: objRows}
+	return &Level{Objects: objs}
 }
 
 func ParseLevelFromFile(filename string) *Level {
@@ -49,9 +47,7 @@ func ParseLevelFromFile(filename string) *Level {
 }
 
 func (l *Level) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
-	for i := range l.Objects {
-		for j := range l.Objects[i] {
-			l.Objects[i][j].Draw(g, xCamStart, yCamStart)
-		}
+	for _, o := range l.Objects {
+		o.Draw(g, xCamStart, yCamStart)
 	}
 }
