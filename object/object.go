@@ -24,9 +24,14 @@ func NewSingleTileObject(tileID graphic.TileID, xStart, yStart int32) Object {
 
 // DrawObject draws an object to a given camera screen (xStart, yStart, graphic.SCREEN_WIDTH, graphic.SCREEN_HEIGHT)
 func (sto *singleTileObject) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
-	rectInTile, rectInCamera := visibleRectInCamera(sto.levelPos, xCamStart, yCamStart)
+	drawTile(g, sto.tileID, sto.levelPos, xCamStart, yCamStart)
+}
+
+// drawTile is a helper function to draw a tile on level to camera
+func drawTile(g *graphic.Graphic, tileID graphic.TileID, levelPos *sdl.Rect, xCamStart, yCamStart int32) {
+	rectInTile, rectInCamera := visibleRectInCamera(levelPos, xCamStart, yCamStart)
 	if rectInTile != nil {
-		g.RenderTile(sto.tileID, rectInTile, rectInCamera)
+		g.RenderTile(tileID, rectInTile, rectInCamera)
 	}
 }
 

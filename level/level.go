@@ -23,6 +23,9 @@ func ParseLevel(arr [][]byte) *Level {
 			// Ground
 			case 'G':
 				objs = append(objs, object.NewSingleTileObject(graphic.TILE_TYPE_GROUD, currentX, currentY))
+			// Hero
+			case 'H':
+				objs = append(objs, object.NewHero(currentX, currentY))
 			}
 			currentX += graphic.TILE_SIZE
 		}

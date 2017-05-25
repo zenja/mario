@@ -10,9 +10,10 @@ import (
 
 type TileID int
 
+// Tile IDs
 const (
-	// Tile IDs
 	TILE_TYPE_GROUD = iota
+	TILE_TYPE_HERO
 )
 
 const TILE_SIZE = 64
@@ -67,4 +68,5 @@ func (g *Graphic) RenderTile(id TileID, srcRect *sdl.Rect, dstRect *sdl.Rect) {
 
 func (g *Graphic) loadAllTiles() {
 	g.registerTile("assets/texture.png", TILE_TYPE_GROUD)
+	g.registerTile("assets/hero.png", TILE_TYPE_HERO)
 }
