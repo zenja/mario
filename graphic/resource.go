@@ -147,7 +147,7 @@ func (g *Graphic) RenderResource(resource Resource, srcRect *sdl.Rect, dstRect *
 
 func (g *Graphic) loadAllResources() {
 	// load tile resources
-	g.registerTileResource("assets/texture.png", RESOURCE_TYPE_GROUD)
+	g.registerTileResource("assets/ground.png", RESOURCE_TYPE_GROUD)
 	// load non-tile resources
 	g.registerNonTailResource("assets/hero.png", RESOURCE_TYPE_HERO)
 }
