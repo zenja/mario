@@ -23,12 +23,7 @@ func main() {
 	defer quit()
 
 	G = graphic.New()
-	levelArr := [][]byte{
-		[]byte{'o', 'G', 'o'},
-		[]byte{'G', 'o', 'G'},
-		[]byte{'o', 'G', 'o'},
-	}
-	l := level.ParseLevel(levelArr, G.TileRegistry)
+	l := level.ParseLevelFromFile("assets/levels/level1.txt")
 
 	G.ClearScreen()
 	l.Draw(G, 0, 0)

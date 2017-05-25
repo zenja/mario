@@ -1,6 +1,10 @@
 package level
 
 import (
+	"bufio"
+	"log"
+	"os"
+
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/object"
 )
@@ -9,7 +13,7 @@ type Level struct {
 	Objects [][]object.Object
 }
 
-func ParseLevel(arr [][]byte, tileRegistry map[graphic.TileID]*graphic.Tile) *Level {
+func ParseLevel(arr [][]byte) *Level {
 	var objRows [][]object.Object
 	var currentX, currentY int32
 	for i, arrRow := range arr {
@@ -20,7 +24,6 @@ func ParseLevel(arr [][]byte, tileRegistry map[graphic.TileID]*graphic.Tile) *Le
 			// Ground
 			case 'G':
 				objRow = append(objRow, object.NewSingleTileObject(graphic.TILE_TYPE_GROUD, currentX, currentY))
-				//fmt.Printf("%d, %d\n", currentX, currentY) fixme
 			}
 			currentX += graphic.TILE_SIZE
 		}
@@ -28,6 +31,21 @@ func ParseLevel(arr [][]byte, tileRegistry map[graphic.TileID]*graphic.Tile) *Le
 		currentY += graphic.TILE_SIZE
 	}
 	return &Level{Objects: objRows}
+}
+
+func ParseLevelFromFile(filename string) *Level {
+	f, err := os.Open(filename)
+	if err != nil {
+		log.Fatalf("failed to open file %s", filename)
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	var arr [][]byte
+	for scanner.Scan() {
+		arr = append(arr, []byte(scanner.Text()))
+	}
+	return ParseLevel(arr)
 }
 
 func (l *Level) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
