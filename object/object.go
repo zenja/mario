@@ -10,28 +10,33 @@ type Object interface {
 }
 
 type singleTileObject struct {
-	tileID graphic.TileID
+	resource graphic.Resource
 	// the position on the level
 	levelPos *sdl.Rect
 }
 
-func NewSingleTileObject(tileID graphic.TileID, xStart, yStart int32) Object {
+func NewSingleTileObject(resource graphic.Resource, xStart, yStart int32) Object {
 	return &singleTileObject{
-		tileID:   tileID,
-		levelPos: &sdl.Rect{xStart, yStart, graphic.TILE_SIZE, graphic.TILE_SIZE},
+		resource: resource,
+		levelPos: &sdl.Rect{xStart, yStart, resource.GetW(), resource.GetH()},
 	}
 }
 
 // DrawObject draws an object to a given camera screen (xStart, yStart, graphic.SCREEN_WIDTH, graphic.SCREEN_HEIGHT)
 func (sto *singleTileObject) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
-	drawTile(g, sto.tileID, sto.levelPos, xCamStart, yCamStart)
+	drawResource(g, sto.resource, sto.levelPos, xCamStart, yCamStart)
 }
 
-// drawTile is a helper function to draw a tile on level to camera
-func drawTile(g *graphic.Graphic, tileID graphic.TileID, levelPos *sdl.Rect, xCamStart, yCamStart int32) {
-	rectInTile, rectInCamera := visibleRectInCamera(levelPos, xCamStart, yCamStart)
-	if rectInTile != nil {
-		g.RenderTile(tileID, rectInTile, rectInCamera)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////tile
+// Helper functions
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////tile
+
+// drawResource is a helper function to draw a resource on level to camera
+func drawResource(g *graphic.Graphic, resource graphic.Resource, levelPos *sdl.Rect, xCamStart, yCamStart int32) {
+	rectInResource, rectInCamera := visibleRectInCamera(levelPos, xCamStart, yCamStart)
+	if rectInResource != nil {
+		g.RenderResource(resource, rectInResource, rectInCamera)
 	}
 }
 

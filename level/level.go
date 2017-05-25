@@ -13,7 +13,7 @@ type Level struct {
 	Objects []object.Object
 }
 
-func ParseLevel(arr [][]byte) *Level {
+func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
 	var objs []object.Object
 	var currentX, currentY int32
 	for i, arrRow := range arr {
@@ -22,10 +22,11 @@ func ParseLevel(arr [][]byte) *Level {
 			switch arr[i][j] {
 			// Ground
 			case 'G':
-				objs = append(objs, object.NewSingleTileObject(graphic.TILE_TYPE_GROUD, currentX, currentY))
+				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD]
+				objs = append(objs, object.NewSingleTileObject(resource, currentX, currentY))
 			// Hero
 			case 'H':
-				objs = append(objs, object.NewHero(currentX, currentY))
+				objs = append(objs, object.NewHero(currentX, currentY, resourceRegistry))
 			}
 			currentX += graphic.TILE_SIZE
 		}
@@ -34,7 +35,7 @@ func ParseLevel(arr [][]byte) *Level {
 	return &Level{Objects: objs}
 }
 
-func ParseLevelFromFile(filename string) *Level {
+func ParseLevelFromFile(filename string, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
 	f, err := os.Open(filename)
 	if err != nil {
 		log.Fatalf("failed to open file %s", filename)
@@ -46,7 +47,7 @@ func ParseLevelFromFile(filename string) *Level {
 	for scanner.Scan() {
 		arr = append(arr, []byte(scanner.Text()))
 	}
-	return ParseLevel(arr)
+	return ParseLevel(arr, resourceRegistry)
 }
 
 func (l *Level) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {

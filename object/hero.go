@@ -1,28 +1,28 @@
 package object
 
 import (
+	"log"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 )
 
 type hero struct {
-	tileUp   graphic.TileID
-	tileDown graphic.TileID
-
-	upLevelPos   *sdl.Rect
-	downLevelPos *sdl.Rect
+	resource graphic.Resource
+	levelPos *sdl.Rect
 }
 
-func NewHero(xStart, yStart int32) Object {
+func NewHero(xStart, yStart int32, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
+	resource, ok := resourceRegistry[graphic.RESOURCE_TYPE_HERO]
+	if !ok {
+		log.Fatalf("resource not fount in resource registry: %d", graphic.RESOURCE_TYPE_HERO)
+	}
 	return &hero{
-		tileUp:       graphic.TILE_TYPE_HERO,
-		tileDown:     graphic.TILE_TYPE_HERO,
-		upLevelPos:   &sdl.Rect{xStart, yStart, graphic.TILE_SIZE, graphic.TILE_SIZE},
-		downLevelPos: &sdl.Rect{xStart, yStart + graphic.TILE_SIZE, graphic.TILE_SIZE, graphic.TILE_SIZE},
+		resource: resource,
+		levelPos: &sdl.Rect{xStart, yStart, resource.GetW(), resource.GetH()},
 	}
 }
 
 func (h *hero) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
-	drawTile(g, h.tileUp, h.upLevelPos, xCamStart, yCamStart)
-	drawTile(g, h.tileDown, h.downLevelPos, xCamStart, yCamStart)
+	drawResource(g, h.resource, h.levelPos, xCamStart, yCamStart)
 }
