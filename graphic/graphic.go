@@ -18,7 +18,7 @@ type Graphic struct {
 	window   *sdl.Window
 	renderer *sdl.Renderer
 
-	ResourceRegistry map[TileID]*Tile
+	TileRegistry map[TileID]*Tile
 }
 
 func New() *Graphic {
@@ -45,9 +45,8 @@ func New() *Graphic {
 		log.Fatal(err)
 	}
 
-
 	// Load tiles
-	g := &Graphic{window: window, renderer: renderer, ResourceRegistry: make(map[TileID]*Tile)}
+	g := &Graphic{window: window, renderer: renderer, TileRegistry: make(map[TileID]*Tile)}
 	g.loadAllTiles()
 
 	return g

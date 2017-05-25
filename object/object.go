@@ -6,7 +6,7 @@ import (
 )
 
 type Object interface {
-	Draw(g *graphic.Graphic, xStart, yStart int32)
+	Draw(g *graphic.Graphic, xCamStart, yCamStart int32)
 }
 
 type singleTileObject struct {
@@ -23,8 +23,8 @@ func NewSingleTileObject(tileID graphic.TileID, xStart, yStart int32) Object {
 }
 
 // DrawObject draws an object to a given camera screen (xStart, yStart, graphic.SCREEN_WIDTH, graphic.SCREEN_HEIGHT)
-func (sto *singleTileObject) Draw(g *graphic.Graphic, xStart, yStart int32) {
-	rectInTile, rectInCamera := visibleRectInCamera(sto.levelPos, xStart, yStart)
+func (sto *singleTileObject) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
+	rectInTile, rectInCamera := visibleRectInCamera(sto.levelPos, xCamStart, yCamStart)
 	if rectInTile != nil {
 		g.RenderTile(sto.tileID, rectInTile, rectInCamera)
 	}
@@ -32,16 +32,16 @@ func (sto *singleTileObject) Draw(g *graphic.Graphic, xStart, yStart int32) {
 
 // visibleRectInCamera returns a rect relative to camera which is (partly) visible
 // return nil if the rect is not visible in camera at all
-func visibleRectInCamera(rect *sdl.Rect, xCameraStart, yCameraStart int32) (rectInTile *sdl.Rect, rectInCamera *sdl.Rect) {
-	if rect.X+rect.W < xCameraStart || rect.X > xCameraStart+graphic.SCREEN_WIDTH ||
-		rect.Y+rect.H < yCameraStart || rect.Y > yCameraStart+graphic.SCREEN_HEIGHT {
+func visibleRectInCamera(rect *sdl.Rect, xCamStart, yCamStart int32) (rectInTile *sdl.Rect, rectInCamera *sdl.Rect) {
+	if rect.X+rect.W < xCamStart || rect.X > xCamStart+graphic.SCREEN_WIDTH ||
+		rect.Y+rect.H < yCamStart || rect.Y > yCamStart+graphic.SCREEN_HEIGHT {
 		return nil, nil
 	}
 
-	xStartInLevel := min(rect.X, xCameraStart)
-	xEndInLevel := min(rect.X+rect.W, xCameraStart+graphic.SCREEN_WIDTH)
-	yStartInLevel := min(rect.Y, yCameraStart)
-	yEndInLevel := min(rect.Y+rect.H, yCameraStart+graphic.SCREEN_HEIGHT)
+	xStartInLevel := max(rect.X, xCamStart)
+	xEndInLevel := min(rect.X+rect.W, xCamStart+graphic.SCREEN_WIDTH)
+	yStartInLevel := max(rect.Y, yCamStart)
+	yEndInLevel := min(rect.Y+rect.H, yCamStart+graphic.SCREEN_HEIGHT)
 
 	rectInTile = &sdl.Rect{
 		xStartInLevel - rect.X,
@@ -50,16 +50,29 @@ func visibleRectInCamera(rect *sdl.Rect, xCameraStart, yCameraStart int32) (rect
 		yEndInLevel - yStartInLevel,
 	}
 	rectInCamera = &sdl.Rect{
-		xStartInLevel - xCameraStart,
-		yStartInLevel - yCameraStart,
+		xStartInLevel - xCamStart,
+		yStartInLevel - yCamStart,
 		xEndInLevel - xStartInLevel,
 		yEndInLevel - yStartInLevel,
 	}
+	//fmt.Printf("Camera: %d, %d\n", xCamStart, yCamStart)
+	//fmt.Printf("Object rect: %d, %d, %d, %d\n", rect.X, rect.Y, rect.W, rect.H)
+	//fmt.Printf("Rect in level: %d, %d, %d, %d\n", xStartInLevel, yStartInLevel, xEndInLevel-xStartInLevel, yEndInLevel-yStartInLevel)
+	//fmt.Printf("Rect in tile: %d, %d, %d, %d\n", rectInTile.X, rectInTile.Y, rectInTile.W, rectInTile.H)
+	//fmt.Printf("Rect in Camera: %d, %d, %d, %d\n", rectInCamera.X, rectInCamera.Y, rectInCamera.W, rectInCamera.H)
+	//fmt.Println()
 	return
 }
 
 func min(x, y int32) int32 {
 	if x < y {
+		return x
+	}
+	return y
+}
+
+func max(x, y int32) int32 {
+	if x > y {
 		return x
 	}
 	return y

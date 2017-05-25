@@ -1,9 +1,9 @@
 package graphic
 
 import (
-	"fmt"
 	"log"
 
+	"github.com/pkg/errors"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/sdl_image"
 )
@@ -53,14 +53,14 @@ func (g *Graphic) registerTileFromSurface(surface *sdl.Surface, id TileID) {
 		oldTexture.Destroy()
 	}
 
-	g.ResourceRegistry[id] = &Tile{texture: texture}
+	g.TileRegistry[id] = &Tile{texture: texture}
 }
 
 // RenderTile renders a tile (or a part of tile specified by srcRect) to a given position in screen
 func (g *Graphic) RenderTile(id TileID, srcRect *sdl.Rect, dstRect *sdl.Rect) {
-	tile, ok := g.ResourceRegistry[id]
+	tile, ok := g.TileRegistry[id]
 	if !ok {
-		log.Fatal(fmt.Errorf("resource not found: %d", id))
+		log.Fatal(errors.Errorf("resource not found: %d", id))
 	}
 	g.renderer.Copy(tile.texture, srcRect, dstRect)
 }

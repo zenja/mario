@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/zenja/mario/graphic"
-	"github.com/zenja/mario/object"
+	"github.com/zenja/mario/level"
 )
 
 var G *graphic.Graphic
@@ -23,10 +23,16 @@ func main() {
 	defer quit()
 
 	G = graphic.New()
-	o := object.NewSingleTileObject(graphic.TILE_TYPE_GROUD, 100, 100)
+	levelArr := [][]byte{
+		[]byte{'o', 'G', 'o'},
+		[]byte{'G', 'o', 'G'},
+		[]byte{'o', 'G', 'o'},
+	}
+	l := level.ParseLevel(levelArr, G.TileRegistry)
+
 	G.ClearScreen()
-	o.Draw(G, 230, 230)
+	l.Draw(G, 0, 0)
 	G.ShowScreen()
 
-	G.Delay(5000)
+	G.Delay(3000)
 }
