@@ -9,6 +9,7 @@ import (
 type Object interface {
 	Draw(g *graphic.Graphic, xCamStart, yCamStart int32)
 	Update(events *intsets.Sparse, ticks uint32)
+	GetRect() sdl.Rect
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,6 +36,10 @@ func (sto *singleTileObject) Draw(g *graphic.Graphic, xCamStart, yCamStart int32
 
 func (sto *singleTileObject) Update(events *intsets.Sparse, ticks uint32) {
 	// Do nothing
+}
+
+func (sto *singleTileObject) GetRect() sdl.Rect {
+	return *sto.levelRect
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

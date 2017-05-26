@@ -40,3 +40,7 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32) {
 		h.levelRect.Y -= 1
 	}
 }
+
+func (h *hero) GetRect() sdl.Rect {
+	return *h.levelRect
+}
