@@ -6,6 +6,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
+	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
 )
 
@@ -14,14 +15,14 @@ type hero struct {
 	levelRect *sdl.Rect
 }
 
-func NewHero(xStart, yStart int32, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
+func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
 	resource, ok := resourceRegistry[graphic.RESOURCE_TYPE_HERO]
 	if !ok {
 		log.Fatalf("resource not found in resource registry: %d", graphic.RESOURCE_TYPE_HERO)
 	}
 	return &hero{
 		resource:  resource,
-		levelRect: &sdl.Rect{xStart, yStart, resource.GetW(), resource.GetH()},
+		levelRect: &sdl.Rect{startPos.X, startPos.Y, resource.GetW(), resource.GetH()},
 	}
 }
 
@@ -43,4 +44,8 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32) {
 
 func (h *hero) GetRect() sdl.Rect {
 	return *h.levelRect
+}
+
+func (h *hero) GetZIndex() int {
+	return ZINDEX_4
 }

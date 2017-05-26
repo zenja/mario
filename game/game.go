@@ -43,7 +43,7 @@ func (game *Game) StartGameLoop() {
 
 		// render
 		game.gra.ClearScreen()
-		game.currentLevel.Draw(game.gra, game.camPos.X, game.camPos.Y)
+		game.currentLevel.Draw(game.gra, game.camPos)
 		game.gra.ShowScreen()
 
 		frameTime := sdl.GetTicks() - frameStart

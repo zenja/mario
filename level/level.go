@@ -19,24 +19,24 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 	var objs []object.Object
 	obstMngr := NewObstacleManager(len(arr[0]), len(arr))
 
-	var currentX, currentY int32
+	var currentPos vector.Pos
 	for i, arrRow := range arr {
-		currentX = 0
+		currentPos.X = 0
 		for j := range arrRow {
 			switch arr[i][j] {
 			// Ground
 			case 'G':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD]
-				objs = append(objs, object.NewSingleTileObject(resource, currentX, currentY))
+				objs = append(objs, object.NewSingleTileObject(resource, currentPos, object.ZINDEX_0))
 				// ground is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 			// Hero
 			case 'H':
-				objs = append(objs, object.NewHero(currentX, currentY, resourceRegistry))
+				objs = append(objs, object.NewHero(currentPos, resourceRegistry))
 			}
-			currentX += graphic.TILE_SIZE
+			currentPos.X += graphic.TILE_SIZE
 		}
-		currentY += graphic.TILE_SIZE
+		currentPos.Y += graphic.TILE_SIZE
 	}
 	return &Level{
 		Objects:  objs,
@@ -59,8 +59,23 @@ func ParseLevelFromFile(filename string, resourceRegistry map[graphic.ResourceID
 	return ParseLevel(arr, resourceRegistry)
 }
 
-func (l *Level) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
+func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
+	var zIndexObjs [object.ZINDEX_NUM][]object.Object
+	// draw lowest z-index, bookkeeping higher z-index for later rendering
 	for _, o := range l.Objects {
-		o.Draw(g, xCamStart, yCamStart)
+		z := o.GetZIndex()
+		if z == object.ZINDEX_0 {
+			o.Draw(g, camPos.X, camPos.Y)
+		} else {
+			zIndexObjs[z] = append(zIndexObjs[z], o)
+		}
+	}
+	// render higher z-index one-by-one
+	for _, objs := range zIndexObjs {
+		if len(objs) > 0 {
+			for _, o := range objs {
+				o.Draw(g, camPos.X, camPos.Y)
+			}
+		}
 	}
 }
