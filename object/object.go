@@ -11,20 +11,20 @@ type Object interface {
 
 type singleTileObject struct {
 	resource graphic.Resource
-	// the position on the level
-	levelPos *sdl.Rect
+	// the position rect on the level
+	levelRect *sdl.Rect
 }
 
 func NewSingleTileObject(resource graphic.Resource, xStart, yStart int32) Object {
 	return &singleTileObject{
-		resource: resource,
-		levelPos: &sdl.Rect{xStart, yStart, resource.GetW(), resource.GetH()},
+		resource:  resource,
+		levelRect: &sdl.Rect{xStart, yStart, resource.GetW(), resource.GetH()},
 	}
 }
 
 // DrawObject draws an object to a given camera screen (xStart, yStart, graphic.SCREEN_WIDTH, graphic.SCREEN_HEIGHT)
 func (sto *singleTileObject) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
-	drawResource(g, sto.resource, sto.levelPos, xCamStart, yCamStart)
+	drawResource(g, sto.resource, sto.levelRect, xCamStart, yCamStart)
 }
 
 

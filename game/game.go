@@ -4,11 +4,12 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/level"
+	"github.com/zenja/mario/vector"
 )
 
 type Game struct {
 	// start position (left top) of camera
-	XCam, YCam int32
+	camPos vector.Pos
 
 	gra          *graphic.Graphic
 	currentLevel *level.Level
@@ -46,7 +47,7 @@ func (game *Game) StartGameLoop() {
 
 			// render
 			game.gra.ClearScreen()
-			game.currentLevel.Draw(game.gra, game.XCam, game.YCam)
+			game.currentLevel.Draw(game.gra, game.camPos.X, game.camPos.Y)
 			game.gra.ShowScreen()
 
 			frameTime := sdl.GetTicks() - frameStart

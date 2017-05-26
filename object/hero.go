@@ -8,8 +8,8 @@ import (
 )
 
 type hero struct {
-	resource graphic.Resource
-	levelPos *sdl.Rect
+	resource  graphic.Resource
+	levelRect *sdl.Rect
 }
 
 func NewHero(xStart, yStart int32, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
@@ -18,11 +18,11 @@ func NewHero(xStart, yStart int32, resourceRegistry map[graphic.ResourceID]graph
 		log.Fatalf("resource not fount in resource registry: %d", graphic.RESOURCE_TYPE_HERO)
 	}
 	return &hero{
-		resource: resource,
-		levelPos: &sdl.Rect{xStart, yStart, resource.GetW(), resource.GetH()},
+		resource:  resource,
+		levelRect: &sdl.Rect{xStart, yStart, resource.GetW(), resource.GetH()},
 	}
 }
 
 func (h *hero) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
-	drawResource(g, h.resource, h.levelPos, xCamStart, yCamStart)
+	drawResource(g, h.resource, h.levelRect, xCamStart, yCamStart)
 }
