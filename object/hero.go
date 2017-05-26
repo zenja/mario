@@ -15,7 +15,7 @@ type hero struct {
 func NewHero(xStart, yStart int32, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
 	resource, ok := resourceRegistry[graphic.RESOURCE_TYPE_HERO]
 	if !ok {
-		log.Fatalf("resource not fount in resource registry: %d", graphic.RESOURCE_TYPE_HERO)
+		log.Fatalf("resource not found in resource registry: %d", graphic.RESOURCE_TYPE_HERO)
 	}
 	return &hero{
 		resource:  resource,
