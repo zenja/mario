@@ -7,23 +7,29 @@ import (
 
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/object"
+	"github.com/zenja/mario/vector"
 )
 
 type Level struct {
-	Objects []object.Object
+	Objects  []object.Object
+	ObstMngr *ObstacleManager
 }
 
 func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
 	var objs []object.Object
+	obstMngr := NewObstacleManager(len(arr[0]), len(arr))
+
 	var currentX, currentY int32
 	for i, arrRow := range arr {
 		currentX = 0
-		for j, _ := range arrRow {
+		for j := range arrRow {
 			switch arr[i][j] {
 			// Ground
 			case 'G':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD]
 				objs = append(objs, object.NewSingleTileObject(resource, currentX, currentY))
+				// ground is obstacle
+				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 			// Hero
 			case 'H':
 				objs = append(objs, object.NewHero(currentX, currentY, resourceRegistry))
@@ -32,7 +38,10 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 		}
 		currentY += graphic.TILE_SIZE
 	}
-	return &Level{Objects: objs}
+	return &Level{
+		Objects:  objs,
+		ObstMngr: obstMngr,
+	}
 }
 
 func ParseLevelFromFile(filename string, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {

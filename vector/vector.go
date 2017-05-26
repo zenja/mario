@@ -19,4 +19,6 @@ func (v Vec2D) Divide(m int32) {
 	v.Y /= m
 }
 
+// Vec2D aliases
 type Pos Vec2D
+type TileID Vec2D // (0, 0) is left top tile
