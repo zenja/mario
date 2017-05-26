@@ -4,7 +4,9 @@ import (
 	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
+	"golang.org/x/tools/container/intsets"
 )
 
 type hero struct {
@@ -25,4 +27,16 @@ func NewHero(xStart, yStart int32, resourceRegistry map[graphic.ResourceID]graph
 
 func (h *hero) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
 	drawResource(g, h.resource, h.levelRect, xCamStart, yCamStart)
+}
+
+func (h *hero) Update(events *intsets.Sparse, ticks uint32) {
+	// handle movement
+	switch {
+	case events.Has(event.EVENT_KEYDOWN_LEFT):
+		h.levelRect.X -= 1
+	case events.Has(event.EVENT_KEYDOWN_RIGHT):
+		h.levelRect.X += 1
+	case events.Has(event.EVENT_KEYDOWN_SPACE):
+		h.levelRect.Y -= 1
+	}
 }

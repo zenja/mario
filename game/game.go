@@ -2,17 +2,19 @@ package game
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/level"
 	"github.com/zenja/mario/vector"
+	"golang.org/x/tools/container/intsets"
 )
 
 type Game struct {
 	// start position (left top) of camera
-	camPos vector.Pos
-
+	camPos       vector.Pos
 	gra          *graphic.Graphic
 	currentLevel *level.Level
+	running      bool
 }
 
 func NewGame() *Game {
@@ -28,34 +30,49 @@ func (game *Game) Quit() {
 }
 
 func (game *Game) StartGameLoop() {
-	var event sdl.Event
-	var quit bool
-	for !quit {
-		for event = sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			frameStart := sdl.GetTicks()
+	game.running = true
+	for game.running {
+		frameStart := sdl.GetTicks()
 
-			switch t := event.(type) {
-			case *sdl.QuitEvent:
-				quit = true
-			case *sdl.KeyDownEvent:
-				switch t.Keysym.Scancode {
-				case sdl.SCANCODE_LEFT:
-				case sdl.SCANCODE_RIGHT:
-				case sdl.SCANCODE_SPACE:
-				}
-			}
+		events := game.handleEvent()
 
-			// render
-			game.gra.ClearScreen()
-			game.currentLevel.Draw(game.gra, game.camPos.X, game.camPos.Y)
-			game.gra.ShowScreen()
+		// update
+		for _, o := range game.currentLevel.Objects {
+			o.Update(events, sdl.GetTicks())
+		}
 
-			frameTime := sdl.GetTicks() - frameStart
+		// render
+		game.gra.ClearScreen()
+		game.currentLevel.Draw(game.gra, game.camPos.X, game.camPos.Y)
+		game.gra.ShowScreen()
 
-			if frameTime < graphic.DELAY_TIME_MS {
-				sdl.Delay(graphic.DELAY_TIME_MS - frameTime)
-			}
+		frameTime := sdl.GetTicks() - frameStart
+
+		// Fixed frame rate
+		if frameTime < graphic.DELAY_TIME_MS {
+			sdl.Delay(graphic.DELAY_TIME_MS - frameTime)
 		}
 	}
 	game.Quit()
+}
+
+func (game *Game) handleEvent() *intsets.Sparse {
+	var events intsets.Sparse
+	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
+		switch t := e.(type) {
+		case *sdl.QuitEvent:
+			game.running = true
+			return nil
+		case *sdl.KeyDownEvent:
+			switch t.Keysym.Scancode {
+			case sdl.SCANCODE_LEFT:
+				events.Insert(event.EVENT_KEYDOWN_LEFT)
+			case sdl.SCANCODE_RIGHT:
+				events.Insert(event.EVENT_KEYDOWN_RIGHT)
+			case sdl.SCANCODE_SPACE:
+				events.Insert(event.EVENT_KEYDOWN_SPACE)
+			}
+		}
+	}
+	return &events
 }

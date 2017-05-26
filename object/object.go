@@ -3,11 +3,17 @@ package object
 import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
+	"golang.org/x/tools/container/intsets"
 )
 
 type Object interface {
 	Draw(g *graphic.Graphic, xCamStart, yCamStart int32)
+	Update(events *intsets.Sparse, ticks uint32)
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Single tile object
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type singleTileObject struct {
 	resource graphic.Resource
@@ -27,6 +33,9 @@ func (sto *singleTileObject) Draw(g *graphic.Graphic, xCamStart, yCamStart int32
 	drawResource(g, sto.resource, sto.levelRect, xCamStart, yCamStart)
 }
 
+func (sto *singleTileObject) Update(events *intsets.Sparse, ticks uint32) {
+	// Do nothing
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions
