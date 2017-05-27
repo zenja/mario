@@ -31,7 +31,7 @@ func (fo *FPSOverlay) Draw(g *graphic.Graphic, ticks uint32) {
 		return
 	}
 	if ticks-fo.currentTicks <= 0 {
-		log.Panicf("FPSOverlay: strange, ticks (%d) <= fo.currentTicks (%d)", ticks, fo.currentTicks)
+		log.Println("FPSOverlay: strange, ticks (%d) <= fo.currentTicks (%d)", ticks, fo.currentTicks)
 		g.DrawText(fmt.Sprint("FPS: NaN"), pos, color)
 	}
 	fps = 1000 / (ticks - fo.currentTicks)
