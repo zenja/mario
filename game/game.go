@@ -79,7 +79,7 @@ func (game *Game) handleEvent() *intsets.Sparse {
 	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
 		switch t := e.(type) {
 		case *sdl.QuitEvent:
-			game.running = true
+			game.running = false
 			return nil
 		case *sdl.KeyDownEvent:
 			switch t.Keysym.Scancode {
