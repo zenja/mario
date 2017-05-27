@@ -16,12 +16,13 @@ const (
 
 const (
 	FPS           = 60
-	DELAY_TIME_MS = 17 // 1000 / FPS
+	DELAY_TIME_MS = 16 // 1000 / FPS
 )
 
 type Graphic struct {
 	window   *sdl.Window
 	renderer *sdl.Renderer
+	font     *ttf.Font
 
 	ResourceRegistry map[ResourceID]Resource
 }
@@ -50,8 +51,19 @@ func New() *Graphic {
 		log.Fatal(err)
 	}
 
+	// Load font
+	font, err := ttf.OpenFont("assets/fonts/Menlo-Regular.ttf", 18)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Load resources
-	g := &Graphic{window: window, renderer: renderer, ResourceRegistry: make(map[ResourceID]Resource)}
+	g := &Graphic{
+		window:           window,
+		renderer:         renderer,
+		font:             font,
+		ResourceRegistry: make(map[ResourceID]Resource),
+	}
 	g.loadAllResources()
 
 	return g

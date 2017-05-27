@@ -65,7 +65,7 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	for _, o := range l.Objects {
 		z := o.GetZIndex()
 		if z == object.ZINDEX_0 {
-			o.Draw(g, camPos.X, camPos.Y)
+			o.Draw(g, camPos)
 		} else {
 			zIndexObjs[z] = append(zIndexObjs[z], o)
 		}
@@ -74,7 +74,7 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	for _, objs := range zIndexObjs {
 		if len(objs) > 0 {
 			for _, o := range objs {
-				o.Draw(g, camPos.X, camPos.Y)
+				o.Draw(g, camPos)
 			}
 		}
 	}

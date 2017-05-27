@@ -6,8 +6,8 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
-	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
+	"github.com/zenja/mario/vector"
 )
 
 type hero struct {
@@ -26,8 +26,8 @@ func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphi
 	}
 }
 
-func (h *hero) Draw(g *graphic.Graphic, xCamStart, yCamStart int32) {
-	drawResource(g, h.resource, h.levelRect, xCamStart, yCamStart)
+func (h *hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
+	drawResource(g, h.resource, h.levelRect, camPos)
 }
 
 func (h *hero) Update(events *intsets.Sparse, ticks uint32) {

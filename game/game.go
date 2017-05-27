@@ -5,6 +5,7 @@ import (
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/level"
+	"github.com/zenja/mario/overlay"
 	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
 )
@@ -15,10 +16,20 @@ type Game struct {
 	gra          *graphic.Graphic
 	currentLevel *level.Level
 	running      bool
+	overlays     []overlay.Overlay
 }
 
 func NewGame() *Game {
-	return &Game{gra: graphic.New()}
+	gra := graphic.New()
+
+	// register overlays
+	var overlays []overlay.Overlay
+	overlays = append(overlays, &overlay.FPSOverlay{})
+
+	return &Game{
+		gra:      gra,
+		overlays: overlays,
+	}
 }
 
 func (game *Game) LoadLevel(filename string) {
@@ -41,9 +52,16 @@ func (game *Game) StartGameLoop() {
 			o.Update(events, sdl.GetTicks())
 		}
 
-		// render
+		// start render
 		game.gra.ClearScreen()
 		game.currentLevel.Draw(game.gra, game.camPos)
+
+		// render overlays
+		for _, ol := range game.overlays {
+			ol.Draw(game.gra, sdl.GetTicks())
+		}
+
+		// show screen
 		game.gra.ShowScreen()
 
 		frameTime := sdl.GetTicks() - frameStart
