@@ -57,6 +57,9 @@ func (game *Game) StartGameLoop() {
 			o.Update(events, sdl.GetTicks())
 		}
 
+		// update camera position
+		game.updateCamPos()
+
 		// start render
 		game.gra.ClearScreen()
 		game.currentLevel.Draw(game.gra, game.camPos)
@@ -98,4 +101,31 @@ func (game *Game) handleEvents() *intsets.Sparse {
 		}
 	}
 	return &events
+}
+
+// updateCamPos update the position of camera based on hero's position
+// It tries to put hero center in vertical, 2/3 camera height from top,
+// but when that exceeds level boundary, it will repect level boundary
+func (game *Game) updateCamPos() {
+	heroRect := game.currentLevel.Hero.GetRect()
+	perfectX := heroRect.X - (graphic.SCREEN_WIDTH-heroRect.W)/2
+	perfectY := heroRect.Y - (graphic.SCREEN_HEIGHT-heroRect.H)/2
+	game.camPos.X = perfectX
+	game.camPos.Y = perfectY
+	// check left
+	if perfectX < 0 {
+		game.camPos.X = 0
+	}
+	// check top
+	if perfectY < 0 {
+		game.camPos.Y = 0
+	}
+	// check right
+	if perfectX > (game.currentLevel.GetLevelWidth()-graphic.SCREEN_WIDTH)/2 {
+		game.camPos.X = (game.currentLevel.GetLevelWidth() - graphic.SCREEN_WIDTH) / 2
+	}
+	// check bottom
+	if perfectY > (game.currentLevel.GetLevelHeight()-graphic.SCREEN_HEIGHT)/2 {
+		game.camPos.Y = (game.currentLevel.GetLevelHeight() - graphic.SCREEN_HEIGHT) / 2
+	}
 }

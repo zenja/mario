@@ -3,6 +3,7 @@ package object
 import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
+	"github.com/zenja/mario/math_utils"
 	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
 )
@@ -80,10 +81,10 @@ func visibleRectInCamera(rect *sdl.Rect, xCamStart, yCamStart int32) (rectInTile
 		return nil, nil
 	}
 
-	xStartInLevel := max(rect.X, xCamStart)
-	xEndInLevel := min(rect.X+rect.W, xCamStart+graphic.SCREEN_WIDTH)
-	yStartInLevel := max(rect.Y, yCamStart)
-	yEndInLevel := min(rect.Y+rect.H, yCamStart+graphic.SCREEN_HEIGHT)
+	xStartInLevel := math_utils.Max(rect.X, xCamStart)
+	xEndInLevel := math_utils.Min(rect.X+rect.W, xCamStart+graphic.SCREEN_WIDTH)
+	yStartInLevel := math_utils.Max(rect.Y, yCamStart)
+	yEndInLevel := math_utils.Min(rect.Y+rect.H, yCamStart+graphic.SCREEN_HEIGHT)
 
 	rectInTile = &sdl.Rect{
 		xStartInLevel - rect.X,
@@ -104,18 +105,4 @@ func visibleRectInCamera(rect *sdl.Rect, xCamStart, yCamStart int32) (rectInTile
 	//fmt.Printf("Rect in Camera: %d, %d, %d, %d\n", rectInCamera.X, rectInCamera.Y, rectInCamera.W, rectInCamera.H)
 	//fmt.Println()
 	return
-}
-
-func min(x, y int32) int32 {
-	if x < y {
-		return x
-	}
-	return y
-}
-
-func max(x, y int32) int32 {
-	if x > y {
-		return x
-	}
-	return y
 }

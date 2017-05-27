@@ -13,11 +13,15 @@ import (
 type Level struct {
 	Objects  []object.Object
 	ObstMngr *ObstacleManager
+	Hero     object.Object
+	numTiles vector.Vec2D
 }
 
 func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
 	var objs []object.Object
+	numTiles := vector.Vec2D{int32(len(arr[0])), int32(len(arr))}
 	obstMngr := NewObstacleManager(len(arr[0]), len(arr))
+	var hero object.Object
 
 	var currentPos vector.Pos
 	for i, arrRow := range arr {
@@ -32,15 +36,26 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 			// Hero
 			case 'H':
-				objs = append(objs, object.NewHero(currentPos, resourceRegistry))
+				if hero != nil {
+					log.Fatal("more than one hero found")
+				}
+				hero = object.NewHero(currentPos, resourceRegistry)
+				objs = append(objs, hero)
 			}
 			currentPos.X += graphic.TILE_SIZE
 		}
 		currentPos.Y += graphic.TILE_SIZE
 	}
+
+	if hero == nil {
+		log.Fatal("no hero found when parsing level")
+	}
+
 	return &Level{
 		Objects:  objs,
 		ObstMngr: obstMngr,
+		Hero:     hero,
+		numTiles: numTiles,
 	}
 }
 
@@ -78,4 +93,12 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
 			}
 		}
 	}
+}
+
+func (l *Level) GetLevelWidth() int32 {
+	return l.numTiles.X * graphic.TILE_SIZE
+}
+
+func (l *Level) GetLevelHeight() int32 {
+	return l.numTiles.Y * graphic.TILE_SIZE
 }

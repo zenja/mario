@@ -55,10 +55,10 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32) {
 	switch {
 	case events.Has(int(event.EVENT_KEYDOWN_LEFT)):
 		h.currState = HERO_STATE_WALKING
-		h.velocity.X = -10
+		h.velocity.X = -8
 	case events.Has(int(event.EVENT_KEYDOWN_RIGHT)):
 		h.currState = HERO_STATE_WALKING
-		h.velocity.X = 10
+		h.velocity.X = 8
 	case events.Has(int(event.EVENT_KEYDOWN_SPACE)):
 		h.currLevelRect.Y -= 1
 	default:
