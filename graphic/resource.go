@@ -18,7 +18,8 @@ type Resource interface {
 // Resource IDs
 const (
 	RESOURCE_TYPE_GROUD = iota
-	RESOURCE_TYPE_HERO
+	RESOURCE_TYPE_HERO_STAND
+	RESOURCE_TYPE_HERO_WALKING
 )
 
 const TILE_SIZE = 64
@@ -149,5 +150,6 @@ func (g *Graphic) loadAllResources() {
 	// load tile resources
 	g.registerTileResource("assets/ground.png", RESOURCE_TYPE_GROUD)
 	// load non-tile resources
-	g.registerNonTailResource("assets/hero.png", RESOURCE_TYPE_HERO)
+	g.registerNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND)
+	g.registerNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING)
 }
