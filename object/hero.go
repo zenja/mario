@@ -53,13 +53,13 @@ func (h *hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 func (h *hero) Update(events *intsets.Sparse, ticks uint32) {
 	// handle movement
 	switch {
-	case events.Has(event.EVENT_KEYDOWN_LEFT):
+	case events.Has(int(event.EVENT_KEYDOWN_LEFT)):
 		h.currState = HERO_STATE_WALKING
 		h.velocity.X = -10
-	case events.Has(event.EVENT_KEYDOWN_RIGHT):
+	case events.Has(int(event.EVENT_KEYDOWN_RIGHT)):
 		h.currState = HERO_STATE_WALKING
 		h.velocity.X = 10
-	case events.Has(event.EVENT_KEYDOWN_SPACE):
+	case events.Has(int(event.EVENT_KEYDOWN_SPACE)):
 		h.currLevelRect.Y -= 1
 	default:
 		// FIXME

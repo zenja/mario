@@ -89,11 +89,11 @@ func (game *Game) handleEvents() *intsets.Sparse {
 		case *sdl.KeyDownEvent:
 			switch t.Keysym.Scancode {
 			case sdl.SCANCODE_LEFT:
-				events.Insert(event.EVENT_KEYDOWN_LEFT)
+				events.Insert(int(event.EVENT_KEYDOWN_LEFT))
 			case sdl.SCANCODE_RIGHT:
-				events.Insert(event.EVENT_KEYDOWN_RIGHT)
+				events.Insert(int(event.EVENT_KEYDOWN_RIGHT))
 			case sdl.SCANCODE_SPACE:
-				events.Insert(event.EVENT_KEYDOWN_SPACE)
+				events.Insert(int(event.EVENT_KEYDOWN_SPACE))
 			}
 		}
 	}
