@@ -1,6 +1,8 @@
 package game
 
 import (
+	"runtime"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
@@ -41,6 +43,9 @@ func (game *Game) Quit() {
 }
 
 func (game *Game) StartGameLoop() {
+	// this may prevent window not responding
+	runtime.LockOSThread()
+
 	game.running = true
 	for game.running {
 		frameStart := sdl.GetTicks()
