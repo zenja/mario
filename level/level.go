@@ -6,22 +6,21 @@ import (
 	"os"
 
 	"github.com/zenja/mario/graphic"
-	"github.com/zenja/mario/object"
 	"github.com/zenja/mario/vector"
 )
 
 type Level struct {
-	Objects  []object.Object
+	Objects  []Object
 	ObstMngr *ObstacleManager
-	Hero     object.Object
+	Hero     Object
 	numTiles vector.Vec2D
 }
 
 func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
-	var objs []object.Object
+	var objs []Object
 	numTiles := vector.Vec2D{int32(len(arr[0])), int32(len(arr))}
 	obstMngr := NewObstacleManager(len(arr[0]), len(arr))
-	var hero object.Object
+	var hero Object
 
 	var currentPos vector.Pos
 	for i, arrRow := range arr {
@@ -31,7 +30,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 			// Ground
 			case 'G':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD]
-				objs = append(objs, object.NewSingleTileObject(resource, currentPos, object.ZINDEX_0))
+				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
 				// ground is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 			// Hero
@@ -39,7 +38,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				if hero != nil {
 					log.Fatal("more than one hero found")
 				}
-				hero = object.NewHero(currentPos, resourceRegistry)
+				hero = NewHero(currentPos, resourceRegistry)
 				objs = append(objs, hero)
 			}
 			currentPos.X += graphic.TILE_SIZE
@@ -75,11 +74,11 @@ func ParseLevelFromFile(filename string, resourceRegistry map[graphic.ResourceID
 }
 
 func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	var zIndexObjs [object.ZINDEX_NUM][]object.Object
+	var zIndexObjs [ZINDEX_NUM][]Object
 	// draw lowest z-index, bookkeeping higher z-index for later rendering
 	for _, o := range l.Objects {
 		z := o.GetZIndex()
-		if z == object.ZINDEX_0 {
+		if z == ZINDEX_0 {
 			o.Draw(g, camPos)
 		} else {
 			zIndexObjs[z] = append(zIndexObjs[z], o)

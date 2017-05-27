@@ -1,14 +1,14 @@
-package object_test
+package level_test
 
 import (
 	"testing"
 
 	"github.com/zenja/mario/event"
-	"github.com/zenja/mario/object"
+	"github.com/zenja/mario/level"
 )
 
 func TestBaseFSMHappyPath(t *testing.T) {
-	bm, err := object.NewBaseFSM("init", []string{"init", "running", "dead"})
+	bm, err := level.NewBaseFSM("init", []string{"init", "running", "dead"})
 	assert(err, "failed to create BaseFSM instance", t)
 
 	var actual string
@@ -24,7 +24,7 @@ func TestBaseFSMHappyPath(t *testing.T) {
 	assert(err, "failed to add transition", t)
 
 	// add triggers
-	err = bm.AddTrigger(event.EVENT_KEYDOWN_LEFT, []object.TransCondition{
+	err = bm.AddTrigger(event.EVENT_KEYDOWN_LEFT, []level.TransCondition{
 		{"init", "running", func(o interface{}) bool {
 			if o == "this-will-cause-condition-to-false" {
 				return false
@@ -34,7 +34,7 @@ func TestBaseFSMHappyPath(t *testing.T) {
 		}},
 	})
 	assert(err, "tailed to add trigger", t)
-	err = bm.AddTrigger(event.EVENT_KEYDOWN_RIGHT, []object.TransCondition{
+	err = bm.AddTrigger(event.EVENT_KEYDOWN_RIGHT, []level.TransCondition{
 		{"running", "dead", func(_ interface{}) bool { return true }},
 	})
 	assert(err, "tailed to add trigger", t)

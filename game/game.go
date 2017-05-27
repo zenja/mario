@@ -54,7 +54,7 @@ func (game *Game) StartGameLoop() {
 
 		// update
 		for _, o := range game.currentLevel.Objects {
-			o.Update(events, sdl.GetTicks())
+			o.Update(events, sdl.GetTicks(), game.currentLevel)
 		}
 
 		// update camera position

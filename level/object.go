@@ -1,4 +1,4 @@
-package object
+package level
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
@@ -20,7 +20,7 @@ const (
 
 type Object interface {
 	Draw(g *graphic.Graphic, camPos vector.Pos)
-	Update(events *intsets.Sparse, ticks uint32)
+	Update(events *intsets.Sparse, ticks uint32, level *Level)
 	GetRect() sdl.Rect
 	GetZIndex() int
 }
@@ -49,7 +49,7 @@ func (sto *singleTileObject) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	drawResource(g, sto.resource, sto.levelRect, camPos)
 }
 
-func (sto *singleTileObject) Update(events *intsets.Sparse, ticks uint32) {
+func (sto *singleTileObject) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	// Do nothing
 }
 

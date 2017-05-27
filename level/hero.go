@@ -1,4 +1,4 @@
-package object
+package level
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
@@ -50,7 +50,7 @@ func (h *hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	drawResource(g, h.currRes, h.currLevelRect, camPos)
 }
 
-func (h *hero) Update(events *intsets.Sparse, ticks uint32) {
+func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	// handle movement
 	switch {
 	case events.Has(int(event.EVENT_KEYDOWN_LEFT)):
@@ -60,7 +60,7 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32) {
 		h.currState = HERO_STATE_WALKING
 		h.velocity.X = 8
 	case events.Has(int(event.EVENT_KEYDOWN_SPACE)):
-		h.currLevelRect.Y -= 1
+		h.velocity.Y -= 8
 	default:
 		// FIXME
 		//h.currState = HERO_STATE_STAND
@@ -68,9 +68,8 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32) {
 		h.velocity.Y = 0
 	}
 
-	// apply velocity
-	h.currLevelRect.X += h.velocity.X
-	h.currLevelRect.Y += h.velocity.Y
+	// move by velocity
+	h.move(h.velocity)
 
 	if h.currState == HERO_STATE_WALKING {
 		if ticks%400 < 200 {
@@ -92,4 +91,13 @@ func (h *hero) GetRect() sdl.Rect {
 
 func (h *hero) GetZIndex() int {
 	return ZINDEX_4
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Private helpers
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (h *hero) move(delta vector.Vec2D) {
+	h.currLevelRect.X += delta.X
+	h.currLevelRect.Y += delta.Y
 }
