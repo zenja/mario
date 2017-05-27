@@ -16,7 +16,7 @@ const (
 
 const (
 	FPS           = 60
-	DELAY_TIME_MS = 16 // 1000 / FPS
+	DELAY_TIME_MS = 1000 / FPS
 )
 
 type Graphic struct {
