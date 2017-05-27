@@ -45,7 +45,7 @@ func (game *Game) StartGameLoop() {
 	for game.running {
 		frameStart := sdl.GetTicks()
 
-		events := game.handleEvent()
+		events := game.handleEvents()
 
 		// update
 		for _, o := range game.currentLevel.Objects {
@@ -74,7 +74,7 @@ func (game *Game) StartGameLoop() {
 	game.Quit()
 }
 
-func (game *Game) handleEvent() *intsets.Sparse {
+func (game *Game) handleEvents() *intsets.Sparse {
 	var events intsets.Sparse
 	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
 		switch t := e.(type) {
