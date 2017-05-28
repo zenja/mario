@@ -69,7 +69,7 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	}
 
 	// move by velocity
-	h.move(h.velocity)
+	h.move(h.velocity, level)
 
 	if h.currState == HERO_STATE_WALKING {
 		if ticks%400 < 200 {
@@ -97,7 +97,28 @@ func (h *hero) GetZIndex() int {
 // Private helpers
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (h *hero) move(delta vector.Vec2D) {
+func (h *hero) move(delta vector.Vec2D, level *Level) {
 	h.currLevelRect.X += delta.X
 	h.currLevelRect.Y += delta.Y
+	top, right, bottom, left := level.ObstMngr.CalcCollisionSize(h.currLevelRect)
+	// if moving left, check left
+	if delta.X < 0 {
+		h.currLevelRect.X += left
+	}
+	// if moving right, check right
+	if delta.X > 0 {
+		h.currLevelRect.X -= right
+	}
+	// if moving up, check top
+	if delta.Y < 0 {
+		h.currLevelRect.Y += top
+	}
+	// if moving down, check bottom
+	if delta.Y > 0 {
+		h.currLevelRect.Y -= bottom
+	}
+	// fixme:
+	if top != 0 || right != 0 || bottom != 0 || left != 0 {
+		println(top, right, bottom, left)
+	}
 }

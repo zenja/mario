@@ -53,25 +53,76 @@ func (om *ObstacleManager) CalcCollisionSize(rect *sdl.Rect) (top, right, bottom
 	rightTopPos := vector.Pos{rect.X + rect.W, rect.Y}
 	leftBottomPos := vector.Pos{rect.X, rect.Y + rect.H}
 	rightBottomPos := vector.Pos{rect.X + rect.W, rect.Y + rect.H}
+
+	//leftTopTildID := getTileID(leftTopPos)
+	//rightTopTildID := getTileID(rightTopPos)
+	//leftBottomTildID := getTileID(leftBottomPos)
+	//rightBottomTildID := getTileID(rightBottomPos)
+	//
+	//for x := leftTopTildID.X; x <= rightTopTildID.X; x++ {
+	//	for y := leftBottomTildID.Y; y <= rightBottomTildID.Y; y++ {
+	//		if om.IsObstTile(vector.TileID{x, y}) {
+	//		}
+	//	}
+	//}
+
+	// check top edge
+	var tmpLTPos = leftTopPos
+	for ; tmpLTPos.X < rect.X+rect.W; tmpLTPos.X += graphic.TILE_SIZE {
+		if om.IsObstTile(getTileID(tmpLTPos)) {
+			tileRect := getTileRectByPos(tmpLTPos)
+			top = tileRect.H - (rect.Y - tileRect.Y)
+			left = tileRect.W - (rect.X - tileRect.X)
+		}
+	}
+	// check left edge
+	tmpLTPos = leftTopPos
+	for ; tmpLTPos.Y < rect.Y+rect.H; tmpLTPos.Y += graphic.TILE_SIZE {
+		if om.IsObstTile(getTileID(tmpLTPos)) {
+			tileRect := getTileRectByPos(tmpLTPos)
+			top = tileRect.H - (rect.Y - tileRect.Y)
+			left = tileRect.W - (rect.X - tileRect.X)
+		}
+	}
+	// check right edge
+	tmpRTPos := rightTopPos
+	for ; tmpRTPos.Y < rect.Y+rect.H; tmpRTPos.Y += graphic.TILE_SIZE {
+		if om.IsObstTile(getTileID(tmpRTPos)) {
+			tileRect := getTileRectByPos(tmpRTPos)
+			top = tileRect.H - (rect.Y - tileRect.Y)
+			right = rect.X + rect.W - tileRect.X
+		}
+	}
+	// check bottom edge
+	tmpLBPos := leftBottomPos
+	for ; tmpLBPos.X < rect.X+rect.W; tmpLBPos.X += graphic.TILE_SIZE {
+		if om.IsObstTile(getTileID(tmpLBPos)) {
+			tileRect := getTileRectByPos(tmpLBPos)
+			left = tileRect.W - (rect.X - tileRect.X)
+			bottom = rect.Y + rect.H - tileRect.Y
+		}
+	}
+
+	// check four corners
 	if om.IsObstTile(getTileID(leftTopPos)) {
 		tileRect := getTileRectByPos(leftTopPos)
-		top = rect.Y - tileRect.Y
-		left = rect.X - tileRect.X
+		top = tileRect.H - (rect.Y - tileRect.Y)
+		left = tileRect.W - (rect.X - tileRect.X)
 	}
 	if om.IsObstTile(getTileID(rightTopPos)) {
 		tileRect := getTileRectByPos(rightTopPos)
-		top = rect.Y - tileRect.Y
-		right = (tileRect.X + tileRect.W) - (rect.X + rect.W)
+		top = tileRect.H - (rect.Y - tileRect.Y)
+		right = rect.X + rect.W - tileRect.X
 	}
 	if om.IsObstTile(getTileID(leftBottomPos)) {
 		tileRect := getTileRectByPos(leftBottomPos)
-		left = rect.X - tileRect.Y
-		bottom = (tileRect.Y + tileRect.H) - (rect.Y + rect.H)
+		left = tileRect.W - (rect.X - tileRect.X)
+		bottom = rect.Y + rect.H - tileRect.Y
 	}
 	if om.IsObstTile(getTileID(rightBottomPos)) {
 		tileRect := getTileRectByPos(rightBottomPos)
-		right = (tileRect.X + tileRect.W) - (rect.X + rect.W)
-		bottom = (tileRect.Y + tileRect.H) - (rect.Y + rect.H)
+		right = rect.X + rect.W - tileRect.X
+		bottom = rect.Y + rect.H - tileRect.Y
 	}
 	return
 }
