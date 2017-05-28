@@ -3,7 +3,6 @@ package level_test
 import (
 	"testing"
 
-	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/level"
 )
 
@@ -12,6 +11,10 @@ func TestBaseFSMHappyPath(t *testing.T) {
 	assert(err, "failed to create BaseFSM instance", t)
 
 	var actual string
+
+	var eventLeft = "event-left"
+	var eventRight = "event-right"
+	var eventSpace = "event-space"
 
 	// add transitions
 	err = bm.AddTransition("init", "running", func(_ interface{}) {
@@ -24,7 +27,7 @@ func TestBaseFSMHappyPath(t *testing.T) {
 	assert(err, "failed to add transition", t)
 
 	// add triggers
-	err = bm.AddTrigger(event.EVENT_KEYDOWN_LEFT, []level.TransCondition{
+	err = bm.AddTrigger(eventLeft, []level.TransCondition{
 		{"init", "running", func(o interface{}) bool {
 			if o == "this-will-cause-condition-to-false" {
 				return false
@@ -34,18 +37,18 @@ func TestBaseFSMHappyPath(t *testing.T) {
 		}},
 	})
 	assert(err, "tailed to add trigger", t)
-	err = bm.AddTrigger(event.EVENT_KEYDOWN_RIGHT, []level.TransCondition{
+	err = bm.AddTrigger(eventRight, []level.TransCondition{
 		{"running", "dead", func(_ interface{}) bool { return true }},
 	})
 	assert(err, "tailed to add trigger", t)
 
-	err = bm.Receive(event.EVENT_KEYDOWN_SPACE, bm)
+	err = bm.Receive(eventSpace, bm)
 	assert(err, "error after receive SPACE event", t)
 	if actual != "" {
 		t.Fatalf("event not related to any trigger should not have effect")
 	}
 
-	err = bm.Receive(event.EVENT_KEYDOWN_RIGHT, bm)
+	err = bm.Receive(eventRight, bm)
 	assert(err, "error after receive RIGHT event", t)
 	if actual != "" {
 		t.Fatalf("event on state which is not related to any trigger for thie event should not have effect")
@@ -54,7 +57,7 @@ func TestBaseFSMHappyPath(t *testing.T) {
 		t.Fatalf("expected state: %s; actual: %s", "init", bm.GetCurrentState())
 	}
 
-	err = bm.Receive(event.EVENT_KEYDOWN_LEFT, "this-will-cause-condition-to-false")
+	err = bm.Receive(eventLeft, "this-will-cause-condition-to-false")
 	assert(err, "error after receive LEFT event", t)
 	if actual != "" {
 		t.Fatalf("event on correct state but with false condition should not be triggered")
@@ -63,7 +66,7 @@ func TestBaseFSMHappyPath(t *testing.T) {
 		t.Fatalf("expected state: %s; actual: %s", "init", bm.GetCurrentState())
 	}
 
-	err = bm.Receive(event.EVENT_KEYDOWN_LEFT, bm)
+	err = bm.Receive(eventLeft, bm)
 	assert(err, "error after receive LEFT event", t)
 	if actual != "I->R" {
 		t.Fatalf("init -> running transition should be triggered but not (expected: %s, actual: %s)", "I->R", actual)
@@ -72,7 +75,7 @@ func TestBaseFSMHappyPath(t *testing.T) {
 		t.Fatalf("expected state: %s; actual: %s", "running", bm.GetCurrentState())
 	}
 
-	err = bm.Receive(event.EVENT_KEYDOWN_RIGHT, bm)
+	err = bm.Receive(eventRight, bm)
 	assert(err, "error after receive RIGHT event", t)
 	if actual != "R->D" {
 		t.Fatalf("running -> dead transition should be triggered but not (expected: %s, actual: %s)", "R->D", actual)

@@ -5,14 +5,13 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/zenja/mario/event"
 )
 
 type FSM interface {
 	GetCurrentState() string
-	Receive(e event.Event, objToPass interface{}) error
+	Receive(e string, objToPass interface{}) error
 	AddTransition(from, to string, effect func(interface{})) error
-	AddTrigger(e event.Event, transitions []TransCondition) error
+	AddTrigger(e string, transitions []TransCondition) error
 }
 
 type TransCondition struct {
@@ -29,7 +28,7 @@ type BaseFSM struct {
 	currState  string
 	states     []string
 	effectMap  map[string]func(interface{})
-	triggerMap map[event.Event][]TransCondition
+	triggerMap map[string][]TransCondition
 }
 
 func NewBaseFSM(initState string, states []string) (*BaseFSM, error) {
@@ -50,7 +49,7 @@ func NewBaseFSM(initState string, states []string) (*BaseFSM, error) {
 		currState:  initState,
 		states:     states,
 		effectMap:  make(map[string]func(interface{})),
-		triggerMap: make(map[event.Event][]TransCondition),
+		triggerMap: make(map[string][]TransCondition),
 	}, nil
 }
 
@@ -58,7 +57,7 @@ func (bm *BaseFSM) GetCurrentState() string {
 	return bm.currState
 }
 
-func (bm *BaseFSM) Receive(e event.Event, objToPass interface{}) error {
+func (bm *BaseFSM) Receive(e string, objToPass interface{}) error {
 	// check for possible transitions and invoke effect function if has any
 	ts := bm.triggerMap[e]
 	for i := range ts {
@@ -97,7 +96,7 @@ func (bm *BaseFSM) AddTransition(from, to string, effect func(interface{})) erro
 	return nil
 }
 
-func (bm *BaseFSM) AddTrigger(e event.Event, ts []TransCondition) error {
+func (bm *BaseFSM) AddTrigger(e string, ts []TransCondition) error {
 	for i := range ts {
 		if bm.isValidState(ts[i].From) == false {
 			return errors.Errorf("%s is not a valid state", ts[i].From)
