@@ -85,20 +85,21 @@ func (game *Game) StartGameLoop() {
 func (game *Game) handleEvents() *intsets.Sparse {
 	var events intsets.Sparse
 	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
-		switch t := e.(type) {
+		switch e.(type) {
 		case *sdl.QuitEvent:
 			game.running = false
 			return nil
-		case *sdl.KeyDownEvent:
-			switch t.Keysym.Scancode {
-			case sdl.SCANCODE_LEFT:
-				events.Insert(int(event.EVENT_KEYDOWN_LEFT))
-			case sdl.SCANCODE_RIGHT:
-				events.Insert(int(event.EVENT_KEYDOWN_RIGHT))
-			case sdl.SCANCODE_SPACE:
-				events.Insert(int(event.EVENT_KEYDOWN_SPACE))
-			}
 		}
+	}
+	kbState := sdl.GetKeyboardState()
+	if kbState[int(sdl.SCANCODE_LEFT)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_LEFT))
+	}
+	if kbState[int(sdl.SCANCODE_RIGHT)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_RIGHT))
+	}
+	if kbState[int(sdl.SCANCODE_SPACE)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_SPACE))
 	}
 	return &events
 }

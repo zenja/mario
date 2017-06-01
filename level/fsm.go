@@ -76,6 +76,8 @@ func (bm *BaseFSM) Receive(e string, objToPass interface{}) error {
 			effect(objToPass)
 			// and THEN change state (notice the sequence!)
 			bm.currState = ts[i].To
+			// after first transition, stop
+			break
 		}
 	}
 	return nil
@@ -141,7 +143,7 @@ type heroFSM struct {
 }
 
 // NewHeroFSM
-func NewHeroFSM(hero *hero, initState string, states []string) (FSM, error) {
+func NewHeroFSM(hero *hero, initState string, states []string) (*heroFSM, error) {
 	bm, err := NewBaseFSM(initState, states)
 	if err != nil {
 		return nil, err

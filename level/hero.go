@@ -1,92 +1,127 @@
 package level
 
 import (
+	"log"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
+	mutils "github.com/zenja/mario/math_utils"
 	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
-)
-
-type HeroState int
-
-const (
-	HERO_STATE_STAND HeroState = iota
-	HERO_STATE_WALKING
 )
 
 type hero struct {
 	resStand   graphic.Resource
 	resWalking graphic.Resource
 
-	// current state
-	currState HeroState
-
 	// current resource
 	currRes graphic.Resource
 
 	// current rect in level
-	currLevelRect *sdl.Rect
+	levelRect *sdl.Rect
 
+	// current velocity, unit is pixels per second
 	velocity vector.Vec2D
+
+	lastTicks uint32
 }
 
 func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
 	resStand, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND]
 	resWalking, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING]
-	return &hero{
+	h := &hero{
 		resStand:   resStand,
 		resWalking: resWalking,
-		// init stat is standing
-		currState:     HERO_STATE_STAND,
-		currRes:       resStand,
-		currLevelRect: &sdl.Rect{startPos.X, startPos.Y, resStand.GetW(), resStand.GetH()},
+		currRes:    resStand,
+
+		levelRect: &sdl.Rect{startPos.X, startPos.Y, resStand.GetW(), resStand.GetH()},
+
 		// init velocity is zero
 		velocity: vector.Vec2D{},
 	}
+	return h
 }
 
 func (h *hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	drawResource(g, h.currRes, h.currLevelRect, camPos)
+	drawResource(g, h.currRes, h.levelRect, camPos)
 }
 
 func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
-	// handle movement
-	switch {
-	case events.Has(int(event.EVENT_KEYDOWN_LEFT)):
-		h.currState = HERO_STATE_WALKING
-		h.velocity.X = -8
-	case events.Has(int(event.EVENT_KEYDOWN_RIGHT)):
-		h.currState = HERO_STATE_WALKING
-		h.velocity.X = 8
-	case events.Has(int(event.EVENT_KEYDOWN_SPACE)):
-		h.velocity.Y -= 8
-	default:
-		// FIXME
-		//h.currState = HERO_STATE_STAND
-		h.velocity.X = 0
-		h.velocity.Y = 0
+	if h.lastTicks == 0 {
+		h.lastTicks = ticks
+		return
 	}
 
-	// move by velocity
-	h.move(h.velocity, level)
+	// ---------------------------------------
+	// TODO handle events
+	// ---------------------------------------
+	if events.Has(int(event.EVENT_KEYDOWN_LEFT)) {
+		h.velocity.X -= 10
+	} else if events.Has(int(event.EVENT_KEYDOWN_RIGHT)) {
+		h.velocity.X += 10
+	}
+	if events.Has(int(event.EVENT_KEYDOWN_SPACE)) {
+		h.velocity.Y -= 10
+	}
 
-	if h.currState == HERO_STATE_WALKING {
-		if ticks%400 < 200 {
-			h.currRes = h.resStand
+	// gravity: unit is pixels per second
+	gravity := vector.Vec2D{0, 5}
+	h.velocity.Add(gravity)
+
+	// calculate velocity step
+	velocityStep := h.velocity
+	velocityStep.Multiply(int32(ticks - h.lastTicks))
+	velocityStep.Divide(1000)
+
+	// limit max velocity step
+	maxVel := int32(graphic.TILE_SIZE * 30 / 100)
+	if mutils.Abs(velocityStep.X) > maxVel {
+		log.Printf("warning: velocity step's |X| is %d > %d, limited", velocityStep.X, maxVel)
+		if velocityStep.X > 0 {
+			velocityStep.X = maxVel
 		} else {
-			h.currRes = h.resWalking
+			velocityStep.X = -maxVel
+		}
+	}
+	if mutils.Abs(velocityStep.Y) > maxVel {
+		log.Printf("warning: velocity step's |Y| is %d > %d, limited", velocityStep.Y, maxVel)
+		if velocityStep.Y > 0 {
+			velocityStep.Y = maxVel
+		} else {
+			velocityStep.Y = -maxVel
 		}
 	}
 
-	if h.currState == HERO_STATE_STAND {
-		h.currRes = h.resStand
-	}
+	// apply velocity step
+	log.Printf("applying velocity step: %v\n", velocityStep)
+	h.levelRect.X += velocityStep.X
+	h.levelRect.Y += velocityStep.Y
 
+	// solve collision
+	log.Printf("desired rect: %v\n", *h.levelRect)
+	hitTop, hitRight, hitBottom, hitLeft := level.ObstMngr.SolveCollision(h.levelRect)
+	log.Printf("solved rect: %v\n", *h.levelRect)
+
+	log.Println("---")
+
+	// reset velocity according to collision and direction
+	if velocityStep.X > 0 && hitRight {
+		h.velocity.X = 0
+	}
+	if velocityStep.X < 0 && hitLeft {
+		h.velocity.X = 0
+	}
+	if velocityStep.Y > 0 && hitBottom {
+		h.velocity.Y = 0
+	}
+	if velocityStep.Y < 0 && hitTop {
+		h.velocity.Y = 0
+	}
 }
 
 func (h *hero) GetRect() sdl.Rect {
-	return *h.currLevelRect
+	return *h.levelRect
 }
 
 func (h *hero) GetZIndex() int {
@@ -96,29 +131,3 @@ func (h *hero) GetZIndex() int {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Private helpers
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-func (h *hero) move(delta vector.Vec2D, level *Level) {
-	h.currLevelRect.X += delta.X
-	h.currLevelRect.Y += delta.Y
-	top, right, bottom, left := level.ObstMngr.CalcCollisionSize(h.currLevelRect)
-	// if moving left, check left
-	if delta.X < 0 {
-		h.currLevelRect.X += left
-	}
-	// if moving right, check right
-	if delta.X > 0 {
-		h.currLevelRect.X -= right
-	}
-	// if moving up, check top
-	if delta.Y < 0 {
-		h.currLevelRect.Y += top
-	}
-	// if moving down, check bottom
-	if delta.Y > 0 {
-		h.currLevelRect.Y -= bottom
-	}
-	// fixme:
-	if top != 0 || right != 0 || bottom != 0 || left != 0 {
-		println(top, right, bottom, left)
-	}
-}

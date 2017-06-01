@@ -3,6 +3,8 @@ package level
 import (
 	"log"
 
+	"fmt"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
@@ -47,83 +49,103 @@ func (om *ObstacleManager) IsObstTile(tileID vector.TileID) bool {
 	return om.isObstTile[tileID.X][tileID.Y]
 }
 
-// CalcCollisionSize returns how much a given rect collides obstacles in four directions: top, right, bottom, left
-func (om *ObstacleManager) CalcCollisionSize(rect *sdl.Rect) (top, right, bottom, left int32) {
-	leftTopPos := vector.Pos{rect.X, rect.Y}
-	rightTopPos := vector.Pos{rect.X + rect.W, rect.Y}
-	leftBottomPos := vector.Pos{rect.X, rect.Y + rect.H}
-	rightBottomPos := vector.Pos{rect.X + rect.W, rect.Y + rect.H}
+func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect) (hitTop bool, hitRight bool, hitBottom bool, hitLeft bool) {
+	tiles := GetSurroundingTileIDs(*desiredRect)
+	for i, tid := range tiles {
+		if tid.X < 0 || tid.Y < 0 {
+			continue
+		}
 
-	//leftTopTildID := getTileID(leftTopPos)
-	//rightTopTildID := getTileID(rightTopPos)
-	//leftBottomTildID := getTileID(leftBottomPos)
-	//rightBottomTildID := getTileID(rightBottomPos)
-	//
-	//for x := leftTopTildID.X; x <= rightTopTildID.X; x++ {
-	//	for y := leftBottomTildID.Y; y <= rightBottomTildID.Y; y++ {
-	//		if om.IsObstTile(vector.TileID{x, y}) {
-	//		}
-	//	}
-	//}
+		if !om.IsObstTile(tid) {
+			continue
+		}
 
-	// check top edge
-	var tmpLTPos = leftTopPos
-	for ; tmpLTPos.X < rect.X+rect.W; tmpLTPos.X += graphic.TILE_SIZE {
-		if om.IsObstTile(getTileID(tmpLTPos)) {
-			tileRect := getTileRectByPos(tmpLTPos)
-			top = tileRect.H - (rect.Y - tileRect.Y)
-			left = tileRect.W - (rect.X - tileRect.X)
+		interRect, isIntersect := desiredRect.Intersect(GetTileRect(tid))
+		if !isIntersect {
+			continue
 		}
-	}
-	// check left edge
-	tmpLTPos = leftTopPos
-	for ; tmpLTPos.Y < rect.Y+rect.H; tmpLTPos.Y += graphic.TILE_SIZE {
-		if om.IsObstTile(getTileID(tmpLTPos)) {
-			tileRect := getTileRectByPos(tmpLTPos)
-			top = tileRect.H - (rect.Y - tileRect.Y)
-			left = tileRect.W - (rect.X - tileRect.X)
-		}
-	}
-	// check right edge
-	tmpRTPos := rightTopPos
-	for ; tmpRTPos.Y < rect.Y+rect.H; tmpRTPos.Y += graphic.TILE_SIZE {
-		if om.IsObstTile(getTileID(tmpRTPos)) {
-			tileRect := getTileRectByPos(tmpRTPos)
-			top = tileRect.H - (rect.Y - tileRect.Y)
-			right = rect.X + rect.W - tileRect.X
-		}
-	}
-	// check bottom edge
-	tmpLBPos := leftBottomPos
-	for ; tmpLBPos.X < rect.X+rect.W; tmpLBPos.X += graphic.TILE_SIZE {
-		if om.IsObstTile(getTileID(tmpLBPos)) {
-			tileRect := getTileRectByPos(tmpLBPos)
-			left = tileRect.W - (rect.X - tileRect.X)
-			bottom = rect.Y + rect.H - tileRect.Y
+
+		switch i {
+		case 0:
+			desiredRect.Y -= interRect.H
+			hitBottom = true
+			fmt.Printf("i: %d, hit bottom! Y -= %d (interRect: %v) \n", i, interRect.H, interRect)
+		case 1:
+			desiredRect.Y += interRect.H
+			fmt.Printf("i: %d, hit top! Y += %d (interRect: %v) \n", i, interRect.H, interRect)
+			hitTop = true
+		case 2:
+			desiredRect.X += interRect.W
+			hitLeft = true
+		case 3:
+			desiredRect.X -= interRect.W
+			hitRight = true
+		default:
+			if interRect.W > interRect.H {
+				// tile is diagonal, but resolving collision vertically
+				if i > 5 {
+					hitBottom = true
+					desiredRect.Y -= interRect.H
+					fmt.Printf("i: %d, hit bottom! Y += %d (interRect: %v) \n", i, interRect.H, interRect)
+				} else {
+					hitTop = true
+					desiredRect.Y += interRect.H
+					fmt.Printf("i: %d, hit top! Y += %d (interRect: %v) \n", i, interRect.H, interRect)
+				}
+			} else {
+				// tile is diagonal, but resolving horizontally
+				if i == 4 || i == 6 {
+					hitLeft = true
+					desiredRect.X += interRect.W
+				} else {
+					hitRight = true
+					desiredRect.X -= interRect.W
+				}
+			}
 		}
 	}
 
-	// check four corners
-	if om.IsObstTile(getTileID(leftTopPos)) {
-		tileRect := getTileRectByPos(leftTopPos)
-		top = tileRect.H - (rect.Y - tileRect.Y)
-		left = tileRect.W - (rect.X - tileRect.X)
+	return
+}
+
+// GetSurroundingTileIDs returns the 8 surrounding tiles of a given rect
+// The order is:
+//
+//     4     1     5
+//         ______
+//        |     |
+//     2  |     |  3
+//        |     |
+//        |_____|
+//     6     0     7
+//
+// NOTE that the tile id returned can be invalid, like negative X or Y
+func GetSurroundingTileIDs(rect sdl.Rect) (tids [8]vector.TileID) {
+	if rect.W >= graphic.TILE_SIZE*3 || rect.H >= graphic.TILE_SIZE*3 {
+		log.Fatalf("rect width or height cannot exceed 3 * TILE_SIZE (%d) but is (%d, %d)",
+			graphic.TILE_SIZE, rect.W, rect.H)
 	}
-	if om.IsObstTile(getTileID(rightTopPos)) {
-		tileRect := getTileRectByPos(rightTopPos)
-		top = tileRect.H - (rect.Y - tileRect.Y)
-		right = rect.X + rect.W - tileRect.X
-	}
-	if om.IsObstTile(getTileID(leftBottomPos)) {
-		tileRect := getTileRectByPos(leftBottomPos)
-		left = tileRect.W - (rect.X - tileRect.X)
-		bottom = rect.Y + rect.H - tileRect.Y
-	}
-	if om.IsObstTile(getTileID(rightBottomPos)) {
-		tileRect := getTileRectByPos(rightBottomPos)
-		right = rect.X + rect.W - tileRect.X
-		bottom = rect.Y + rect.H - tileRect.Y
-	}
+
+	topMid := vector.Pos{rect.X + rect.W/2, rect.Y}
+	bottomMid := vector.Pos{rect.X + rect.W/2, rect.Y + rect.H}
+	leftMid := vector.Pos{rect.X, rect.Y + rect.H/2}
+	rightMid := vector.Pos{rect.X + rect.W, rect.Y + rect.H/2}
+
+	topMidTID := GetTileID(topMid, true, true)
+	bottomMidTID := GetTileID(bottomMid, false, true)
+	leftMidTID := GetTileID(leftMid, true, true)
+	rightMidTID := GetTileID(rightMid, true, false)
+
+	tids[0] = bottomMidTID
+	tids[1] = topMidTID
+	tids[2] = leftMidTID
+	tids[3] = rightMidTID
+
+	tids[4] = vector.TileID{topMidTID.X - 1, topMidTID.Y}
+	tids[5] = vector.TileID{topMidTID.X + 1, topMidTID.Y}
+	tids[6] = vector.TileID{bottomMidTID.X - 1, bottomMidTID.Y}
+	tids[7] = vector.TileID{bottomMidTID.X + 1, bottomMidTID.Y}
+
 	return
 }
 
@@ -139,20 +161,24 @@ func (om *ObstacleManager) assertLegalTilePos(tileID vector.TileID) {
 	}
 }
 
-// getTileID returns tile ID for a given position
-// Note that getTileID won't check tile id nor given position
-func getTileID(levelPos vector.Pos) vector.TileID {
+// GetTileID returns tile ID for a given position
+// Note that GetTileID won't check tile id nor given position
+func GetTileID(levelPos vector.Pos, preferTop bool, preferLeft bool) vector.TileID {
+	x := levelPos.X / graphic.TILE_SIZE
+	if levelPos.X%graphic.TILE_SIZE == 0 && preferLeft {
+		x--
+	}
+	y := levelPos.Y / graphic.TILE_SIZE
+	if levelPos.Y%graphic.TILE_SIZE == 0 && preferTop {
+		y--
+	}
 	return vector.TileID{
-		X: levelPos.X / graphic.TILE_SIZE,
-		Y: levelPos.Y / graphic.TILE_SIZE,
+		X: x,
+		Y: y,
 	}
 }
 
-func getTileRectByPos(levelPos vector.Pos) *sdl.Rect {
-	return getTileRect(getTileID(levelPos))
-}
-
-func getTileRect(tileID vector.TileID) *sdl.Rect {
+func GetTileRect(tileID vector.TileID) *sdl.Rect {
 	return &sdl.Rect{
 		X: tileID.X * graphic.TILE_SIZE,
 		Y: tileID.Y * graphic.TILE_SIZE,
