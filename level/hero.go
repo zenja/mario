@@ -25,6 +25,8 @@ type hero struct {
 	velocity vector.Vec2D
 
 	lastTicks uint32
+
+	isOnGround bool
 }
 
 func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
@@ -34,11 +36,9 @@ func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphi
 		resStand:   resStand,
 		resWalking: resWalking,
 		currRes:    resStand,
-
 		levelRect: &sdl.Rect{startPos.X, startPos.Y, resStand.GetW(), resStand.GetH()},
-
-		// init velocity is zero
-		velocity: vector.Vec2D{},
+		velocity:   vector.Vec2D{0, 0},
+		isOnGround: false,
 	}
 	return h
 }
@@ -62,7 +62,9 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		h.velocity.X += 10
 	}
 	if events.Has(int(event.EVENT_KEYDOWN_SPACE)) {
-		h.velocity.Y -= 10
+		if h.isOnGround {
+			h.velocity.Y -= 60
+		}
 	}
 
 	// gravity: unit is pixels per second
@@ -102,6 +104,9 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	log.Printf("desired rect: %v\n", *h.levelRect)
 	hitTop, hitRight, hitBottom, hitLeft := level.ObstMngr.SolveCollision(h.levelRect)
 	log.Printf("solved rect: %v\n", *h.levelRect)
+
+	// is on ground
+	h.isOnGround = hitBottom
 
 	log.Println("---")
 
