@@ -122,11 +122,11 @@ func (game *Game) updateCamPos() {
 		game.camPos.Y = 0
 	}
 	// check right
-	if perfectX > (game.currentLevel.GetLevelWidth()-graphic.SCREEN_WIDTH)/2 {
-		game.camPos.X = (game.currentLevel.GetLevelWidth() - graphic.SCREEN_WIDTH) / 2
+	if perfectX+graphic.SCREEN_WIDTH > game.currentLevel.GetLevelWidth() {
+		game.camPos.X = game.currentLevel.GetLevelWidth() - graphic.SCREEN_WIDTH
 	}
 	// check bottom
-	if perfectY > (game.currentLevel.GetLevelHeight()-graphic.SCREEN_HEIGHT)/2 {
-		game.camPos.Y = (game.currentLevel.GetLevelHeight() - graphic.SCREEN_HEIGHT) / 2
+	if perfectY+graphic.SCREEN_HEIGHT > game.currentLevel.GetLevelHeight() {
+		game.camPos.Y = game.currentLevel.GetLevelHeight() - graphic.SCREEN_HEIGHT
 	}
 }
