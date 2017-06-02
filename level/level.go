@@ -55,6 +55,13 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				// ground is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 
+			// Inner ground in middle
+			case 'I':
+				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_INNER_MID]
+				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
+				// ground is obstacle
+				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+
 			// Hero
 			case 'H':
 				if hero != nil {

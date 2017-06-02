@@ -17,10 +17,14 @@ type Resource interface {
 
 // Resource IDs
 const (
-	RESOURCE_TYPE_BRICK              = iota
+	RESOURCE_TYPE_BRICK = iota
+
 	RESOURCE_TYPE_GROUD_GRASS_LEFT
 	RESOURCE_TYPE_GROUD_GRASS_MID
 	RESOURCE_TYPE_GROUD_GRASS_RIGHT
+
+	RESOURCE_TYPE_GROUD_INNER_MID
+
 	RESOURCE_TYPE_HERO_STAND_LEFT
 	RESOURCE_TYPE_HERO_WALKING_LEFT
 	RESOURCE_TYPE_HERO_STAND_RIGHT
@@ -211,6 +215,8 @@ func (g *Graphic) loadAllResources() {
 	g.registerTileResource("assets/ground-grass-left.png", RESOURCE_TYPE_GROUD_GRASS_LEFT)
 	g.registerTileResource("assets/ground-grass-mid.png", RESOURCE_TYPE_GROUD_GRASS_MID)
 	g.registerTileResource("assets/ground-grass-right.png", RESOURCE_TYPE_GROUD_GRASS_RIGHT)
+	g.registerTileResource("assets/ground-inner-mid.png", RESOURCE_TYPE_GROUD_INNER_MID)
+
 	// load non-tile resources
 	g.registerNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_RIGHT)
 	g.registerNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_RIGHT)
