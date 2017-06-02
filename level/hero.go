@@ -36,7 +36,7 @@ func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphi
 		resStand:   resStand,
 		resWalking: resWalking,
 		currRes:    resStand,
-		levelRect: &sdl.Rect{startPos.X, startPos.Y, resStand.GetW(), resStand.GetH()},
+		levelRect:  &sdl.Rect{startPos.X, startPos.Y, resStand.GetW(), resStand.GetH()},
 		velocity:   vector.Vec2D{0, 0},
 		isOnGround: false,
 	}
@@ -48,27 +48,33 @@ func (h *hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 }
 
 func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+	// skip first update due to lack of ticks
 	if h.lastTicks == 0 {
 		h.lastTicks = ticks
 		return
+	}
+
+	// standing on ground will absorb all X-velocity
+	if h.isOnGround {
+		h.velocity.X = 0
 	}
 
 	// ---------------------------------------
 	// TODO handle events
 	// ---------------------------------------
 	if events.Has(int(event.EVENT_KEYDOWN_LEFT)) {
-		h.velocity.X -= 10
+		h.velocity.X = -350
 	} else if events.Has(int(event.EVENT_KEYDOWN_RIGHT)) {
-		h.velocity.X += 10
+		h.velocity.X = 350
 	}
 	if events.Has(int(event.EVENT_KEYDOWN_SPACE)) {
 		if h.isOnGround {
-			h.velocity.Y -= 60
+			h.velocity.Y = -1000
 		}
 	}
 
 	// gravity: unit is pixels per second
-	gravity := vector.Vec2D{0, 5}
+	gravity := vector.Vec2D{0, 50}
 	h.velocity.Add(gravity)
 
 	// calculate velocity step
@@ -123,6 +129,9 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	if velocityStep.Y < 0 && hitTop {
 		h.velocity.Y = 0
 	}
+
+	// update ticks
+	h.lastTicks = ticks
 }
 
 func (h *hero) GetRect() sdl.Rect {
