@@ -79,8 +79,21 @@ func (g *Graphic) DestroyAndQuit() {
 }
 
 // Show the screen
-func (g *Graphic) ClearScreen() {
-	g.renderer.Clear()
+func (g *Graphic) ClearScreenWithColor(color sdl.Color) {
+	var err error
+	err = g.renderer.SetDrawColor(color.R, color.G, color.B, color.A)
+	if err != nil {
+		log.Fatal("failed to set renderer draw color")
+	}
+	err = g.renderer.Clear()
+	if err != nil {
+		log.Fatal("failed to clear renderer")
+	}
+	// reset draw color
+	err = g.renderer.SetDrawColor(0, 0, 0, 0)
+	if err != nil {
+		log.Fatal("failed to reset renderer draw color")
+	}
 }
 
 // Show the screen
@@ -95,39 +108,67 @@ func (g *Graphic) Delay(ms uint32) {
 // clipTexture is a helper function to create a new texture from a region of a texture
 // User needs to free the input texture himself if needed
 func (g *Graphic) clipTexture(texture *sdl.Texture, rect *sdl.Rect) (*sdl.Texture, error) {
-	newTexture, err := g.renderer.CreateTexture(sdl.PIXELFORMAT_RGB888, sdl.TEXTUREACCESS_TARGET, int(rect.W), int(rect.H))
+	newTexture, err := g.renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_TARGET, int(rect.W), int(rect.H))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to clip texture")
 	}
+
+	// will make pixels with alpha 0 fully transparent
+	if err = newTexture.SetBlendMode(sdl.BLENDMODE_BLEND); err != nil {
+		return nil, errors.Wrap(err, "failed to set blend mode")
+	}
+
 	if err = g.renderer.SetRenderTarget(newTexture); err != nil {
 		return nil, errors.Wrap(err, "failed to set render target")
 	}
-	if err := g.renderer.Clear(); err != nil {
+
+	// this together with blend mode will make transparent area
+	if err = g.renderer.SetDrawColor(0, 0, 0, 0); err != nil {
+		return nil, errors.Wrap(err, "failed to reset draw color")
+	}
+
+	if err = g.renderer.Clear(); err != nil {
 		return nil, errors.Wrap(err, "failed to clear renderer")
 	}
+
 	if err = g.renderer.Copy(texture, nil, rect); err != nil {
 		return nil, errors.Wrap(err, "failed to render texture")
 	}
+
 	// reset render target
 	if err = g.renderer.SetRenderTarget(nil); err != nil {
 		return nil, errors.Wrap(err, "failed to reset render target")
 	}
+
 	return newTexture, nil
 }
 
 // flipTexture is a helper function to create a flipped texture from a region of a texture
 // User needs to free the input texture himself if needed
 func (g *Graphic) flipTexture(texture *sdl.Texture, width int32, height int32, flipHorizontal bool) (*sdl.Texture, error) {
-	newTexture, err := g.renderer.CreateTexture(sdl.PIXELFORMAT_RGB888, sdl.TEXTUREACCESS_TARGET, int(width), int(height))
+	newTexture, err := g.renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_TARGET, int(width), int(height))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to clip texture")
 	}
+
+	// will make pixels with alpha 0 fully transparent
+	if err = newTexture.SetBlendMode(sdl.BLENDMODE_BLEND); err != nil {
+		return nil, errors.Wrap(err, "failed to set blend mode")
+	}
+
 	if err = g.renderer.SetRenderTarget(newTexture); err != nil {
 		return nil, errors.Wrap(err, "failed to set render target")
 	}
+
+	// this together with blend mode will make transparent area
+	if err = g.renderer.SetDrawColor(0, 0, 0, 0); err != nil {
+		return nil, errors.Wrap(err, "failed to reset draw color")
+	}
+
 	if err := g.renderer.Clear(); err != nil {
 		return nil, errors.Wrap(err, "failed to clear renderer")
 	}
+
 	var flipFlag sdl.RendererFlip
 	if flipHorizontal {
 		flipFlag = sdl.FLIP_HORIZONTAL
@@ -137,6 +178,7 @@ func (g *Graphic) flipTexture(texture *sdl.Texture, width int32, height int32, f
 	if err := g.renderer.CopyEx(texture, nil, nil, 0, nil, flipFlag); err != nil {
 		return nil, errors.Wrap(err, "failed to render texture")
 	}
+
 	// reset render target
 	if err = g.renderer.SetRenderTarget(nil); err != nil {
 		return nil, errors.Wrap(err, "failed to reset render target")

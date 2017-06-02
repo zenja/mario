@@ -61,7 +61,7 @@ func (game *Game) StartGameLoop() {
 		game.updateCamPos()
 
 		// start render
-		game.gra.ClearScreen()
+		game.gra.ClearScreenWithColor(game.currentLevel.BGColor)
 		game.currentLevel.Draw(game.gra, game.camPos)
 
 		// render overlays

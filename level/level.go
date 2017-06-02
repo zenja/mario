@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 )
@@ -13,6 +14,7 @@ type Level struct {
 	Objects  []Object
 	ObstMngr *ObstacleManager
 	Hero     Object
+	BGColor  sdl.Color
 	numTiles vector.Vec2D
 }
 
@@ -83,6 +85,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 		Objects:  objs,
 		ObstMngr: obstMngr,
 		Hero:     hero,
+		BGColor:  sdl.Color{204, 237, 255, 255},
 		numTiles: numTiles,
 	}
 }
