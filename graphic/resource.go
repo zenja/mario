@@ -18,8 +18,10 @@ type Resource interface {
 // Resource IDs
 const (
 	RESOURCE_TYPE_GROUD = iota
-	RESOURCE_TYPE_HERO_STAND
-	RESOURCE_TYPE_HERO_WALKING
+	RESOURCE_TYPE_HERO_STAND_LEFT
+	RESOURCE_TYPE_HERO_WALKING_LEFT
+	RESOURCE_TYPE_HERO_STAND_RIGHT
+	RESOURCE_TYPE_HERO_WALKING_RIGHT
 )
 
 const TILE_SIZE = 50
@@ -99,6 +101,16 @@ func (g *Graphic) registerNonTailResource(filename string, id ResourceID) {
 	g.registerNonTileFromSurface(surface, id)
 }
 
+func (g *Graphic) registerFlippedNonTailResource(filename string, id ResourceID, flipHorizontal bool) {
+	surface, err := img.Load(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer surface.Free()
+
+	g.registerFlippedNonTileFromSurface(surface, id, flipHorizontal)
+}
+
 // registerTileFromSurface loads a sprite from a surface into a TileResource object
 // User need to free the surface himself
 func (g *Graphic) registerTileFromSurface(surface *sdl.Surface, id ResourceID) {
@@ -109,6 +121,10 @@ func (g *Graphic) registerTileFromSurface(surface *sdl.Surface, id ResourceID) {
 // User need to free the surface himself
 func (g *Graphic) registerNonTileFromSurface(surface *sdl.Surface, id ResourceID) {
 	g.registerResourceFromSurface(surface, id, surface.W, surface.H, false)
+}
+
+func (g *Graphic) registerFlippedNonTileFromSurface(surface *sdl.Surface, id ResourceID, flipHorizontal bool) {
+	g.registerFlippedResourceFromSurface(surface, id, surface.W, surface.H, flipHorizontal, false)
 }
 
 // registerResourceFromSurface loads a sprite from a surface into a Resource object
@@ -141,6 +157,46 @@ func (g *Graphic) registerResourceFromSurface(surface *sdl.Surface, id ResourceI
 	}
 }
 
+func (g *Graphic) registerFlippedResourceFromSurface(
+	surface *sdl.Surface,
+	id ResourceID,
+	width,
+	height int32,
+	flipHorizontal bool,
+	isTile bool) {
+
+	if isTile && (width != TILE_SIZE || height != TILE_SIZE) {
+		log.Fatalf("declared to be tile but has wrong width (%d) or height (%d)", width, height)
+	}
+
+	texture, err := g.renderer.CreateTextureFromSurface(surface)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// make sure the tile is in good shape
+	if surface.W != width || surface.H != height {
+		oldTexture := texture
+		texture, err = g.clipTexture(oldTexture, &sdl.Rect{0, 0, width, height})
+		if err != nil {
+			log.Fatal(err)
+		}
+		// release original texture
+		oldTexture.Destroy()
+	}
+
+	// flip texture
+	oldTexture := texture
+	texture, err = g.flipTexture(texture, width, height, flipHorizontal)
+	oldTexture.Destroy()
+
+	if isTile {
+		g.ResourceRegistry[id] = &TileResource{texture: texture}
+	} else {
+		g.ResourceRegistry[id] = &NonTileResource{texture: texture, w: width, h: height}
+	}
+}
+
 // RenderResource renders a tile (or a part of tile specified by srcRect) to a given position in screen
 func (g *Graphic) RenderResource(resource Resource, srcRect *sdl.Rect, dstRect *sdl.Rect) {
 	g.renderer.Copy(resource.GetTexture(), srcRect, dstRect)
@@ -150,6 +206,8 @@ func (g *Graphic) loadAllResources() {
 	// load tile resources
 	g.registerTileResource("assets/ground.png", RESOURCE_TYPE_GROUD)
 	// load non-tile resources
-	g.registerNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND)
-	g.registerNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING)
+	g.registerNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_RIGHT)
+	g.registerNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_RIGHT)
+	g.registerFlippedNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_LEFT, true)
+	g.registerFlippedNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_LEFT, true)
 }

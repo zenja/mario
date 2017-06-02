@@ -111,3 +111,30 @@ func (g *Graphic) clipTexture(texture *sdl.Texture, rect *sdl.Rect) (*sdl.Textur
 	}
 	return newTexture, nil
 }
+
+// flipTexture is a helper function to create a flipped texture from a region of a texture
+// User needs to free the input texture himself if needed
+func (g *Graphic) flipTexture(texture *sdl.Texture, width int32, height int32, flipHorizontal bool) (*sdl.Texture, error) {
+	newTexture, err := g.renderer.CreateTexture(sdl.PIXELFORMAT_RGB888, sdl.TEXTUREACCESS_TARGET, int(width), int(height))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to clip texture")
+	}
+	if err = g.renderer.SetRenderTarget(newTexture); err != nil {
+		return nil, errors.Wrap(err, "failed to set render target")
+	}
+	var flipFlag sdl.RendererFlip
+	if flipHorizontal {
+		flipFlag = sdl.FLIP_HORIZONTAL
+	} else {
+		flipFlag = sdl.FLIP_VERTICAL
+	}
+	if err := g.renderer.CopyEx(texture, nil, nil, 0, nil, flipFlag); err != nil {
+		println("!!!!!!!!!!!!!!!!!!!!!!!!!!")
+		return nil, errors.Wrap(err, "failed to render texture")
+	}
+	// reset render target
+	if err = g.renderer.SetRenderTarget(nil); err != nil {
+		return nil, errors.Wrap(err, "failed to reset render target")
+	}
+	return newTexture, nil
+}

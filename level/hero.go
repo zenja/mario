@@ -12,8 +12,10 @@ import (
 )
 
 type hero struct {
-	resStand   graphic.Resource
-	resWalking graphic.Resource
+	resStandRight   graphic.Resource
+	resWalkingRight graphic.Resource
+	resStandLeft    graphic.Resource
+	resWalkingLeft  graphic.Resource
 
 	// current resource
 	currRes graphic.Resource
@@ -27,18 +29,25 @@ type hero struct {
 	lastTicks uint32
 
 	isOnGround bool
+
+	isFacingRight bool
 }
 
 func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
-	resStand, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND]
-	resWalking, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING]
+	resStandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND_RIGHT]
+	resWalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING_RIGHT]
+	resStandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND_LEFT]
+	resWalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING_LEFT]
 	h := &hero{
-		resStand:   resStand,
-		resWalking: resWalking,
-		currRes:    resStand,
-		levelRect:  &sdl.Rect{startPos.X, startPos.Y, resStand.GetW(), resStand.GetH()},
-		velocity:   vector.Vec2D{0, 0},
-		isOnGround: false,
+		resStandRight:   resStandRight,
+		resWalkingRight: resWalkingRight,
+		resStandLeft:    resStandLeft,
+		resWalkingLeft:  resWalkingLeft,
+		currRes:         resStandRight,
+		levelRect:       &sdl.Rect{startPos.X, startPos.Y, resStandLeft.GetW(), resStandLeft.GetH()},
+		velocity:        vector.Vec2D{0, 0},
+		isOnGround:      false,
+		isFacingRight:   true,
 	}
 	return h
 }
@@ -60,11 +69,13 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	}
 
 	// ---------------------------------------
-	// TODO handle events
+	// Handle events
 	// ---------------------------------------
 	if events.Has(int(event.EVENT_KEYDOWN_LEFT)) {
+		h.isFacingRight = false
 		h.velocity.X = -350
 	} else if events.Has(int(event.EVENT_KEYDOWN_RIGHT)) {
+		h.isFacingRight = true
 		h.velocity.X = 350
 	}
 	if events.Has(int(event.EVENT_KEYDOWN_SPACE)) {
@@ -130,6 +141,9 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		h.velocity.Y = 0
 	}
 
+	// update resource
+	h.updateRes()
+
 	// update ticks
 	h.lastTicks = ticks
 }
@@ -145,3 +159,11 @@ func (h *hero) GetZIndex() int {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Private helpers
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (h *hero) updateRes() {
+	if h.isFacingRight {
+		h.currRes = h.resStandRight
+	} else {
+		h.currRes = h.resStandLeft
+	}
+}
