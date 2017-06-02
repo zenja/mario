@@ -102,6 +102,9 @@ func (g *Graphic) clipTexture(texture *sdl.Texture, rect *sdl.Rect) (*sdl.Textur
 	if err = g.renderer.SetRenderTarget(newTexture); err != nil {
 		return nil, errors.Wrap(err, "failed to set render target")
 	}
+	if err := g.renderer.Clear(); err != nil {
+		return nil, errors.Wrap(err, "failed to clear renderer")
+	}
 	if err = g.renderer.Copy(texture, nil, rect); err != nil {
 		return nil, errors.Wrap(err, "failed to render texture")
 	}
@@ -122,6 +125,9 @@ func (g *Graphic) flipTexture(texture *sdl.Texture, width int32, height int32, f
 	if err = g.renderer.SetRenderTarget(newTexture); err != nil {
 		return nil, errors.Wrap(err, "failed to set render target")
 	}
+	if err := g.renderer.Clear(); err != nil {
+		return nil, errors.Wrap(err, "failed to clear renderer")
+	}
 	var flipFlag sdl.RendererFlip
 	if flipHorizontal {
 		flipFlag = sdl.FLIP_HORIZONTAL
@@ -129,7 +135,6 @@ func (g *Graphic) flipTexture(texture *sdl.Texture, width int32, height int32, f
 		flipFlag = sdl.FLIP_VERTICAL
 	}
 	if err := g.renderer.CopyEx(texture, nil, nil, 0, nil, flipFlag); err != nil {
-		println("!!!!!!!!!!!!!!!!!!!!!!!!!!")
 		return nil, errors.Wrap(err, "failed to render texture")
 	}
 	// reset render target
