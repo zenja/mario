@@ -27,12 +27,34 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 		currentPos.X = 0
 		for j := range arrRow {
 			switch arr[i][j] {
-			// Ground
-			case 'G':
-				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD]
+			// Brick
+			case 'B':
+				resource := resourceRegistry[graphic.RESOURCE_TYPE_BRICK]
 				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
 				// ground is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+
+			// Ground with left grass
+			case 'L':
+				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT]
+				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
+				// ground is obstacle
+				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+
+			// Ground with mid grass
+			case 'G':
+				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_MID]
+				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
+				// ground is obstacle
+				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+
+			// Ground with right grass
+			case 'R':
+				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT]
+				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
+				// ground is obstacle
+				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+
 			// Hero
 			case 'H':
 				if hero != nil {
