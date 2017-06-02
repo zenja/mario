@@ -161,9 +161,17 @@ func (h *hero) GetZIndex() int {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func (h *hero) updateRes() {
-	if h.isFacingRight {
-		h.currRes = h.resStandRight
-	} else {
-		h.currRes = h.resStandLeft
+	if h.velocity.X == 0 || h.lastTicks%600 < 300 {
+		if h.isFacingRight {
+			h.currRes = h.resStandRight
+		} else {
+			h.currRes = h.resStandLeft
+		}
+	} else if h.velocity.X != 0 && h.lastTicks%600 >= 300 {
+		if h.isFacingRight {
+			h.currRes = h.resWalkingRight
+		} else {
+			h.currRes = h.resWalkingLeft
+		}
 	}
 }
