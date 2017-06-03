@@ -105,10 +105,14 @@ func (mb *mythBox) GetZIndex() int {
 // Private major methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (mb *mythBox) hitByHero() {
+func (mb *mythBox) hitByHero(level *Level, ticks uint32) {
 	if !mb.isBounding && mb.numCoinsLeft > 0 {
 		mb.isBounding = true
 		mb.velocity.Y = -100
+
+		// add a coin effect
+		mbTID := GetTileID(vector.Pos{mb.tileRect.X, mb.tileRect.Y}, false, false)
+		level.AddEffect(NewCoinEffect(vector.TileID{mbTID.X, mbTID.Y - 1}, level.ResourceRegistry, ticks))
 	}
 }
 

@@ -5,17 +5,24 @@ import (
 	"log"
 	"os"
 
+	"container/list"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 )
 
 type Level struct {
-	TileObjects [][]Object
-	ObstMngr    *ObstacleManager
-	Hero        Object
-	BGColor     sdl.Color
-	NumTiles    vector.Vec2D // NOTE: X, Y is TID
+	// Public
+	TileObjects      [][]Object
+	ObstMngr         *ObstacleManager
+	Hero             Object
+	BGColor          sdl.Color
+	NumTiles         vector.Vec2D // NOTE: X, Y is TID
+	ResourceRegistry map[graphic.ResourceID]graphic.Resource
+
+	// Private
+	effects *list.List
 }
 
 func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
@@ -95,11 +102,13 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 	}
 
 	return &Level{
-		TileObjects: tileObjs,
-		ObstMngr:    obstMngr,
-		Hero:        hero,
-		BGColor:     sdl.Color{204, 237, 255, 255},
-		NumTiles:    numTiles,
+		TileObjects:      tileObjs,
+		ObstMngr:         obstMngr,
+		Hero:             hero,
+		BGColor:          sdl.Color{204, 237, 255, 255},
+		NumTiles:         numTiles,
+		ResourceRegistry: resourceRegistry,
+		effects:          list.New(),
 	}
 }
 
@@ -151,6 +160,23 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
 			}
 		}
 	}
+
+	// render effects and remove finished effects
+	var finishedEffs []*list.Element
+	for e := l.effects.Front(); e != nil; e = e.Next() {
+		eff, ok := e.Value.(Effect)
+		if !ok {
+			log.Fatalf("eff is not an effect object: %T", e.Value)
+		}
+		eff.UpdateAndDraw(g, camPos, sdl.GetTicks())
+
+		if eff.Finished() {
+			finishedEffs = append(finishedEffs, e)
+		}
+	}
+	for _, e := range finishedEffs {
+		l.effects.Remove(e)
+	}
 }
 
 func (l *Level) GetLevelWidth() int32 {
@@ -159,4 +185,8 @@ func (l *Level) GetLevelWidth() int32 {
 
 func (l *Level) GetLevelHeight() int32 {
 	return l.NumTiles.Y * graphic.TILE_SIZE
+}
+
+func (l *Level) AddEffect(e Effect) {
+	l.effects.PushFront(e)
 }

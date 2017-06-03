@@ -123,7 +123,7 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	//log.Printf("solved rect: %v\n", h.levelRect)
 
 	// update tiles hit
-	h.notifyTilesHit(tilesHit, level)
+	h.notifyTilesHit(tilesHit, level, ticks)
 
 	// is on ground
 	h.isOnGround = hitBottom
@@ -179,7 +179,7 @@ func (h *hero) updateRes() {
 	}
 }
 
-func (h *hero) notifyTilesHit(tilesHit []vector.TileID, level *Level) {
+func (h *hero) notifyTilesHit(tilesHit []vector.TileID, level *Level, ticks uint32) {
 	for _, tid := range tilesHit {
 		o := level.TileObjects[tid.X][tid.Y]
 		if o == nil {
@@ -187,7 +187,7 @@ func (h *hero) notifyTilesHit(tilesHit []vector.TileID, level *Level) {
 		}
 		switch o.(type) {
 		case *mythBox:
-			o.(*mythBox).hitByHero()
+			o.(*mythBox).hitByHero(level, ticks)
 		}
 	}
 }

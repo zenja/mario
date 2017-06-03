@@ -133,8 +133,8 @@ func (g *Graphic) GetResource(resourceID ResourceID) Resource {
 }
 
 // drawResource is a helper function to draw a resource on level to camera
-func (g *Graphic) DrawResource(resource Resource, levelPos sdl.Rect, camPos vector.Pos) {
-	rectInResource, rectInCamera := VisibleRectInCamera(levelPos, camPos.X, camPos.Y)
+func (g *Graphic) DrawResource(resource Resource, levelRect sdl.Rect, camPos vector.Pos) {
+	rectInResource, rectInCamera := VisibleRectInCamera(levelRect, camPos.X, camPos.Y)
 	if rectInResource != nil {
 		g.RenderResource(resource, rectInResource, rectInCamera)
 	}
