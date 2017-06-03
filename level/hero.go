@@ -53,7 +53,7 @@ func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphi
 }
 
 func (h *hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	drawResource(g, h.currRes, h.levelRect, camPos)
+	g.DrawResource(h.currRes, h.levelRect, camPos)
 }
 
 func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {

@@ -5,6 +5,8 @@ import (
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/sdl_image"
+	"github.com/zenja/mario/math_utils"
+	"github.com/zenja/mario/vector"
 )
 
 type ResourceID int
@@ -28,6 +30,8 @@ const (
 	RESOURCE_TYPE_MYTH_BOX_NORMAL
 	RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT
 	RESOURCE_TYPE_MYTH_BOX_EMPTY
+
+	RESOURCE_TYPE_COIN
 
 	RESOURCE_TYPE_HERO_STAND_LEFT
 	RESOURCE_TYPE_HERO_WALKING_LEFT
@@ -79,6 +83,44 @@ func (ntr *NonTileResource) GetH() int32 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Public helper methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// visibleRectInCamera returns a rect relative to camera which is (partly) visible
+// return nil if the rect is not visible in camera at all
+func VisibleRectInCamera(rect sdl.Rect, xCamStart, yCamStart int32) (rectInTile *sdl.Rect, rectInCamera *sdl.Rect) {
+	if rect.X+rect.W < xCamStart || rect.X > xCamStart+SCREEN_WIDTH ||
+		rect.Y+rect.H < yCamStart || rect.Y > yCamStart+SCREEN_HEIGHT {
+		return nil, nil
+	}
+
+	xStartInLevel := math_utils.Max(rect.X, xCamStart)
+	xEndInLevel := math_utils.Min(rect.X+rect.W, xCamStart+SCREEN_WIDTH)
+	yStartInLevel := math_utils.Max(rect.Y, yCamStart)
+	yEndInLevel := math_utils.Min(rect.Y+rect.H, yCamStart+SCREEN_HEIGHT)
+
+	rectInTile = &sdl.Rect{
+		xStartInLevel - rect.X,
+		yStartInLevel - rect.Y,
+		xEndInLevel - xStartInLevel,
+		yEndInLevel - yStartInLevel,
+	}
+	rectInCamera = &sdl.Rect{
+		xStartInLevel - xCamStart,
+		yStartInLevel - yCamStart,
+		xEndInLevel - xStartInLevel,
+		yEndInLevel - yStartInLevel,
+	}
+	//fmt.Printf("Camera: %d, %d\n", xCamStart, yCamStart)
+	//fmt.Printf("Object rect: %d, %d, %d, %d\n", rect.X, rect.Y, rect.W, rect.H)
+	//fmt.Printf("Rect in level: %d, %d, %d, %d\n", xStartInLevel, yStartInLevel, xEndInLevel-xStartInLevel, yEndInLevel-yStartInLevel)
+	//fmt.Printf("Rect in tile: %d, %d, %d, %d\n", rectInTile.X, rectInTile.Y, rectInTile.W, rectInTile.H)
+	//fmt.Printf("Rect in Camera: %d, %d, %d, %d\n", rectInCamera.X, rectInCamera.Y, rectInCamera.W, rectInCamera.H)
+	//fmt.Println()
+	return
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Graphic methods relative to resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -88,6 +130,14 @@ func (g *Graphic) GetResource(resourceID ResourceID) Resource {
 		log.Fatalf("ResourceID %d not found in resource registry", resourceID)
 	}
 	return r
+}
+
+// drawResource is a helper function to draw a resource on level to camera
+func (g *Graphic) DrawResource(resource Resource, levelPos sdl.Rect, camPos vector.Pos) {
+	rectInResource, rectInCamera := VisibleRectInCamera(levelPos, camPos.X, camPos.Y)
+	if rectInResource != nil {
+		g.RenderResource(resource, rectInResource, rectInCamera)
+	}
 }
 
 // registerTileResource loads a sprite into a TileResource from a file
@@ -229,6 +279,8 @@ func (g *Graphic) loadAllResources() {
 	g.registerTileResource("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
 	g.registerTileResource("assets/myth-box-normal-light.png", RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
 	g.registerTileResource("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
+
+	g.registerTileResource("assets/coin.png", RESOURCE_TYPE_COIN)
 
 	// -------------------------------
 	// Load non-tile resources
