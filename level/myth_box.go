@@ -9,9 +9,10 @@ import (
 
 type mythBox struct {
 	// resources
-	resNormal graphic.Resource
-	resEmpty  graphic.Resource // empty, no coins
-	currRes   graphic.Resource
+	resNormal      graphic.Resource
+	resNormalLight graphic.Resource
+	resEmpty       graphic.Resource // empty, no coins
+	currRes        graphic.Resource
 
 	// myth box has both a tile rect and current level rect,
 	// because we allow myth box to move a little bit after being hit
@@ -27,15 +28,17 @@ type mythBox struct {
 
 func NewMythBox(startPos vector.Pos, numCoins int, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
 	resNormal, _ := resourceRegistry[graphic.RESOURCE_TYPE_MYTH_BOX_NORMAL]
+	resNormalLight, _ := resourceRegistry[graphic.RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT]
 	resEmpty, _ := resourceRegistry[graphic.RESOURCE_TYPE_MYTH_BOX_EMPTY]
 	tileRect := sdl.Rect{startPos.X, startPos.Y, graphic.TILE_SIZE, graphic.TILE_SIZE}
 	return &mythBox{
-		resNormal:    resNormal,
-		resEmpty:     resEmpty,
-		currRes:      resNormal,
-		tileRect:     tileRect,
-		levelRect:    tileRect,
-		numCoinsLeft: numCoins,
+		resNormal:      resNormal,
+		resNormalLight: resNormalLight,
+		resEmpty:       resEmpty,
+		currRes:        resNormal,
+		tileRect:       tileRect,
+		levelRect:      tileRect,
+		numCoinsLeft:   numCoins,
 	}
 }
 
@@ -49,6 +52,16 @@ func (mb *mythBox) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		return
 	}
 
+	// if has coin, show blink animation
+	if mb.numCoinsLeft > 0 {
+		// update res for blink animation
+		if ticks%400 < 200 {
+			mb.currRes = mb.resNormal
+		} else {
+			mb.currRes = mb.resNormalLight
+		}
+	}
+
 	if mb.isBounding {
 		gravity := vector.Vec2D{0, 10}
 		mb.velocity.Add(gravity)
@@ -60,6 +73,12 @@ func (mb *mythBox) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		// apply velocity step
 		mb.levelRect.X += velocityStep.X
 		mb.levelRect.Y += velocityStep.Y
+
+		// update coin, set empty res if no coin
+		mb.numCoinsLeft--
+		if mb.numCoinsLeft <= 0 {
+			mb.currRes = mb.resEmpty
+		}
 
 		// if reach origin (Y) position, the bounding is stopped
 		if mb.levelRect.Y >= mb.tileRect.Y {
@@ -87,7 +106,7 @@ func (mb *mythBox) GetZIndex() int {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func (mb *mythBox) hitByHero() {
-	if !mb.isBounding {
+	if !mb.isBounding && mb.numCoinsLeft > 0 {
 		mb.isBounding = true
 		mb.velocity.Y = -100
 	}

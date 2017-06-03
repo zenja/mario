@@ -26,6 +26,7 @@ const (
 	RESOURCE_TYPE_GROUD_INNER_MID
 
 	RESOURCE_TYPE_MYTH_BOX_NORMAL
+	RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT
 	RESOURCE_TYPE_MYTH_BOX_EMPTY
 
 	RESOURCE_TYPE_HERO_STAND_LEFT
@@ -226,6 +227,7 @@ func (g *Graphic) loadAllResources() {
 	g.registerTileResource("assets/ground-inner-mid.png", RESOURCE_TYPE_GROUD_INNER_MID)
 
 	g.registerTileResource("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
+	g.registerTileResource("assets/myth-box-normal-light.png", RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
 	g.registerTileResource("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
 
 	// -------------------------------
