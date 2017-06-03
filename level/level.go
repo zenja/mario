@@ -33,35 +33,41 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 			case 'B':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_BRICK]
 				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
-				// ground is obstacle
+				// this is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 
 			// Ground with left grass
 			case 'L':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT]
 				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
-				// ground is obstacle
+				// this is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 
 			// Ground with mid grass
 			case 'G':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_MID]
 				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
-				// ground is obstacle
+				// this is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 
 			// Ground with right grass
 			case 'R':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT]
 				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
-				// ground is obstacle
+				// this is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 
 			// Inner ground in middle
 			case 'I':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_INNER_MID]
 				objs = append(objs, NewSingleTileObject(resource, currentPos, ZINDEX_0))
-				// ground is obstacle
+				// this is obstacle
+				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+
+			// Myth box
+			case 'M':
+				objs = append(objs, NewMythBox(currentPos, 1, resourceRegistry))
+				// this is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
 
 			// Hero

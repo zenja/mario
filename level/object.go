@@ -44,7 +44,6 @@ func NewSingleTileObject(resource graphic.Resource, startPos vector.Pos, zIndex 
 	}
 }
 
-// DrawObject draws an object to a given camera screen (xStart, yStart, graphic.SCREEN_WIDTH, graphic.SCREEN_HEIGHT)
 func (sto *singleTileObject) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	drawResource(g, sto.resource, sto.levelRect, camPos)
 }

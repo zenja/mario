@@ -25,6 +25,9 @@ const (
 
 	RESOURCE_TYPE_GROUD_INNER_MID
 
+	RESOURCE_TYPE_MYTH_BOX_NORMAL
+	RESOURCE_TYPE_MYTH_BOX_EMPTY
+
 	RESOURCE_TYPE_HERO_STAND_LEFT
 	RESOURCE_TYPE_HERO_WALKING_LEFT
 	RESOURCE_TYPE_HERO_STAND_RIGHT
@@ -210,14 +213,26 @@ func (g *Graphic) RenderResource(resource Resource, srcRect *sdl.Rect, dstRect *
 }
 
 func (g *Graphic) loadAllResources() {
+	// -------------------------------
 	// load tile resources
+	// -------------------------------
+
 	g.registerTileResource("assets/brick.png", RESOURCE_TYPE_BRICK)
+
 	g.registerTileResource("assets/ground-grass-left.png", RESOURCE_TYPE_GROUD_GRASS_LEFT)
 	g.registerTileResource("assets/ground-grass-mid.png", RESOURCE_TYPE_GROUD_GRASS_MID)
 	g.registerTileResource("assets/ground-grass-right.png", RESOURCE_TYPE_GROUD_GRASS_RIGHT)
+
 	g.registerTileResource("assets/ground-inner-mid.png", RESOURCE_TYPE_GROUD_INNER_MID)
 
-	// load non-tile resources
+	g.registerTileResource("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
+	g.registerTileResource("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
+
+	// -------------------------------
+	// Load non-tile resources
+	// -------------------------------
+
+	// hero
 	g.registerNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_RIGHT)
 	g.registerNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_RIGHT)
 	g.registerFlippedNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_LEFT, true)
