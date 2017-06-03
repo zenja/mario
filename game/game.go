@@ -52,10 +52,19 @@ func (game *Game) StartGameLoop() {
 
 		events := game.handleEvents()
 
-		// update
-		for _, o := range game.currentLevel.Objects {
-			o.Update(events, sdl.GetTicks(), game.currentLevel)
+		// update tile objects
+		for i := 0; i < int(game.currentLevel.NumTiles.Y); i++ {
+			for j := 0; j < int(game.currentLevel.NumTiles.X); j++ {
+				o := game.currentLevel.TileObjects[i][j]
+				if o == nil {
+					continue
+				}
+				o.Update(events, sdl.GetTicks(), game.currentLevel)
+			}
 		}
+
+		// update non-tile objects
+		game.currentLevel.Hero.Update(events, sdl.GetTicks(), game.currentLevel)
 
 		// update camera position
 		game.updateCamPos()
