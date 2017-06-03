@@ -101,7 +101,7 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	//log.Printf("solved rect: %v\n", h.levelRect)
 
 	// update tiles hit
-	h.notifyTilesHit(tilesHit, level, ticks)
+	h.notifyTilesHit(tilesHit, h.levelRect, level, ticks)
 
 	// is on ground
 	h.isOnGround = hitBottom
@@ -157,15 +157,44 @@ func (h *hero) updateRes() {
 	}
 }
 
-func (h *hero) notifyTilesHit(tilesHit []vector.TileID, level *Level, ticks uint32) {
+func (h *hero) notifyTilesHit(tilesHit []vector.TileID, resolvedRect sdl.Rect, level *Level, ticks uint32) {
 	for _, tid := range tilesHit {
 		o := level.TileObjects[tid.X][tid.Y]
 		if o == nil {
 			log.Fatal("bug! notify hit tile object which is a nil object")
 		}
 		switch o.(type) {
-		case *mythBox:
-			o.(*mythBox).hitByHero(level, ticks)
+		case heroHittableObject:
+			o.(heroHittableObject).hitByHero(calcHitDirection(resolvedRect, o.GetRect()), level, ticks)
 		}
 	}
+}
+
+// calcHitDirection decides from which direction was the tile being hit by hero
+// It assumed that the hero and tile was intersected and then collision has been resolved
+// note that after resolution the two rects should have to be non-intersected
+func calcHitDirection(resolvedHeroRect sdl.Rect, tileRect sdl.Rect) hitDirection {
+	if _, intersected := tileRect.Intersect(&resolvedHeroRect); intersected {
+		log.Fatalf("calcHitDirection: hero %v and tile %v are intersected but should not", resolvedHeroRect, tileRect)
+	}
+
+	if resolvedHeroRect.Y >= tileRect.Y+tileRect.H {
+		return HIT_FROM_BOTTOM
+	}
+
+	if resolvedHeroRect.Y+resolvedHeroRect.H <= tileRect.Y {
+		return HIT_FROM_TOP
+	}
+
+	if resolvedHeroRect.X+resolvedHeroRect.W <= tileRect.X {
+		return HIT_FROM_LEFT
+	}
+
+	if resolvedHeroRect.X >= tileRect.X+tileRect.W {
+		return HIT_FROM_RIGHT
+	}
+
+	log.Fatal("bug! should already covered all possible cases")
+
+	return HIT_FROM_TOP
 }

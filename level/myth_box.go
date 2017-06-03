@@ -7,6 +7,9 @@ import (
 	"golang.org/x/tools/container/intsets"
 )
 
+// assert that mythBox is hit-able by hero
+var _ heroHittableObject = &mythBox{}
+
 type mythBox struct {
 	// resources
 	resNormal      graphic.Resource
@@ -103,7 +106,12 @@ func (mb *mythBox) GetZIndex() int {
 // Private major methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (mb *mythBox) hitByHero(level *Level, ticks uint32) {
+func (mb *mythBox) hitByHero(hd hitDirection, level *Level, ticks uint32) {
+	// can only be hit from bottom
+	if hd != HIT_FROM_BOTTOM {
+		return
+	}
+
 	if !mb.isBounding && mb.numCoinsLeft > 0 {
 		mb.isBounding = true
 		mb.velocity.Y = -100

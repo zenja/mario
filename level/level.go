@@ -46,8 +46,9 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 			switch arr[tidY][tidX] {
 			// Brick
 			case 'B':
-				resource := resourceRegistry[graphic.RESOURCE_TYPE_BRICK]
-				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				mainRes := resourceRegistry[graphic.RESOURCE_TYPE_BRICK]
+				pieceRes := resourceRegistry[graphic.RESOURCE_TYPE_BRICK_PIECE]
+				tileObjs[tidX][tidY] = NewBreakableTileObject(mainRes, pieceRes, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
 
@@ -189,4 +190,9 @@ func (l *Level) GetLevelHeight() int32 {
 
 func (l *Level) AddEffect(e Effect) {
 	l.effects.PushFront(e)
+}
+
+func (l *Level) RemoveObstacleTileObject(tid vector.TileID) {
+	l.TileObjects[tid.X][tid.Y] = nil
+	l.ObstMngr.RemoveTileObst(tid)
 }

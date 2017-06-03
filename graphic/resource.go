@@ -33,6 +33,8 @@ const (
 
 	RESOURCE_TYPE_COIN
 
+	RESOURCE_TYPE_BRICK_PIECE
+
 	RESOURCE_TYPE_HERO_STAND_LEFT
 	RESOURCE_TYPE_HERO_WALKING_LEFT
 	RESOURCE_TYPE_HERO_STAND_RIGHT
@@ -162,6 +164,16 @@ func (g *Graphic) registerNonTailResource(filename string, id ResourceID) {
 	g.registerNonTileFromSurface(surface, id)
 }
 
+func (g *Graphic) registerScaledNonTailResource(filename string, id ResourceID, dstWidth int32, dstHeight int32) {
+	surface, err := img.Load(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer surface.Free()
+
+	g.registerScaledNonTileFromSurface(surface, id, dstWidth, dstHeight)
+}
+
 func (g *Graphic) registerFlippedNonTailResource(filename string, id ResourceID, flipHorizontal bool) {
 	surface, err := img.Load(filename)
 	if err != nil {
@@ -182,6 +194,10 @@ func (g *Graphic) registerTileFromSurface(surface *sdl.Surface, id ResourceID) {
 // User need to free the surface himself
 func (g *Graphic) registerNonTileFromSurface(surface *sdl.Surface, id ResourceID) {
 	g.registerResourceFromSurface(surface, id, surface.W, surface.H, false)
+}
+
+func (g *Graphic) registerScaledNonTileFromSurface(surface *sdl.Surface, id ResourceID, dstWidth, dstHeight int32) {
+	g.registerResourceFromSurface(surface, id, dstWidth, dstHeight, false)
 }
 
 func (g *Graphic) registerFlippedNonTileFromSurface(surface *sdl.Surface, id ResourceID, flipHorizontal bool) {
@@ -291,4 +307,7 @@ func (g *Graphic) loadAllResources() {
 	g.registerNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_RIGHT)
 	g.registerFlippedNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_LEFT, true)
 	g.registerFlippedNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_LEFT, true)
+
+	// broken pieces
+	g.registerScaledNonTailResource("assets/brick-piece.png", RESOURCE_TYPE_BRICK_PIECE, TILE_SIZE/2, TILE_SIZE/2)
 }
