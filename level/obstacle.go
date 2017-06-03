@@ -3,8 +3,6 @@ package level
 import (
 	"log"
 
-	"fmt"
-
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
@@ -49,7 +47,13 @@ func (om *ObstacleManager) IsObstTile(tileID vector.TileID) bool {
 	return om.isObstTile[tileID.X][tileID.Y]
 }
 
-func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect) (hitTop bool, hitRight bool, hitBottom bool, hitLeft bool) {
+func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect) (
+	hitTop bool,
+	hitRight bool,
+	hitBottom bool,
+	hitLeft bool,
+	tilesHit []vector.TileID) {
+
 	tiles := GetSurroundingTileIDs(*desiredRect)
 	for i, tid := range tiles {
 		if tid.X < 0 || tid.Y < 0 {
@@ -65,14 +69,16 @@ func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect) (hitTop bool, h
 			continue
 		}
 
+		tilesHit = append(tilesHit, tid)
+
 		switch i {
 		case 0:
 			desiredRect.Y -= interRect.H
 			hitBottom = true
-			fmt.Printf("i: %d, hit bottom! Y -= %d (interRect: %v) \n", i, interRect.H, interRect)
+			//log.Printf("i: %d, hit bottom! Y -= %d (interRect: %v) \n", i, interRect.H, interRect)
 		case 1:
 			desiredRect.Y += interRect.H
-			fmt.Printf("i: %d, hit top! Y += %d (interRect: %v) \n", i, interRect.H, interRect)
+			//log.Printf("i: %d, hit top! Y += %d (interRect: %v) \n", i, interRect.H, interRect)
 			hitTop = true
 		case 2:
 			desiredRect.X += interRect.W
@@ -86,11 +92,11 @@ func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect) (hitTop bool, h
 				if i > 5 {
 					hitBottom = true
 					desiredRect.Y -= interRect.H
-					fmt.Printf("i: %d, hit bottom! Y += %d (interRect: %v) \n", i, interRect.H, interRect)
+					//log.Printf("i: %d, hit bottom! Y += %d (interRect: %v) \n", i, interRect.H, interRect)
 				} else {
 					hitTop = true
 					desiredRect.Y += interRect.H
-					fmt.Printf("i: %d, hit top! Y += %d (interRect: %v) \n", i, interRect.H, interRect)
+					//log.Printf("i: %d, hit top! Y += %d (interRect: %v) \n", i, interRect.H, interRect)
 				}
 			} else {
 				// tile is diagonal, but resolving horizontally

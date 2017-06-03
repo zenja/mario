@@ -15,65 +15,68 @@ type Level struct {
 	ObstMngr    *ObstacleManager
 	Hero        Object
 	BGColor     sdl.Color
-	NumTiles    vector.Vec2D
+	NumTiles    vector.Vec2D // NOTE: X, Y is TID
 }
 
 func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
+	// NOTE: index is tid.X, tid.Y
 	var tileObjs [][]Object
+
 	numTiles := vector.Vec2D{int32(len(arr[0])), int32(len(arr))}
 	obstMngr := NewObstacleManager(len(arr[0]), len(arr))
 	var hero Object
 
 	// init tileObjs array
-	for i := 0; i < int(numTiles.Y); i++ {
-		tileObjs = append(tileObjs, make([]Object, numTiles.X))
+	for i := 0; i < int(numTiles.X); i++ {
+		tileObjs = append(tileObjs, make([]Object, numTiles.Y))
 	}
 
 	var currentPos vector.Pos
-	for i, arrRow := range arr {
+	for tidY := 0; tidY < int(numTiles.Y); tidY++ {
 		currentPos.X = 0
-		for j := range arrRow {
-			switch arr[i][j] {
+		for tidX := 0; tidX < int(numTiles.X); tidX++ {
+			// note that arr's index is not TID, need reverse
+			switch arr[tidY][tidX] {
 			// Brick
 			case 'B':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_BRICK]
-				tileObjs[i][j] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
 
 			// Ground with left grass
 			case 'L':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT]
-				tileObjs[i][j] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
 
 			// Ground with mid grass
 			case 'G':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_MID]
-				tileObjs[i][j] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
 
 			// Ground with right grass
 			case 'R':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT]
-				tileObjs[i][j] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
 
 			// Inner ground in middle
 			case 'I':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_INNER_MID]
-				tileObjs[i][j] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
 
 			// Myth box
 			case 'M':
-				tileObjs[i][j] = NewMythBox(currentPos, 1, resourceRegistry)
+				tileObjs[tidX][tidY] = NewMythBox(currentPos, 1, resourceRegistry)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(j), int32(i)})
+				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
 
 			// Hero
 			case 'H':
@@ -118,8 +121,8 @@ func ParseLevelFromFile(filename string, resourceRegistry map[graphic.ResourceID
 func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	var zIndexObjs [ZINDEX_NUM][]Object
 	// draw lowest z-index, bookkeeping higher z-index for later rendering
-	for i := 0; i < int(l.NumTiles.Y); i++ {
-		for j := 0; j < int(l.NumTiles.X); j++ {
+	for i := 0; i < int(l.NumTiles.X); i++ {
+		for j := 0; j < int(l.NumTiles.Y); j++ {
 			o := l.TileObjects[i][j]
 			if o == nil {
 				continue

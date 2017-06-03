@@ -19,6 +19,10 @@ type mythBox struct {
 	levelRect sdl.Rect
 
 	numCoinsLeft int
+
+	isBounding bool
+	velocity   vector.Vec2D
+	lastTicks  uint32
 }
 
 func NewMythBox(startPos vector.Pos, numCoins int, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
@@ -40,7 +44,34 @@ func (mb *mythBox) Draw(g *graphic.Graphic, camPos vector.Pos) {
 }
 
 func (mb *mythBox) Update(events *intsets.Sparse, ticks uint32, level *Level) {
-	// TODO
+	if mb.lastTicks == 0 {
+		mb.lastTicks = ticks
+		return
+	}
+
+	if mb.isBounding {
+		gravity := vector.Vec2D{0, 10}
+		mb.velocity.Add(gravity)
+
+		velocityStep := mb.velocity
+		velocityStep.Multiply(int32(ticks - mb.lastTicks))
+		velocityStep.Divide(1000)
+
+		// apply velocity step
+		mb.levelRect.X += velocityStep.X
+		mb.levelRect.Y += velocityStep.Y
+
+		// if reach origin (Y) position, the bounding is stopped
+		if mb.levelRect.Y >= mb.tileRect.Y {
+			mb.levelRect.Y = mb.tileRect.Y
+			mb.isBounding = false
+		}
+	} else {
+		mb.levelRect.X = mb.tileRect.X
+		mb.levelRect.Y = mb.tileRect.Y
+	}
+
+	mb.lastTicks = ticks
 }
 
 func (mb *mythBox) GetRect() sdl.Rect {
@@ -50,3 +81,18 @@ func (mb *mythBox) GetRect() sdl.Rect {
 func (mb *mythBox) GetZIndex() int {
 	return ZINDEX_1
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Private major methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (mb *mythBox) hitByHero() {
+	if !mb.isBounding {
+		mb.isBounding = true
+		mb.velocity.Y = -100
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Private helper methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

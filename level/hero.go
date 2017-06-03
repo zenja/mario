@@ -113,19 +113,22 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	}
 
 	// apply velocity step
-	log.Printf("applying velocity step: %v\n", velocityStep)
+	//log.Printf("applying velocity step: %v\n", velocityStep)
 	h.levelRect.X += velocityStep.X
 	h.levelRect.Y += velocityStep.Y
 
 	// solve collision
-	log.Printf("desired rect: %v\n", h.levelRect)
-	hitTop, hitRight, hitBottom, hitLeft := level.ObstMngr.SolveCollision(&h.levelRect)
-	log.Printf("solved rect: %v\n", h.levelRect)
+	//log.Printf("desired rect: %v\n", h.levelRect)
+	hitTop, hitRight, hitBottom, hitLeft, tilesHit := level.ObstMngr.SolveCollision(&h.levelRect)
+	//log.Printf("solved rect: %v\n", h.levelRect)
+
+	// update tiles hit
+	h.notifyTilesHit(tilesHit, level)
 
 	// is on ground
 	h.isOnGround = hitBottom
 
-	log.Println("---")
+	//log.Println("---")
 
 	// reset velocity according to collision and direction
 	if velocityStep.X > 0 && hitRight {
@@ -172,6 +175,19 @@ func (h *hero) updateRes() {
 			h.currRes = h.resWalkingRight
 		} else {
 			h.currRes = h.resWalkingLeft
+		}
+	}
+}
+
+func (h *hero) notifyTilesHit(tilesHit []vector.TileID, level *Level) {
+	for _, tid := range tilesHit {
+		o := level.TileObjects[tid.X][tid.Y]
+		if o == nil {
+			log.Fatal("bug! notify hit tile object which is a nil object")
+		}
+		switch o.(type) {
+		case *mythBox:
+			o.(*mythBox).hitByHero()
 		}
 	}
 }

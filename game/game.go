@@ -53,8 +53,8 @@ func (game *Game) StartGameLoop() {
 		events := game.handleEvents()
 
 		// update tile objects
-		for i := 0; i < int(game.currentLevel.NumTiles.Y); i++ {
-			for j := 0; j < int(game.currentLevel.NumTiles.X); j++ {
+		for i := 0; i < int(game.currentLevel.NumTiles.X); i++ {
+			for j := 0; j < int(game.currentLevel.NumTiles.Y); j++ {
 				o := game.currentLevel.TileObjects[i][j]
 				if o == nil {
 					continue
