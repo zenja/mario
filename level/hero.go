@@ -21,7 +21,7 @@ type hero struct {
 	currRes graphic.Resource
 
 	// current rect in level
-	levelRect *sdl.Rect
+	levelRect sdl.Rect
 
 	// current velocity, unit is pixels per second
 	velocity vector.Vec2D
@@ -44,7 +44,7 @@ func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphi
 		resStandLeft:    resStandLeft,
 		resWalkingLeft:  resWalkingLeft,
 		currRes:         resStandRight,
-		levelRect:       &sdl.Rect{startPos.X, startPos.Y, resStandLeft.GetW(), resStandLeft.GetH()},
+		levelRect:       sdl.Rect{startPos.X, startPos.Y, resStandLeft.GetW(), resStandLeft.GetH()},
 		velocity:        vector.Vec2D{0, 0},
 		isOnGround:      false,
 		isFacingRight:   true,
@@ -118,9 +118,9 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	h.levelRect.Y += velocityStep.Y
 
 	// solve collision
-	log.Printf("desired rect: %v\n", *h.levelRect)
-	hitTop, hitRight, hitBottom, hitLeft := level.ObstMngr.SolveCollision(h.levelRect)
-	log.Printf("solved rect: %v\n", *h.levelRect)
+	log.Printf("desired rect: %v\n", h.levelRect)
+	hitTop, hitRight, hitBottom, hitLeft := level.ObstMngr.SolveCollision(&h.levelRect)
+	log.Printf("solved rect: %v\n", h.levelRect)
 
 	// is on ground
 	h.isOnGround = hitBottom
@@ -149,7 +149,7 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 }
 
 func (h *hero) GetRect() sdl.Rect {
-	return *h.levelRect
+	return h.levelRect
 }
 
 func (h *hero) GetZIndex() int {

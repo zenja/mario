@@ -32,14 +32,14 @@ type Object interface {
 type singleTileObject struct {
 	resource graphic.Resource
 	// the position rect on the level
-	levelRect *sdl.Rect
+	levelRect sdl.Rect
 	zIndex    int
 }
 
 func NewSingleTileObject(resource graphic.Resource, startPos vector.Pos, zIndex int) Object {
 	return &singleTileObject{
 		resource:  resource,
-		levelRect: &sdl.Rect{startPos.X, startPos.Y, resource.GetW(), resource.GetH()},
+		levelRect: sdl.Rect{startPos.X, startPos.Y, resource.GetW(), resource.GetH()},
 		zIndex:    zIndex,
 	}
 }
@@ -53,7 +53,7 @@ func (sto *singleTileObject) Update(events *intsets.Sparse, ticks uint32, level 
 }
 
 func (sto *singleTileObject) GetRect() sdl.Rect {
-	return *sto.levelRect
+	return sto.levelRect
 }
 
 func (sto *singleTileObject) GetZIndex() int {
@@ -65,7 +65,7 @@ func (sto *singleTileObject) GetZIndex() int {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // drawResource is a helper function to draw a resource on level to camera
-func drawResource(g *graphic.Graphic, resource graphic.Resource, levelPos *sdl.Rect, camPos vector.Pos) {
+func drawResource(g *graphic.Graphic, resource graphic.Resource, levelPos sdl.Rect, camPos vector.Pos) {
 	rectInResource, rectInCamera := visibleRectInCamera(levelPos, camPos.X, camPos.Y)
 	if rectInResource != nil {
 		g.RenderResource(resource, rectInResource, rectInCamera)
@@ -74,7 +74,7 @@ func drawResource(g *graphic.Graphic, resource graphic.Resource, levelPos *sdl.R
 
 // visibleRectInCamera returns a rect relative to camera which is (partly) visible
 // return nil if the rect is not visible in camera at all
-func visibleRectInCamera(rect *sdl.Rect, xCamStart, yCamStart int32) (rectInTile *sdl.Rect, rectInCamera *sdl.Rect) {
+func visibleRectInCamera(rect sdl.Rect, xCamStart, yCamStart int32) (rectInTile *sdl.Rect, rectInCamera *sdl.Rect) {
 	if rect.X+rect.W < xCamStart || rect.X > xCamStart+graphic.SCREEN_WIDTH ||
 		rect.Y+rect.H < yCamStart || rect.Y > yCamStart+graphic.SCREEN_HEIGHT {
 		return nil, nil

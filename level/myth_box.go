@@ -36,7 +36,7 @@ func NewMythBox(startPos vector.Pos, numCoins int, resourceRegistry map[graphic.
 }
 
 func (mb *mythBox) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	drawResource(g, mb.currRes, &mb.levelRect, camPos)
+	drawResource(g, mb.currRes, mb.levelRect, camPos)
 }
 
 func (mb *mythBox) Update(events *intsets.Sparse, ticks uint32, level *Level) {
