@@ -66,9 +66,7 @@ func (mb *mythBox) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		gravity := vector.Vec2D{0, 10}
 		mb.velocity.Add(gravity)
 
-		velocityStep := mb.velocity
-		velocityStep.Multiply(int32(ticks - mb.lastTicks))
-		velocityStep.Divide(1000)
+		velocityStep := CalcVelocityStep(mb.velocity, ticks, mb.lastTicks, nil)
 
 		// apply velocity step
 		mb.levelRect.X += velocityStep.X

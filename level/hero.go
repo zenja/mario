@@ -6,7 +6,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
-	mutils "github.com/zenja/mario/math_utils"
 	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
 )
@@ -88,29 +87,8 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	gravity := vector.Vec2D{0, 50}
 	h.velocity.Add(gravity)
 
-	// calculate velocity step
-	velocityStep := h.velocity
-	velocityStep.Multiply(int32(ticks - h.lastTicks))
-	velocityStep.Divide(1000)
-
-	// limit max velocity step
-	maxVel := int32(graphic.TILE_SIZE * 30 / 100)
-	if mutils.Abs(velocityStep.X) > maxVel {
-		log.Printf("warning: velocity step's |X| is %d > %d, limited", velocityStep.X, maxVel)
-		if velocityStep.X > 0 {
-			velocityStep.X = maxVel
-		} else {
-			velocityStep.X = -maxVel
-		}
-	}
-	if mutils.Abs(velocityStep.Y) > maxVel {
-		log.Printf("warning: velocity step's |Y| is %d > %d, limited", velocityStep.Y, maxVel)
-		if velocityStep.Y > 0 {
-			velocityStep.Y = maxVel
-		} else {
-			velocityStep.Y = -maxVel
-		}
-	}
+	maxVel := vector.Vec2D{int32(graphic.TILE_SIZE * 30 / 100), int32(graphic.TILE_SIZE * 30 / 100)}
+	velocityStep := CalcVelocityStep(h.velocity, ticks, h.lastTicks, &maxVel)
 
 	// apply velocity step
 	//log.Printf("applying velocity step: %v\n", velocityStep)
