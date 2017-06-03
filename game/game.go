@@ -71,7 +71,7 @@ func (game *Game) StartGameLoop() {
 
 		// start render
 		game.gra.ClearScreenWithColor(game.currentLevel.BGColor)
-		game.currentLevel.Draw(game.gra, game.camPos)
+		game.currentLevel.UpdateAndDraw(game.gra, game.camPos)
 
 		// render overlays
 		for _, ol := range game.overlays {

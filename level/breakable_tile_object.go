@@ -41,10 +41,10 @@ func (bto *breakableTileObject) GetZIndex() int {
 	return bto.zIndex
 }
 
-func (bto *breakableTileObject) hitByHero(hd hitDirection, level *Level, ticks uint32) {
+func (bto *breakableTileObject) hitByHero(h *hero, direction hitDirection, level *Level, ticks uint32) {
 	// can only be hit from bottom
 	// TODO in the future the direction may need to be decided from input
-	if hd != HIT_FROM_BOTTOM {
+	if direction != HIT_FROM_BOTTOM {
 		return
 	}
 

@@ -35,10 +35,11 @@ const (
 	HIT_FROM_RIGHT
 	HIT_FROM_BOTTOM
 	HIT_FROM_LEFT
+	HIT_NOT_FROM_TOP
 )
 
 type heroHittableObject interface {
-	hitByHero(hd hitDirection, level *Level, ticks uint32)
+	hitByHero(h *hero, direction hitDirection, level *Level, ticks uint32)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

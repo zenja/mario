@@ -15,6 +15,7 @@ import (
 type Level struct {
 	// Public
 	TileObjects      [][]Object
+	Enemies          []Enemy
 	ObstMngr         *ObstacleManager
 	Hero             Object
 	BGColor          sdl.Color
@@ -28,6 +29,8 @@ type Level struct {
 func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
 	// NOTE: index is tid.X, tid.Y
 	var tileObjs [][]Object
+
+	var enemies []Enemy
 
 	numTiles := vector.Vec2D{int32(len(arr[0])), int32(len(arr))}
 	obstMngr := NewObstacleManager(len(arr[0]), len(arr))
@@ -86,6 +89,10 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				// this is obstacle
 				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
 
+			// Enemy 1: mushroom enemy
+			case '1':
+				enemies = append(enemies, NewMushroomEnemy(currentPos, resourceRegistry))
+
 			// Hero
 			case 'H':
 				if hero != nil {
@@ -104,6 +111,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 
 	return &Level{
 		TileObjects:      tileObjs,
+		Enemies:          enemies,
 		ObstMngr:         obstMngr,
 		Hero:             hero,
 		BGColor:          sdl.Color{204, 237, 255, 255},
@@ -128,7 +136,9 @@ func ParseLevelFromFile(filename string, resourceRegistry map[graphic.ResourceID
 	return ParseLevel(arr, resourceRegistry)
 }
 
-func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
+func (l *Level) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos) {
+	var ticks = sdl.GetTicks()
+
 	var zIndexObjs [ZINDEX_NUM][]Object
 	// draw lowest z-index, bookkeeping higher z-index for later rendering
 	for i := 0; i < int(l.NumTiles.X); i++ {
@@ -162,6 +172,16 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
 		}
 	}
 
+	// update and render live enemies
+	for _, e := range l.Enemies {
+		if e.IsDead() {
+			continue
+		}
+
+		e.Update(ticks, l)
+		e.Draw(g, camPos)
+	}
+
 	// render effects and remove finished effects
 	var finishedEffs []*list.Element
 	for e := l.effects.Front(); e != nil; e = e.Next() {
@@ -169,7 +189,7 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos) {
 		if !ok {
 			log.Fatalf("eff is not an effect object: %T", e.Value)
 		}
-		eff.UpdateAndDraw(g, camPos, sdl.GetTicks())
+		eff.UpdateAndDraw(g, camPos, ticks)
 
 		if eff.Finished() {
 			finishedEffs = append(finishedEffs, e)

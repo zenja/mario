@@ -106,9 +106,9 @@ func (mb *mythBox) GetZIndex() int {
 // Private major methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (mb *mythBox) hitByHero(hd hitDirection, level *Level, ticks uint32) {
+func (mb *mythBox) hitByHero(h *hero, direction hitDirection, level *Level, ticks uint32) {
 	// can only be hit from bottom
-	if hd != HIT_FROM_BOTTOM {
+	if direction != HIT_FROM_BOTTOM {
 		return
 	}
 

@@ -103,6 +103,24 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	// update tiles hit
 	h.notifyTilesHit(tilesHit, h.levelRect, level, ticks)
 
+	// check if hit any live enemies
+	for _, emy := range level.Enemies {
+		if emy.IsDead() {
+			continue
+		}
+
+		hit, hitEmyTop := isHitEnemy(h.levelRect, emy.GetLevelRect())
+		if !hit {
+			continue
+		}
+
+		if hitEmyTop {
+			emy.hitByHero(h, HIT_FROM_TOP, level, ticks)
+		} else {
+			emy.hitByHero(h, HIT_NOT_FROM_TOP, level, ticks)
+		}
+	}
+
 	// is on ground
 	h.isOnGround = hitBottom
 
@@ -165,7 +183,7 @@ func (h *hero) notifyTilesHit(tilesHit []vector.TileID, resolvedRect sdl.Rect, l
 		}
 		switch o.(type) {
 		case heroHittableObject:
-			o.(heroHittableObject).hitByHero(calcHitDirection(resolvedRect, o.GetRect()), level, ticks)
+			o.(heroHittableObject).hitByHero(h, calcHitDirection(resolvedRect, o.GetRect()), level, ticks)
 		}
 	}
 }
@@ -197,4 +215,19 @@ func calcHitDirection(resolvedHeroRect sdl.Rect, tileRect sdl.Rect) hitDirection
 	log.Fatal("bug! should already covered all possible cases")
 
 	return HIT_FROM_TOP
+}
+
+func isHitEnemy(heroRect sdl.Rect, enemyRect sdl.Rect) (hit bool, hitEnemyTop bool) {
+	interRect, intersected := heroRect.Intersect(&enemyRect)
+	if !intersected {
+		return
+	}
+
+	hit = true
+
+	if interRect.Y == enemyRect.Y && interRect.W > interRect.H {
+		hitEnemyTop = true
+	}
+
+	return
 }

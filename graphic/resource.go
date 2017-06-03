@@ -35,6 +35,10 @@ const (
 
 	RESOURCE_TYPE_BRICK_PIECE
 
+	RESOURCE_TYPE_MUSHROOM_ENEMY_0
+	RESOURCE_TYPE_MUSHROOM_ENEMY_1
+	RESOURCE_TYPE_MUSHROOM_ENEMY_HIT
+
 	RESOURCE_TYPE_HERO_STAND_LEFT
 	RESOURCE_TYPE_HERO_WALKING_LEFT
 	RESOURCE_TYPE_HERO_STAND_RIGHT
@@ -295,6 +299,10 @@ func (g *Graphic) loadAllResources() {
 	g.registerTileResource("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
 	g.registerTileResource("assets/myth-box-normal-light.png", RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
 	g.registerTileResource("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
+
+	g.registerTileResource("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_0)
+	g.registerTileResource("assets/mushroom-enemy-1.png", RESOURCE_TYPE_MUSHROOM_ENEMY_1)
+	g.registerTileResource("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT)
 
 	g.registerTileResource("assets/coin.png", RESOURCE_TYPE_COIN)
 
