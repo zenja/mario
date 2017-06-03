@@ -48,7 +48,10 @@ func (bto *breakableTileObject) hitByHero(hd hitDirection, level *Level, ticks u
 		return
 	}
 
-	tid := GetTileID(vector.Pos{bto.levelRect.X, bto.levelRect.Y}, false, false)
 	// remove object and obstacle
+	tid := GetTileID(vector.Pos{bto.levelRect.X, bto.levelRect.Y}, false, false)
 	level.RemoveObstacleTileObject(tid)
+
+	// show breaking effect
+	level.AddEffect(NewBreakTileEffect(bto.pieceRes, tid, ticks))
 }
