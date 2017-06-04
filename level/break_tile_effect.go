@@ -27,7 +27,7 @@ type breakTileEffect struct {
 
 func NewBreakTileEffect(pieceRes graphic.Resource, tid vector.TileID, ticks uint32) Effect {
 	tileRect := GetTileRect(tid)
-	var size int32 = graphic.TILE_SIZE / 4
+	var size int32 = graphic.TILE_SIZE / 2
 	return &breakTileEffect{
 		pieceRes:   pieceRes,
 		rectLT:     sdl.Rect{tileRect.X, tileRect.Y, size, size},
