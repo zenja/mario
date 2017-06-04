@@ -7,11 +7,12 @@ import (
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
+	"github.com/zenja/mario/level"
 	"github.com/zenja/mario/vector"
 )
 
 type Overlay interface {
-	Draw(g *graphic.Graphic, ticks uint32)
+	Draw(g *graphic.Graphic, h *level.Hero, ticks uint32)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,7 +23,7 @@ type FPSOverlay struct {
 	currentTicks uint32
 }
 
-func (fo *FPSOverlay) Draw(g *graphic.Graphic, ticks uint32) {
+func (fo *FPSOverlay) Draw(g *graphic.Graphic, h *level.Hero, ticks uint32) {
 	var fps uint32
 	pos := vector.Pos{50, 50}
 	color := sdl.Color{255, 255, 255, 0}
@@ -38,4 +39,16 @@ func (fo *FPSOverlay) Draw(g *graphic.Graphic, ticks uint32) {
 	fps = 1000 / (ticks - fo.currentTicks)
 	g.DrawText(fmt.Sprintf("FPS: %d", fps), pos, color)
 	fo.currentTicks = ticks
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// HeroLiveOverlay
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type HeroLiveOverlay struct{}
+
+func (hlo *HeroLiveOverlay) Draw(g *graphic.Graphic, h *level.Hero, ticks uint32) {
+	pos := vector.Pos{graphic.SCREEN_WIDTH - 150, 50}
+	color := sdl.Color{255, 255, 255, 0}
+	g.DrawText(fmt.Sprintf("Lives: %d", h.GetLives()), pos, color)
 }

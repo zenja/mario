@@ -111,7 +111,7 @@ func (m *mushroomEnemy) updateResource(ticks uint32) {
 	}
 }
 
-func (m *mushroomEnemy) hitByHero(h *hero, direction hitDirection, level *Level, ticks uint32) {
+func (m *mushroomEnemy) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
 	if direction == HIT_FROM_TOP_W_INTENT {
 		// ignore if already hit
 		if m.hitTicks > 0 {

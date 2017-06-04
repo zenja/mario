@@ -13,9 +13,10 @@ import (
 )
 
 type Game struct {
+	Gra *graphic.Graphic
+
 	// start position (left top) of camera
 	camPos       vector.Pos
-	gra          *graphic.Graphic
 	currentLevel *level.Level
 	running      bool
 	overlays     []overlay.Overlay
@@ -27,19 +28,20 @@ func NewGame() *Game {
 	// register overlays
 	var overlays []overlay.Overlay
 	overlays = append(overlays, &overlay.FPSOverlay{})
+	overlays = append(overlays, &overlay.HeroLiveOverlay{})
 
 	return &Game{
-		gra:      gra,
+		Gra:      gra,
 		overlays: overlays,
 	}
 }
 
 func (game *Game) LoadLevel(filename string) {
-	game.currentLevel = level.ParseLevelFromFile(filename, game.gra.ResourceRegistry)
+	game.currentLevel = level.ParseLevelFromFile(filename, game.Gra.ResourceRegistry)
 }
 
 func (game *Game) Quit() {
-	game.gra.DestroyAndQuit()
+	game.Gra.DestroyAndQuit()
 }
 
 func (game *Game) StartGameLoop() {
@@ -64,22 +66,22 @@ func (game *Game) StartGameLoop() {
 		}
 
 		// update non-tile objects
-		game.currentLevel.Hero.Update(events, sdl.GetTicks(), game.currentLevel)
+		game.currentLevel.TheHero.Update(events, sdl.GetTicks(), game.currentLevel)
 
 		// update camera position
 		game.updateCamPos()
 
 		// start render
-		game.gra.ClearScreenWithColor(game.currentLevel.BGColor)
-		game.currentLevel.UpdateAndDraw(game.gra, game.camPos)
+		game.Gra.ClearScreenWithColor(game.currentLevel.BGColor)
+		game.currentLevel.UpdateAndDraw(game.Gra, game.camPos)
 
 		// render overlays
 		for _, ol := range game.overlays {
-			ol.Draw(game.gra, sdl.GetTicks())
+			ol.Draw(game.Gra, game.currentLevel.TheHero, sdl.GetTicks())
 		}
 
 		// show screen
-		game.gra.ShowScreen()
+		game.Gra.ShowScreen()
 
 		frameTime := sdl.GetTicks() - frameStart
 
@@ -121,7 +123,7 @@ func (game *Game) handleEvents() *intsets.Sparse {
 // It tries to put hero center in vertical, 2/3 camera height from top,
 // but when that exceeds level boundary, it will respect level boundary
 func (game *Game) updateCamPos() {
-	heroRect := game.currentLevel.Hero.GetRect()
+	heroRect := game.currentLevel.TheHero.GetRect()
 	perfectX := heroRect.X - (graphic.SCREEN_WIDTH-heroRect.W)/2
 	perfectY := heroRect.Y - (graphic.SCREEN_HEIGHT-heroRect.H)*2/3
 	game.camPos.X = perfectX

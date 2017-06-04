@@ -17,7 +17,7 @@ type Level struct {
 	TileObjects      [][]Object
 	Enemies          []Enemy
 	ObstMngr         *ObstacleManager
-	Hero             Object
+	TheHero          *Hero
 	BGColor          sdl.Color
 	NumTiles         vector.Vec2D // NOTE: X, Y is TID
 	ResourceRegistry map[graphic.ResourceID]graphic.Resource
@@ -34,7 +34,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 
 	numTiles := vector.Vec2D{int32(len(arr[0])), int32(len(arr))}
 	obstMngr := NewObstacleManager(len(arr[0]), len(arr))
-	var hero Object
+	var hero *Hero
 
 	// init tileObjs array
 	for i := 0; i < int(numTiles.X); i++ {
@@ -113,7 +113,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 		TileObjects:      tileObjs,
 		Enemies:          enemies,
 		ObstMngr:         obstMngr,
-		Hero:             hero,
+		TheHero:          hero,
 		BGColor:          sdl.Color{204, 237, 255, 255},
 		NumTiles:         numTiles,
 		ResourceRegistry: resourceRegistry,
@@ -158,10 +158,10 @@ func (l *Level) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos) {
 	}
 
 	// put non-tile objects into render queue
-	if l.Hero.GetZIndex() == ZINDEX_0 {
+	if l.TheHero.GetZIndex() == ZINDEX_0 {
 		log.Fatal("hero's z-index cannot be lowest")
 	}
-	zIndexObjs[l.Hero.GetZIndex()] = append(zIndexObjs[l.Hero.GetZIndex()], l.Hero)
+	zIndexObjs[l.TheHero.GetZIndex()] = append(zIndexObjs[l.TheHero.GetZIndex()], l.TheHero)
 
 	// render higher z-index one-by-one
 	for _, objs := range zIndexObjs {

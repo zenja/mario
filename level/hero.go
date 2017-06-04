@@ -12,7 +12,10 @@ import (
 
 const hurtAnimationMS = 2000
 
-type hero struct {
+// assert &Hero is an Object
+var _ Object = &Hero{}
+
+type Hero struct {
 	resStandRight   graphic.Resource
 	resWalkingRight graphic.Resource
 	resStandLeft    graphic.Resource
@@ -41,12 +44,12 @@ type hero struct {
 	hurtStartTicks uint32
 }
 
-func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
+func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Hero {
 	resStandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND_RIGHT]
 	resWalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING_RIGHT]
 	resStandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND_LEFT]
 	resWalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING_LEFT]
-	h := &hero{
+	h := &Hero{
 		resStandRight:   resStandRight,
 		resWalkingRight: resWalkingRight,
 		resStandLeft:    resStandLeft,
@@ -61,7 +64,7 @@ func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphi
 	return h
 }
 
-func (h *hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
+func (h *Hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	// if hurt, blink for a while, otherwise just draw the hero
 	ticks := sdl.GetTicks()
 	if h.hurtStartTicks > 0 && ticks-h.hurtStartTicks < hurtAnimationMS {
@@ -75,7 +78,7 @@ func (h *hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	}
 }
 
-func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	// skip first update due to lack of ticks
 	if h.lastTicks == 0 {
 		h.lastTicks = ticks
@@ -172,15 +175,15 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	h.lastTicks = ticks
 }
 
-func (h *hero) GetRect() sdl.Rect {
+func (h *Hero) GetRect() sdl.Rect {
 	return h.levelRect
 }
 
-func (h *hero) GetZIndex() int {
+func (h *Hero) GetZIndex() int {
 	return ZINDEX_4
 }
 
-func (h *hero) Hurt() {
+func (h *Hero) Hurt() {
 	// cannot hurt twice
 	if h.hurtStartTicks == 0 {
 		h.lives--
@@ -188,11 +191,15 @@ func (h *hero) Hurt() {
 	}
 }
 
+func (h *Hero) GetLives() int {
+	return h.lives
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Private helpers
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (h *hero) updateRes() {
+func (h *Hero) updateRes() {
 	if h.velocity.X == 0 || h.lastTicks%600 < 300 {
 		if h.isFacingRight {
 			h.currRes = h.resStandRight
@@ -208,7 +215,7 @@ func (h *hero) updateRes() {
 	}
 }
 
-func (h *hero) notifyTilesHit(
+func (h *Hero) notifyTilesHit(
 	tilesHit []vector.TileID,
 	resolvedRect sdl.Rect,
 	heroVelStep vector.Vec2D,

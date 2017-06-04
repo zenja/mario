@@ -139,11 +139,11 @@ func (bm *BaseFSM) isValidState(s string) bool {
 
 type heroFSM struct {
 	*BaseFSM
-	hero *hero
+	hero *Hero
 }
 
 // NewHeroFSM
-func NewHeroFSM(hero *hero, initState string, states []string) (*heroFSM, error) {
+func NewHeroFSM(hero *Hero, initState string, states []string) (*heroFSM, error) {
 	bm, err := NewBaseFSM(initState, states)
 	if err != nil {
 		return nil, err
