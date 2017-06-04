@@ -109,7 +109,7 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 			continue
 		}
 
-		hit, hitEmyTop := isHitEnemy(h.levelRect, emy.GetLevelRect())
+		hit, hitEmyTop := isHitEnemy(velocityStep, h.levelRect, emy.GetLevelRect())
 		if !hit {
 			continue
 		}
@@ -217,7 +217,7 @@ func calcHitDirection(resolvedHeroRect sdl.Rect, tileRect sdl.Rect) hitDirection
 	return HIT_FROM_TOP
 }
 
-func isHitEnemy(heroRect sdl.Rect, enemyRect sdl.Rect) (hit bool, hitEnemyTop bool) {
+func isHitEnemy(heroVelStep vector.Vec2D, heroRect sdl.Rect, enemyRect sdl.Rect) (hit bool, hitEnemyTop bool) {
 	interRect, intersected := heroRect.Intersect(&enemyRect)
 	if !intersected {
 		return
@@ -225,7 +225,10 @@ func isHitEnemy(heroRect sdl.Rect, enemyRect sdl.Rect) (hit bool, hitEnemyTop bo
 
 	hit = true
 
-	if interRect.Y == enemyRect.Y && interRect.W > interRect.H {
+	// note that we also need to check velocity direction here,
+	// because enemy is not an obstacle so is no constantly being collision resolved with hero
+	// so a hero can move from an position where him already collides with the enemy
+	if interRect.Y == enemyRect.Y && interRect.W > interRect.H && heroVelStep.Y > 0 {
 		hitEnemyTop = true
 	}
 
