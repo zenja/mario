@@ -32,9 +32,7 @@ type mushroomEnemy struct {
 	levelRect sdl.Rect
 	lastTicks uint32
 	velocity  vector.Vec2D
-	isHit     bool
 	isDead    bool
-	hitTicks  uint32 // ticks when the enemy is hit
 }
 
 func NewMushroomEnemy(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Enemy {
@@ -83,11 +81,6 @@ func (m *mushroomEnemy) Update(ticks uint32, level *Level) {
 
 	m.updateResource(ticks)
 
-	// check if should kill the enemy (wait for hit animation to finish)
-	if m.hitTicks > 0 && ticks-m.hitTicks > 500 {
-		m.isDead = true
-	}
-
 	m.lastTicks = ticks
 }
 
@@ -100,34 +93,23 @@ func (m *mushroomEnemy) IsDead() bool {
 }
 
 func (m *mushroomEnemy) updateResource(ticks uint32) {
-	if m.hitTicks != 0 {
-		m.currRes = m.resHit
+	if ticks%1000 < 500 {
+		m.currRes = m.res0
 	} else {
-		if ticks%1000 < 500 {
-			m.currRes = m.res0
-		} else {
-			m.currRes = m.res1
-		}
+		m.currRes = m.res1
 	}
 }
 
 func (m *mushroomEnemy) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
-	if m.hitTicks > 0 {
-		// if already hit, it will lost interaction with hero
-		return
-	}
-
 	if direction == HIT_FROM_TOP_W_INTENT {
-		// ignore if already hit
-		if m.hitTicks > 0 {
-			return
-		}
-
-		// mark hit by setting hit time
-		m.hitTicks = ticks
+		// dead immediately!
+		m.isDead = true
 
 		// bounce the hero up
 		h.velocity.Y = -1200
+
+		// add dead effect
+		level.AddEffect(NewShowOnceEffect(m.resHit, m.levelRect, ticks, 500))
 	} else {
 		// hero is hurt
 		h.Hurt()
