@@ -184,7 +184,7 @@ func (h *Hero) GetZIndex() int {
 }
 
 func (h *Hero) Hurt() {
-	// cannot hurt twice
+	// cannot hurt during super time
 	if h.hurtStartTicks == 0 {
 		h.lives--
 		h.hurtStartTicks = sdl.GetTicks()
