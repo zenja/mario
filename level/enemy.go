@@ -125,6 +125,6 @@ func (m *mushroomEnemy) hitByHero(h *hero, direction hitDirection, level *Level,
 		h.velocity.Y = -1200
 	} else {
 		// hero is hurt
-		// TODO
+		h.Hurt()
 	}
 }

@@ -10,6 +10,8 @@ import (
 	"golang.org/x/tools/container/intsets"
 )
 
+const hurtAnimationMS = 2000
+
 type hero struct {
 	resStandRight   graphic.Resource
 	resWalkingRight graphic.Resource
@@ -30,6 +32,13 @@ type hero struct {
 	isOnGround bool
 
 	isFacingRight bool
+
+	lives int
+
+	// a non-zero hurtStartTicks means it has been hurt before and the "hurt" (or "super") status is still in effect
+	// when hero got hurt, it will be set to current ticks
+	// will be reset after a while
+	hurtStartTicks uint32
 }
 
 func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
@@ -47,12 +56,23 @@ func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphi
 		velocity:        vector.Vec2D{0, 0},
 		isOnGround:      false,
 		isFacingRight:   true,
+		lives:           3,
 	}
 	return h
 }
 
 func (h *hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	g.DrawResource(h.currRes, h.levelRect, camPos)
+	// if hurt, blink for a while, otherwise just draw the hero
+	ticks := sdl.GetTicks()
+	if h.hurtStartTicks > 0 && ticks-h.hurtStartTicks < hurtAnimationMS {
+		if (ticks-h.hurtStartTicks)%200 > 100 {
+			g.DrawResource(h.currRes, h.levelRect, camPos)
+		} else {
+			// Draw nothing to create a blink effect
+		}
+	} else {
+		g.DrawResource(h.currRes, h.levelRect, camPos)
+	}
 }
 
 func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
@@ -140,6 +160,11 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		h.velocity.Y = 0
 	}
 
+	// check if need to reset hurt status
+	if ticks-h.hurtStartTicks > hurtAnimationMS {
+		h.hurtStartTicks = 0
+	}
+
 	// update resource
 	h.updateRes()
 
@@ -153,6 +178,14 @@ func (h *hero) GetRect() sdl.Rect {
 
 func (h *hero) GetZIndex() int {
 	return ZINDEX_4
+}
+
+func (h *hero) Hurt() {
+	// cannot hurt twice
+	if h.hurtStartTicks == 0 {
+		h.lives--
+		h.hurtStartTicks = sdl.GetTicks()
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
