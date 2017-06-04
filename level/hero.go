@@ -101,7 +101,7 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	//log.Printf("solved rect: %v\n", h.levelRect)
 
 	// update tiles hit
-	h.notifyTilesHit(tilesHit, h.levelRect, level, ticks)
+	h.notifyTilesHit(tilesHit, h.levelRect, velocityStep, level, ticks)
 
 	// check if hit any live enemies
 	for _, emy := range level.Enemies {
@@ -115,9 +115,9 @@ func (h *hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		}
 
 		if hitEmyTop {
-			emy.hitByHero(h, HIT_FROM_TOP, level, ticks)
+			emy.hitByHero(h, HIT_FROM_TOP_W_INTENT, level, ticks)
 		} else {
-			emy.hitByHero(h, HIT_NOT_FROM_TOP, level, ticks)
+			emy.hitByHero(h, HIT_NOT_FROM_TOP_W_INTENT, level, ticks)
 		}
 	}
 
@@ -175,7 +175,12 @@ func (h *hero) updateRes() {
 	}
 }
 
-func (h *hero) notifyTilesHit(tilesHit []vector.TileID, resolvedRect sdl.Rect, level *Level, ticks uint32) {
+func (h *hero) notifyTilesHit(
+	tilesHit []vector.TileID,
+	resolvedRect sdl.Rect,
+	heroVelStep vector.Vec2D,
+	level *Level, ticks uint32) {
+
 	for _, tid := range tilesHit {
 		o := level.TileObjects[tid.X][tid.Y]
 		if o == nil {
@@ -183,38 +188,39 @@ func (h *hero) notifyTilesHit(tilesHit []vector.TileID, resolvedRect sdl.Rect, l
 		}
 		switch o.(type) {
 		case heroHittableObject:
-			o.(heroHittableObject).hitByHero(h, calcHitDirection(resolvedRect, o.GetRect()), level, ticks)
+			o.(heroHittableObject).hitByHero(h, calcHitDirection(heroVelStep, resolvedRect, o.GetRect()), level, ticks)
 		}
 	}
 }
 
 // calcHitDirection decides from which direction was the tile being hit by hero
-// It assumed that the hero and tile was intersected and then collision has been resolved
-// note that after resolution the two rects should have to be non-intersected
-func calcHitDirection(resolvedHeroRect sdl.Rect, tileRect sdl.Rect) hitDirection {
+// NOTE:
+// 1. It assumed that the hero and tile was intersected and then collision has been resolved
+// 2. After resolution the two rects should have to be non-intersected
+func calcHitDirection(heroVelStep vector.Vec2D, resolvedHeroRect sdl.Rect, tileRect sdl.Rect) hitDirection {
 	if _, intersected := tileRect.Intersect(&resolvedHeroRect); intersected {
 		log.Fatalf("calcHitDirection: hero %v and tile %v are intersected but should not", resolvedHeroRect, tileRect)
 	}
 
-	if resolvedHeroRect.Y >= tileRect.Y+tileRect.H {
-		return HIT_FROM_BOTTOM
+	if resolvedHeroRect.Y >= tileRect.Y+tileRect.H && heroVelStep.Y < 0 {
+		return HIT_FROM_BOTTOM_W_INTENT
 	}
 
-	if resolvedHeroRect.Y+resolvedHeroRect.H <= tileRect.Y {
-		return HIT_FROM_TOP
+	if resolvedHeroRect.Y+resolvedHeroRect.H <= tileRect.Y && heroVelStep.Y > 0 {
+		return HIT_FROM_TOP_W_INTENT
 	}
 
-	if resolvedHeroRect.X+resolvedHeroRect.W <= tileRect.X {
-		return HIT_FROM_LEFT
+	if resolvedHeroRect.X+resolvedHeroRect.W <= tileRect.X && heroVelStep.X > 0 {
+		return HIT_FROM_LEFT_W_INTENT
 	}
 
-	if resolvedHeroRect.X >= tileRect.X+tileRect.W {
-		return HIT_FROM_RIGHT
+	if resolvedHeroRect.X >= tileRect.X+tileRect.W && heroVelStep.X < 0 {
+		return HIT_FROM_RIGHT_W_INTENT
 	}
 
-	log.Fatal("bug! should already covered all possible cases")
+	log.Println("calcHitDirection: no hit intention found")
 
-	return HIT_FROM_TOP
+	return HIT_WITH_NO_INTENTION
 }
 
 func isHitEnemy(heroVelStep vector.Vec2D, heroRect sdl.Rect, enemyRect sdl.Rect) (hit bool, hitEnemyTop bool) {
