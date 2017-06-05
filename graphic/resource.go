@@ -39,6 +39,12 @@ const (
 	RESOURCE_TYPE_MUSHROOM_ENEMY_1
 	RESOURCE_TYPE_MUSHROOM_ENEMY_HIT
 
+	RESOURCE_TYPE_FIREBALL_0
+	RESOURCE_TYPE_FIREBALL_1
+	RESOURCE_TYPE_FIREBALL_2
+	RESOURCE_TYPE_FIREBALL_3
+	RESOURCE_TYPE_FIREBALL_BOOM
+
 	RESOURCE_TYPE_HERO_STAND_LEFT
 	RESOURCE_TYPE_HERO_WALKING_LEFT
 	RESOURCE_TYPE_HERO_STAND_RIGHT
@@ -318,4 +324,11 @@ func (g *Graphic) loadAllResources() {
 
 	// broken pieces
 	g.registerScaledNonTailResource("assets/brick-piece.png", RESOURCE_TYPE_BRICK_PIECE, TILE_SIZE/2, TILE_SIZE/2)
+
+	// fireball
+	g.registerNonTailResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0)
+	g.registerNonTailResource("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1)
+	g.registerNonTailResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2)
+	g.registerNonTailResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3)
+	g.registerNonTailResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM)
 }

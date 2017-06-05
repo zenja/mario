@@ -4,20 +4,15 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
+	"golang.org/x/tools/container/intsets"
 )
 
 type Enemy interface {
 	// Enemy is hittable by hero
 	heroHittableObject
 
-	GetLevelRect() sdl.Rect
-
 	// if the enemy is dead, if so, don't need to update/draw
 	IsDead() bool
-
-	Update(ticks uint32, level *Level)
-
-	Draw(g *graphic.Graphic, camPos vector.Pos)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,11 +42,15 @@ func NewMushroomEnemy(startPos vector.Pos, resourceRegistry map[graphic.Resource
 	}
 }
 
-func (m *mushroomEnemy) GetLevelRect() sdl.Rect {
+func (m *mushroomEnemy) GetRect() sdl.Rect {
 	return m.levelRect
 }
 
-func (m *mushroomEnemy) Update(ticks uint32, level *Level) {
+func (m *mushroomEnemy) GetZIndex() int {
+	return ZINDEX_4
+}
+
+func (m *mushroomEnemy) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	if m.lastTicks == 0 {
 		m.lastTicks = ticks
 		return

@@ -16,6 +16,7 @@ type Level struct {
 	// Public
 	TileObjects      [][]Object
 	Enemies          []Enemy
+	VolatileObjs     *list.List // a list of volatileObject objects
 	ObstMngr         *ObstacleManager
 	TheHero          *Hero
 	BGColor          sdl.Color
@@ -112,6 +113,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 	return &Level{
 		TileObjects:      tileObjs,
 		Enemies:          enemies,
+		VolatileObjs:     list.New(),
 		ObstMngr:         obstMngr,
 		TheHero:          hero,
 		BGColor:          sdl.Color{204, 237, 255, 255},
@@ -178,8 +180,27 @@ func (l *Level) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos) {
 			continue
 		}
 
-		e.Update(ticks, l)
+		e.Update(nil, ticks, l)
 		e.Draw(g, camPos)
+	}
+
+	// update and render volatile objects
+	var deadVolatileObjs []*list.Element
+	for e := l.VolatileObjs.Front(); e != nil; e = e.Next() {
+		vo, ok := e.Value.(volatileObject)
+		if !ok {
+			log.Fatalf("eff is not an volatile object: %T", e.Value)
+		}
+		vo.Update(nil, ticks, l)
+
+		if vo.IsDead() {
+			deadVolatileObjs = append(deadVolatileObjs, e)
+		} else {
+			vo.Draw(g, camPos)
+		}
+	}
+	for _, e := range deadVolatileObjs {
+		l.VolatileObjs.Remove(e)
 	}
 
 	// render effects and remove finished effects
@@ -215,4 +236,8 @@ func (l *Level) AddEffect(e Effect) {
 func (l *Level) RemoveObstacleTileObject(tid vector.TileID) {
 	l.TileObjects[tid.X][tid.Y] = nil
 	l.ObstMngr.RemoveTileObst(tid)
+}
+
+func (l *Level) AddVolatileObject(vo volatileObject) {
+	l.VolatileObjs.PushBack(vo)
 }

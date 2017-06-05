@@ -32,6 +32,8 @@ type Hero struct {
 
 	lastTicks uint32
 
+	lastFireTicks uint32
+
 	isOnGround bool
 
 	isFacingRight bool
@@ -93,6 +95,8 @@ func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	// ---------------------------------------
 	// Handle events
 	// ---------------------------------------
+	var upPressed bool
+	var fPressed bool
 	if events.Has(int(event.EVENT_KEYDOWN_LEFT)) {
 		h.isFacingRight = false
 		h.velocity.X = -350
@@ -105,6 +109,12 @@ func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 			h.velocity.Y = -1000
 		}
 	}
+	if events.Has(int(event.EVENT_KEYDOWN_F)) {
+		fPressed = true
+	}
+	if events.Has(int(event.EVENT_KEYDOWN_UP)) {
+		upPressed = true
+	}
 
 	// gravity: unit is pixels per second
 	gravity := vector.Vec2D{0, 50}
@@ -114,14 +124,11 @@ func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	velocityStep := CalcVelocityStep(h.velocity, ticks, h.lastTicks, &maxVel)
 
 	// apply velocity step
-	//log.Printf("applying velocity step: %v\n", velocityStep)
 	h.levelRect.X += velocityStep.X
 	h.levelRect.Y += velocityStep.Y
 
 	// solve collision
-	//log.Printf("desired rect: %v\n", h.levelRect)
 	hitTop, hitRight, hitBottom, hitLeft, tilesHit := level.ObstMngr.SolveCollision(&h.levelRect)
-	//log.Printf("solved rect: %v\n", h.levelRect)
 
 	// update tiles hit
 	h.notifyTilesHit(tilesHit, h.levelRect, velocityStep, level, ticks)
@@ -132,7 +139,7 @@ func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 			continue
 		}
 
-		hit, hitEmyTop := isHitEnemy(velocityStep, h.levelRect, emy.GetLevelRect())
+		hit, hitEmyTop := isHitEnemy(velocityStep, h.levelRect, emy.GetRect())
 		if !hit {
 			continue
 		}
@@ -147,8 +154,6 @@ func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	// is on ground
 	h.isOnGround = hitBottom
 
-	//log.Println("---")
-
 	// reset velocity according to collision and direction
 	if velocityStep.X > 0 && hitRight {
 		h.velocity.X = 0
@@ -161,6 +166,12 @@ func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	}
 	if velocityStep.Y < 0 && hitTop {
 		h.velocity.Y = 0
+	}
+
+	// fire if needed and not too frequent
+	if fPressed && ticks-h.lastFireTicks > 400 {
+		level.AddVolatileObject(NewFireball(h.levelRect, h.isFacingRight, upPressed, ticks, level.ResourceRegistry))
+		h.lastFireTicks = ticks
 	}
 
 	// check if need to reset hurt status

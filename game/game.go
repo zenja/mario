@@ -113,8 +113,14 @@ func (game *Game) handleEvents() *intsets.Sparse {
 	if kbState[int(sdl.SCANCODE_RIGHT)] == 1 {
 		events.Insert(int(event.EVENT_KEYDOWN_RIGHT))
 	}
+	if kbState[int(sdl.SCANCODE_UP)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_UP))
+	}
 	if kbState[int(sdl.SCANCODE_SPACE)] == 1 {
 		events.Insert(int(event.EVENT_KEYDOWN_SPACE))
+	}
+	if kbState[int(sdl.SCANCODE_F)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_F))
 	}
 	return &events
 }

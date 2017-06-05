@@ -15,12 +15,12 @@ type showOnceEffect struct {
 	finished   bool
 }
 
-func NewShowOnceEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32, lastMs uint32) Effect {
+func NewShowOnceEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32, durationMs uint32) Effect {
 	return &showOnceEffect{
 		res:        res,
 		levelRect:  levelRect,
 		startTicks: ticks,
-		durationMs: lastMs,
+		durationMs: durationMs,
 		finished:   false,
 	}
 }

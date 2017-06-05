@@ -40,6 +40,7 @@ const (
 )
 
 type heroHittableObject interface {
+	Object
 	hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32)
 }
 
