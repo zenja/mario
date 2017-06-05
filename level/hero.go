@@ -238,8 +238,8 @@ func (h *Hero) notifyTilesHit(
 			log.Fatal("bug! notify hit tile object which is a nil object")
 		}
 		switch o.(type) {
-		case heroHittableObject:
-			o.(heroHittableObject).hitByHero(h, calcHitDirection(heroVelStep, resolvedRect, o.GetRect()), level, ticks)
+		case hittableByHero:
+			o.(hittableByHero).hitByHero(h, calcHitDirection(heroVelStep, resolvedRect, o.GetRect()), level, ticks)
 		}
 	}
 }

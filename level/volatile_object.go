@@ -131,6 +131,18 @@ func (f *fireball) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		f.currRes = f.res3
 	}
 
+	// check if hit any enemies
+	for _, emy := range level.Enemies {
+		if emy.IsDead() {
+			continue
+		}
+
+		emyRect := emy.GetRect()
+		if f.levelRect.HasIntersection(&emyRect) {
+			emy.hitByFireball(level, ticks)
+		}
+	}
+
 	// update last ticks
 	f.lastTicks = ticks
 }

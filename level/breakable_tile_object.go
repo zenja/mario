@@ -8,7 +8,7 @@ import (
 )
 
 // assert that breakableTileObject is hit-able by hero
-var _ heroHittableObject = &breakableTileObject{}
+var _ hittableByHero = &breakableTileObject{}
 
 type breakableTileObject struct {
 	mainRes   graphic.Resource

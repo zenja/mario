@@ -7,9 +7,23 @@ import (
 	"golang.org/x/tools/container/intsets"
 )
 
+type hittableByHero interface {
+	hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32)
+}
+
+type hittableByFireball interface {
+	hitByFireball(level *Level, ticks uint32)
+}
+
 type Enemy interface {
+	// Enemy is an object
+	Object
+
 	// Enemy is hittable by hero
-	heroHittableObject
+	hittableByHero
+
+	// Enemy is hittable by fireball
+	hittableByFireball
 
 	// if the enemy is dead, if so, don't need to update/draw
 	IsDead() bool
@@ -23,6 +37,7 @@ type mushroomEnemy struct {
 	res0      graphic.Resource
 	res1      graphic.Resource
 	resHit    graphic.Resource
+	resDown   graphic.Resource
 	currRes   graphic.Resource
 	levelRect sdl.Rect
 	lastTicks uint32
@@ -36,6 +51,7 @@ func NewMushroomEnemy(startPos vector.Pos, resourceRegistry map[graphic.Resource
 		res0:      res0,
 		res1:      resourceRegistry[graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_1],
 		resHit:    resourceRegistry[graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_HIT],
+		resDown:   resourceRegistry[graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN],
 		currRes:   res0,
 		levelRect: sdl.Rect{startPos.X, startPos.Y, res0.GetW(), res0.GetH()},
 		velocity:  vector.Vec2D{100, 0},
@@ -113,4 +129,9 @@ func (m *mushroomEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 		// hero is hurt
 		h.Hurt()
 	}
+}
+
+func (m *mushroomEnemy) hitByFireball(level *Level, ticks uint32) {
+	m.isDead = true
+	level.AddEffect(NewDeadDownEffect(m.resDown, m.levelRect, ticks))
 }

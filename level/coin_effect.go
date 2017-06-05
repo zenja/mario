@@ -6,6 +6,9 @@ import (
 	"github.com/zenja/mario/vector"
 )
 
+// coinEffect is an Effect
+var _ Effect = &coinEffect{}
+
 type coinEffect struct {
 	coinRes    graphic.Resource
 	tileRect   sdl.Rect
@@ -16,7 +19,7 @@ type coinEffect struct {
 	finished   bool
 }
 
-func NewCoinEffect(tid vector.TileID, resourceRegistry map[graphic.ResourceID]graphic.Resource, ticks uint32) Effect {
+func NewCoinEffect(tid vector.TileID, resourceRegistry map[graphic.ResourceID]graphic.Resource, ticks uint32) *coinEffect {
 	coinRes, _ := resourceRegistry[graphic.RESOURCE_TYPE_COIN]
 	tileRect := *GetTileRect(tid)
 	return &coinEffect{

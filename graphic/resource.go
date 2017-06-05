@@ -38,6 +38,7 @@ const (
 	RESOURCE_TYPE_MUSHROOM_ENEMY_0
 	RESOURCE_TYPE_MUSHROOM_ENEMY_1
 	RESOURCE_TYPE_MUSHROOM_ENEMY_HIT
+	RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN
 
 	RESOURCE_TYPE_FIREBALL_0
 	RESOURCE_TYPE_FIREBALL_1
@@ -163,8 +164,8 @@ func (g *Graphic) registerTileResource(filename string, id ResourceID) {
 	g.registerTileFromSurface(surface, id)
 }
 
-// registerNonTailResource loads a sprite into a NonTileResource from a file
-func (g *Graphic) registerNonTailResource(filename string, id ResourceID) {
+// registerNonTileResource loads a sprite into a NonTileResource from a file
+func (g *Graphic) registerNonTileResource(filename string, id ResourceID) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -174,7 +175,7 @@ func (g *Graphic) registerNonTailResource(filename string, id ResourceID) {
 	g.registerNonTileFromSurface(surface, id)
 }
 
-func (g *Graphic) registerScaledNonTailResource(filename string, id ResourceID, dstWidth int32, dstHeight int32) {
+func (g *Graphic) registerScaledNonTileResource(filename string, id ResourceID, dstWidth int32, dstHeight int32) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -184,7 +185,7 @@ func (g *Graphic) registerScaledNonTailResource(filename string, id ResourceID, 
 	g.registerScaledNonTileFromSurface(surface, id, dstWidth, dstHeight)
 }
 
-func (g *Graphic) registerFlippedNonTailResource(filename string, id ResourceID, flipHorizontal bool) {
+func (g *Graphic) registerFlippedNonTileResource(filename string, id ResourceID, flipHorizontal bool) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -306,10 +307,6 @@ func (g *Graphic) loadAllResources() {
 	g.registerTileResource("assets/myth-box-normal-light.png", RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
 	g.registerTileResource("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
 
-	g.registerTileResource("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_0)
-	g.registerTileResource("assets/mushroom-enemy-1.png", RESOURCE_TYPE_MUSHROOM_ENEMY_1)
-	g.registerTileResource("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT)
-
 	g.registerTileResource("assets/coin.png", RESOURCE_TYPE_COIN)
 
 	// -------------------------------
@@ -317,18 +314,24 @@ func (g *Graphic) loadAllResources() {
 	// -------------------------------
 
 	// hero
-	g.registerNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_RIGHT)
-	g.registerNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_RIGHT)
-	g.registerFlippedNonTailResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_LEFT, true)
-	g.registerFlippedNonTailResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_LEFT, true)
+	g.registerNonTileResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_RIGHT)
+	g.registerNonTileResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_RIGHT)
+	g.registerFlippedNonTileResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_LEFT, true)
+	g.registerFlippedNonTileResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_LEFT, true)
 
 	// broken pieces
-	g.registerScaledNonTailResource("assets/brick-piece.png", RESOURCE_TYPE_BRICK_PIECE, TILE_SIZE/2, TILE_SIZE/2)
+	g.registerScaledNonTileResource("assets/brick-piece.png", RESOURCE_TYPE_BRICK_PIECE, TILE_SIZE/2, TILE_SIZE/2)
+
+	// mushroom enemy
+	g.registerScaledNonTileResource("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_0, TILE_SIZE, TILE_SIZE)
+	g.registerScaledNonTileResource("assets/mushroom-enemy-1.png", RESOURCE_TYPE_MUSHROOM_ENEMY_1, TILE_SIZE, TILE_SIZE)
+	g.registerScaledNonTileResource("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT, TILE_SIZE, TILE_SIZE)
+	g.registerScaledNonTileResource("assets/mushroom-enemy-down.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE)
 
 	// fireball
-	g.registerNonTailResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0)
-	g.registerNonTailResource("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1)
-	g.registerNonTailResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2)
-	g.registerNonTailResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3)
-	g.registerNonTailResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM)
+	g.registerNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0)
+	g.registerNonTileResource("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1)
+	g.registerNonTileResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2)
+	g.registerNonTileResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3)
+	g.registerNonTileResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM)
 }

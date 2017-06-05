@@ -8,7 +8,7 @@ import (
 )
 
 // assert that mythBox is hit-able by hero
-var _ heroHittableObject = &mythBox{}
+var _ hittableByHero = &mythBox{}
 
 type mythBox struct {
 	// resources

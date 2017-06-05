@@ -6,6 +6,9 @@ import (
 	"github.com/zenja/mario/vector"
 )
 
+// breakTileEffect is an Effect
+var _ Effect = &breakTileEffect{}
+
 type breakTileEffect struct {
 	pieceRes graphic.Resource
 
@@ -25,7 +28,7 @@ type breakTileEffect struct {
 	finished   bool
 }
 
-func NewBreakTileEffect(pieceRes graphic.Resource, tid vector.TileID, ticks uint32) Effect {
+func NewBreakTileEffect(pieceRes graphic.Resource, tid vector.TileID, ticks uint32) *breakTileEffect {
 	tileRect := GetTileRect(tid)
 	var size int32 = graphic.TILE_SIZE / 2
 	return &breakTileEffect{

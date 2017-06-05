@@ -6,6 +6,9 @@ import (
 	"github.com/zenja/mario/vector"
 )
 
+// showOnceEffect is an Effect
+var _ Effect = &showOnceEffect{}
+
 // showOnceEffect shows a resource for a while and then disappear
 type showOnceEffect struct {
 	res        graphic.Resource
@@ -15,7 +18,7 @@ type showOnceEffect struct {
 	finished   bool
 }
 
-func NewShowOnceEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32, durationMs uint32) Effect {
+func NewShowOnceEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32, durationMs uint32) *showOnceEffect {
 	return &showOnceEffect{
 		res:        res,
 		levelRect:  levelRect,
