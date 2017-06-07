@@ -139,15 +139,18 @@ func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 			continue
 		}
 
-		hit, hitEmyTop := isHitEnemy(velocityStep, h.levelRect, emy.GetRect())
+		hit, hitEmyTop, hitEmyLeft, hitEmyRight := isHitEnemy(velocityStep, h.levelRect, emy.GetRect())
 		if !hit {
 			continue
 		}
 
-		if hitEmyTop {
+		switch {
+		case hitEmyTop:
 			emy.hitByHero(h, HIT_FROM_TOP_W_INTENT, level, ticks)
-		} else {
-			emy.hitByHero(h, HIT_NOT_FROM_TOP_W_INTENT, level, ticks)
+		case hitEmyLeft:
+			emy.hitByHero(h, HIT_FROM_LEFT_W_INTENT, level, ticks)
+		case hitEmyRight:
+			emy.hitByHero(h, HIT_FROM_RIGHT_W_INTENT, level, ticks)
 		}
 	}
 
@@ -274,7 +277,7 @@ func calcHitDirection(heroVelStep vector.Vec2D, resolvedHeroRect sdl.Rect, tileR
 	return HIT_WITH_NO_INTENTION
 }
 
-func isHitEnemy(heroVelStep vector.Vec2D, heroRect sdl.Rect, enemyRect sdl.Rect) (hit bool, hitEnemyTop bool) {
+func isHitEnemy(heroVelStep vector.Vec2D, heroRect sdl.Rect, enemyRect sdl.Rect) (hit bool, hitEnemyTop bool, hitEnemyLeft bool, hitEnemyRight bool) {
 	interRect, intersected := heroRect.Intersect(&enemyRect)
 	if !intersected {
 		return
@@ -287,6 +290,10 @@ func isHitEnemy(heroVelStep vector.Vec2D, heroRect sdl.Rect, enemyRect sdl.Rect)
 	// so a hero can move from an position where him already collides with the enemy
 	if interRect.Y == enemyRect.Y && interRect.W > interRect.H && heroVelStep.Y > 0 {
 		hitEnemyTop = true
+	} else if interRect.X == enemyRect.X && interRect.W < interRect.H && heroVelStep.X > 0 {
+		hitEnemyLeft = true
+	} else if interRect.X+interRect.W == enemyRect.X+enemyRect.W && interRect.W < interRect.H && heroVelStep.X < 0 {
+		hitEnemyRight = true
 	}
 
 	return

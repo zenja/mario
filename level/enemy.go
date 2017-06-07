@@ -1,6 +1,8 @@
 package level
 
 import (
+	"log"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
@@ -140,6 +142,11 @@ func (m *mushroomEnemy) hitByFireball(level *Level, ticks uint32) {
 // TortoiseEnemy
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const (
+	tortoiseInitVelocityX         = 50
+	tortoiseBumpingVelocityXRight = 800
+)
+
 type tortoiseEnemy struct {
 	resLeft0      graphic.Resource
 	resLeft1      graphic.Resource
@@ -154,6 +161,9 @@ type tortoiseEnemy struct {
 	velocity      vector.Vec2D
 	lastTicks     uint32
 	isDead        bool
+
+	insideStartTicks uint32 // when tortoise go inside
+	bumpStartTicks   uint32 // when tortoise start bumping
 }
 
 func NewTortoiseEnemy(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Enemy {
@@ -185,7 +195,7 @@ func (t *tortoiseEnemy) Update(events *intsets.Sparse, ticks uint32, level *Leve
 		return
 	}
 
-	gravity := vector.Vec2D{0, 50}
+	gravity := vector.Vec2D{0, tortoiseInitVelocityX}
 	t.velocity.Add(gravity)
 
 	maxVel := vector.Vec2D{int32(graphic.TILE_SIZE * 30 / 100), int32(graphic.TILE_SIZE * 30 / 100)}
@@ -196,11 +206,11 @@ func (t *tortoiseEnemy) Update(events *intsets.Sparse, ticks uint32, level *Leve
 	_, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&t.levelRect)
 
 	if hitRight {
-		t.velocity.X = -100
+		t.velocity.X = -t.velocity.X
 		t.isFacingRight = false
 	}
 	if hitLeft {
-		t.velocity.X = 100
+		t.velocity.X = -t.velocity.X
 		t.isFacingRight = true
 	}
 
@@ -223,6 +233,11 @@ func (t *tortoiseEnemy) IsDead() bool {
 }
 
 func (t *tortoiseEnemy) updateResource(ticks uint32) {
+	if t.insideStartTicks > 0 || t.bumpStartTicks > 0 {
+		t.currRes = t.resInside
+		return
+	}
+
 	if ticks%1000 < 500 {
 		if t.isFacingRight {
 			t.currRes = t.resRight0
@@ -239,16 +254,51 @@ func (t *tortoiseEnemy) updateResource(ticks uint32) {
 }
 
 func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
-	if direction == HIT_FROM_TOP_W_INTENT {
-		// dead immediately!
-		t.isDead = true
+	if t.insideStartTicks > 0 && t.bumpStartTicks > 0 {
+		log.Fatal("bug! insideStartTicks and bumpStartTicks cannot be positive at the same time!")
+	}
 
+	switch direction {
+	case HIT_FROM_TOP_W_INTENT:
 		// bounce the hero up
 		h.velocity.Y = -1200
 
-		// add dead effect
-		level.AddEffect(NewShowOnceEffect(t.resInside, t.levelRect, ticks, 500))
-	} else {
+		switch {
+		// case 1: normal state => go inside, don't move in X
+		case t.insideStartTicks == 0 && t.bumpStartTicks == 0:
+			t.toInsideState(ticks)
+
+		// case 2: inside state => start bumping
+		case t.bumpStartTicks == 0:
+			// decide move right or left
+			heroMidX := h.levelRect.X + h.levelRect.W/2
+			tortoiseMidX := t.levelRect.X + t.levelRect.W/2
+			if heroMidX < tortoiseMidX {
+				t.toBumpingState(ticks, true)
+			} else {
+				t.toBumpingState(ticks, false)
+			}
+
+		// case 3: bumping state => stop bumping, turn to inside state, don't move in X
+		default:
+			t.toInsideState(ticks)
+		}
+
+	case HIT_FROM_LEFT_W_INTENT:
+		if t.insideStartTicks > 0 {
+			t.toBumpingState(ticks, true)
+		} else {
+			h.Hurt()
+		}
+
+	case HIT_FROM_RIGHT_W_INTENT:
+		if t.insideStartTicks > 0 {
+			t.toBumpingState(ticks, false)
+		} else {
+			h.Hurt()
+		}
+
+	default:
 		// hero is hurt
 		h.Hurt()
 	}
@@ -257,5 +307,26 @@ func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 func (t *tortoiseEnemy) hitByFireball(level *Level, ticks uint32) {
 	t.isDead = true
 	level.AddEffect(NewDeadDownEffect(t.resInside, t.levelRect, ticks))
+}
 
+func (t *tortoiseEnemy) toInsideState(ticks uint32) {
+	// change state
+	t.insideStartTicks = ticks
+	t.bumpStartTicks = 0
+
+	t.velocity.X = 0
+}
+
+func (t *tortoiseEnemy) toBumpingState(ticks uint32, toRight bool) {
+	// change state
+	t.insideStartTicks = 0
+	t.bumpStartTicks = ticks
+
+	if toRight {
+		// move right
+		t.velocity.X = tortoiseBumpingVelocityXRight
+	} else {
+		// move left
+		t.velocity.X = -tortoiseBumpingVelocityXRight
+	}
 }
