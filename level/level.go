@@ -46,49 +46,55 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 	for tidY := 0; tidY < int(numTiles.Y); tidY++ {
 		currentPos.X = 0
 		for tidX := 0; tidX < int(numTiles.X); tidX++ {
+			tid := vector.TileID{int32(tidX), int32(tidY)}
 			// note that arr's index is not TID, need reverse
 			switch arr[tidY][tidX] {
+			// Invisible block
+			case '#':
+				tileObjs[tidX][tidY] = NewInvisibleTileObject(tid)
+				obstMngr.AddTileObst(tid)
+
 			// Brick
 			case 'B':
 				mainRes := resourceRegistry[graphic.RESOURCE_TYPE_BRICK]
 				pieceRes := resourceRegistry[graphic.RESOURCE_TYPE_BRICK_PIECE]
 				tileObjs[tidX][tidY] = NewBreakableTileObject(mainRes, pieceRes, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
+				obstMngr.AddTileObst(tid)
 
 			// Ground with left grass
 			case 'L':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT]
 				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
+				obstMngr.AddTileObst(tid)
 
 			// Ground with mid grass
 			case 'G':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_MID]
 				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
+				obstMngr.AddTileObst(tid)
 
 			// Ground with right grass
 			case 'R':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT]
 				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
+				obstMngr.AddTileObst(tid)
 
 			// Inner ground in middle
 			case 'I':
 				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_INNER_MID]
 				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
+				obstMngr.AddTileObst(tid)
 
 			// Myth box
 			case 'M':
 				tileObjs[tidX][tidY] = NewMythBox(currentPos, 1, resourceRegistry)
 				// this is obstacle
-				obstMngr.AddTileObst(vector.TileID{int32(tidX), int32(tidY)})
+				obstMngr.AddTileObst(tid)
 
 			// Enemy 1: mushroom enemy
 			case '1':
