@@ -109,7 +109,13 @@ func (f *fireball) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	// if hit top/right/left, die, show boom effect
 	if hitTop || hitRight || hitLeft {
 		f.isDead = true
-		level.AddEffect(NewShowOnceEffect(f.resBoom, f.levelRect, ticks, fireballBoomDurationMS))
+		boomRect := sdl.Rect{
+			X: f.levelRect.X,
+			Y: f.levelRect.Y,
+			W: f.resBoom.GetW(),
+			H: f.resBoom.GetH(),
+		}
+		level.AddEffect(NewShowOnceEffect(f.resBoom, boomRect, ticks, fireballBoomDurationMS))
 		return
 	}
 

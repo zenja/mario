@@ -342,9 +342,9 @@ func (g *Graphic) loadAllResources() {
 	g.registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
 
 	// fireball
-	g.registerNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0)
-	g.registerNonTileResource("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1)
-	g.registerNonTileResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2)
-	g.registerNonTileResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3)
-	g.registerNonTileResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM)
+	g.registerScaledNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)
+	g.registerScaledNonTileResource("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1, 30, 30)
+	g.registerScaledNonTileResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
+	g.registerScaledNonTileResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
+	g.registerScaledNonTileResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 40, 40)
 }
