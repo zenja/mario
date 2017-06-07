@@ -82,7 +82,7 @@ func (m *mushroomEnemy) Update(events *intsets.Sparse, ticks uint32, level *Leve
 	m.levelRect.X += velocityStep.X
 	m.levelRect.Y += velocityStep.Y
 
-	_, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&m.levelRect)
+	_, hitRight, hitBottom, hitLeft, _ := level.EnemyObstMngr.SolveCollision(&m.levelRect)
 
 	if hitRight {
 		m.velocity.X = -100
@@ -203,7 +203,7 @@ func (t *tortoiseEnemy) Update(events *intsets.Sparse, ticks uint32, level *Leve
 	t.levelRect.X += velocityStep.X
 	t.levelRect.Y += velocityStep.Y
 
-	_, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&t.levelRect)
+	_, hitRight, hitBottom, hitLeft, _ := level.EnemyObstMngr.SolveCollision(&t.levelRect)
 
 	if hitRight {
 		t.velocity.X = -t.velocity.X

@@ -18,6 +18,7 @@ type Level struct {
 	Enemies          []Enemy
 	VolatileObjs     *list.List // a list of volatileObject objects
 	ObstMngr         *ObstacleManager
+	EnemyObstMngr    *ObstacleManager // obstacle manager for enemies
 	TheHero          *Hero
 	BGColor          sdl.Color
 	NumTiles         vector.Vec2D // NOTE: X, Y is TID
@@ -35,6 +36,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 
 	numTiles := vector.Vec2D{int32(len(arr[0])), int32(len(arr))}
 	obstMngr := NewObstacleManager(len(arr[0]), len(arr))
+	enemyObstMngr := NewObstacleManager(len(arr[0]), len(arr))
 	var hero *Hero
 
 	// init tileObjs array
@@ -53,6 +55,12 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 			case '#':
 				tileObjs[tidX][tidY] = NewInvisibleTileObject(tid)
 				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
+
+			// Invisible block only to enemies
+			case '"':
+				tileObjs[tidX][tidY] = NewInvisibleTileObject(tid)
+				enemyObstMngr.AddTileObst(tid)
 
 			// Brick
 			case 'B':
@@ -61,6 +69,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				tileObjs[tidX][tidY] = NewBreakableTileObject(mainRes, pieceRes, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
 
 			// Ground with left grass
 			case 'L':
@@ -68,6 +77,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
 
 			// Ground with mid grass
 			case 'G':
@@ -75,6 +85,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
 
 			// Ground with right grass
 			case 'R':
@@ -82,6 +93,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
 
 			// Inner ground in middle
 			case 'I':
@@ -89,12 +101,14 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
 
 			// Myth box
 			case 'M':
 				tileObjs[tidX][tidY] = NewMythBox(currentPos, 1, resourceRegistry)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
 
 			// Enemy 1: mushroom enemy
 			case '1':
@@ -125,6 +139,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 		Enemies:          enemies,
 		VolatileObjs:     list.New(),
 		ObstMngr:         obstMngr,
+		EnemyObstMngr:    enemyObstMngr,
 		TheHero:          hero,
 		BGColor:          sdl.Color{204, 237, 255, 255},
 		NumTiles:         numTiles,
@@ -246,6 +261,7 @@ func (l *Level) AddEffect(e Effect) {
 func (l *Level) RemoveObstacleTileObject(tid vector.TileID) {
 	l.TileObjects[tid.X][tid.Y] = nil
 	l.ObstMngr.RemoveTileObst(tid)
+	l.EnemyObstMngr.RemoveTileObst(tid)
 }
 
 func (l *Level) AddVolatileObject(vo volatileObject) {
