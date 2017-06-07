@@ -195,6 +195,24 @@ func (g *Graphic) registerFlippedNonTileResource(filename string, id ResourceID,
 	g.registerFlippedNonTileFromSurface(surface, id, flipHorizontal)
 }
 
+func (g *Graphic) registerResourceEx(
+	filename string,
+	id ResourceID,
+	width,
+	height int32,
+	isTile bool,
+	flipHorizontal bool,
+	flipVertical bool) {
+
+	surface, err := img.Load(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer surface.Free()
+
+	g.registerResourceFromSurfaceEx(surface, id, width, height, isTile, flipHorizontal, flipVertical)
+}
+
 // registerTileFromSurface loads a sprite from a surface into a TileResource object
 // User need to free the surface himself
 func (g *Graphic) registerTileFromSurface(surface *sdl.Surface, id ResourceID) {
@@ -212,37 +230,13 @@ func (g *Graphic) registerScaledNonTileFromSurface(surface *sdl.Surface, id Reso
 }
 
 func (g *Graphic) registerFlippedNonTileFromSurface(surface *sdl.Surface, id ResourceID, flipHorizontal bool) {
-	g.registerFlippedResourceFromSurface(surface, id, surface.W, surface.H, flipHorizontal, false)
+	g.registerFlippedResourceFromSurface(surface, id, surface.W, surface.H, false, flipHorizontal)
 }
 
 // registerResourceFromSurface loads a sprite from a surface into a Resource object
 // User need to free the surface himself
 func (g *Graphic) registerResourceFromSurface(surface *sdl.Surface, id ResourceID, width, height int32, isTile bool) {
-	if isTile && (width != TILE_SIZE || height != TILE_SIZE) {
-		log.Fatalf("declared to be tile but has wrong width (%d) or height (%d)", width, height)
-	}
-
-	texture, err := g.renderer.CreateTextureFromSurface(surface)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// make sure the tile is in good shape
-	if surface.W != width || surface.H != height {
-		oldTexture := texture
-		texture, err = g.clipTexture(oldTexture, &sdl.Rect{0, 0, width, height})
-		if err != nil {
-			log.Fatal(err)
-		}
-		// release original texture
-		oldTexture.Destroy()
-	}
-
-	if isTile {
-		g.ResourceRegistry[id] = &TileResource{texture: texture}
-	} else {
-		g.ResourceRegistry[id] = &NonTileResource{texture: texture, w: width, h: height}
-	}
+	g.registerResourceFromSurfaceEx(surface, id, width, height, isTile, false, false)
 }
 
 func (g *Graphic) registerFlippedResourceFromSurface(
@@ -250,8 +244,20 @@ func (g *Graphic) registerFlippedResourceFromSurface(
 	id ResourceID,
 	width,
 	height int32,
+	isTile bool,
+	flipHorizontal bool) {
+
+	g.registerResourceFromSurfaceEx(surface, id, width, height, isTile, flipHorizontal, !flipHorizontal)
+}
+
+func (g *Graphic) registerResourceFromSurfaceEx(
+	surface *sdl.Surface,
+	id ResourceID,
+	width,
+	height int32,
+	isTile bool,
 	flipHorizontal bool,
-	isTile bool) {
+	flipVertical bool) {
 
 	if isTile && (width != TILE_SIZE || height != TILE_SIZE) {
 		log.Fatalf("declared to be tile but has wrong width (%d) or height (%d)", width, height)
@@ -273,10 +279,17 @@ func (g *Graphic) registerFlippedResourceFromSurface(
 		oldTexture.Destroy()
 	}
 
-	// flip texture
-	oldTexture := texture
-	texture, err = g.flipTexture(texture, width, height, flipHorizontal)
-	oldTexture.Destroy()
+	// flip texture if needed
+	if flipHorizontal {
+		oldTexture := texture
+		texture, err = g.flipTexture(texture, width, height, true)
+		oldTexture.Destroy()
+	}
+	if flipVertical {
+		oldTexture := texture
+		texture, err = g.flipTexture(texture, width, height, false)
+		oldTexture.Destroy()
+	}
 
 	if isTile {
 		g.ResourceRegistry[id] = &TileResource{texture: texture}
@@ -326,7 +339,7 @@ func (g *Graphic) loadAllResources() {
 	g.registerScaledNonTileResource("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_0, TILE_SIZE, TILE_SIZE)
 	g.registerScaledNonTileResource("assets/mushroom-enemy-1.png", RESOURCE_TYPE_MUSHROOM_ENEMY_1, TILE_SIZE, TILE_SIZE)
 	g.registerScaledNonTileResource("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT, TILE_SIZE, TILE_SIZE)
-	g.registerScaledNonTileResource("assets/mushroom-enemy-down.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE)
+	g.registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
 
 	// fireball
 	g.registerNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0)
