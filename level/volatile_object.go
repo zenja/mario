@@ -106,7 +106,7 @@ func (f *fireball) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 
 	hitTop, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&f.levelRect)
 
-	// if hit top/right/left, die, show boom effect
+	// if hit top/right/left, dieDown, show boom effect
 	if hitTop || hitRight || hitLeft {
 		f.boom(level, ticks)
 		return
@@ -138,7 +138,7 @@ func (f *fireball) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 
 		emyRect := emy.GetRect()
 		if f.levelRect.HasIntersection(&emyRect) {
-			emy.hitByFireball(level, ticks)
+			emy.hitByFireball(f, level, ticks)
 			f.boom(level, ticks)
 		}
 	}

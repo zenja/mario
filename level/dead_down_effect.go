@@ -18,11 +18,17 @@ type deadDownEffect struct {
 	finished   bool
 }
 
-func NewDeadDownEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32) *deadDownEffect {
+func NewDeadDownEffect(res graphic.Resource, toRight bool, levelRect sdl.Rect, ticks uint32) *deadDownEffect {
+	var velocityX int32
+	if toRight {
+		velocityX = 400
+	} else {
+		velocityX = -400
+	}
 	return &deadDownEffect{
 		res:        res,
 		levelRect:  levelRect,
-		velocity:   vector.Vec2D{400, -1000},
+		velocity:   vector.Vec2D{velocityX, -1000},
 		startTicks: ticks,
 		lastTicks:  ticks,
 		finished:   false,

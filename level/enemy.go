@@ -18,7 +18,7 @@ type hittableByBrokenTile interface {
 }
 
 type hittableByFireball interface {
-	hitByFireball(level *Level, ticks uint32)
+	hitByFireball(fb *fireball, level *Level, ticks uint32)
 }
 
 type Enemy interface {
@@ -141,16 +141,20 @@ func (m *mushroomEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 }
 
 func (m *mushroomEnemy) hitByBrokenTile(level *Level, ticks uint32) {
-	m.die(level, ticks)
+	m.dieDown(true, level, ticks)
 }
 
-func (m *mushroomEnemy) hitByFireball(level *Level, ticks uint32) {
-	m.die(level, ticks)
+func (m *mushroomEnemy) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+	var dieToRight bool
+	if fb.levelRect.X < m.levelRect.X {
+		dieToRight = true
+	}
+	m.dieDown(dieToRight, level, ticks)
 }
 
-func (m *mushroomEnemy) die(level *Level, ticks uint32) {
+func (m *mushroomEnemy) dieDown(toRight bool, level *Level, ticks uint32) {
 	m.isDead = true
-	level.AddEffect(NewDeadDownEffect(m.resDown, m.levelRect, ticks))
+	level.AddEffect(NewDeadDownEffect(m.resDown, toRight, m.levelRect, ticks))
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -320,17 +324,20 @@ func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 }
 
 func (t *tortoiseEnemy) hitByBrokenTile(level *Level, ticks uint32) {
-	t.die(level, ticks)
+	t.dieDown(true, level, ticks)
 }
 
-func (t *tortoiseEnemy) hitByFireball(level *Level, ticks uint32) {
-	t.isDead = true
-	level.AddEffect(NewDeadDownEffect(t.resInside, t.levelRect, ticks))
+func (t *tortoiseEnemy) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+	var dieToRight bool
+	if fb.levelRect.X < t.levelRect.X {
+		dieToRight = true
+	}
+	t.dieDown(dieToRight, level, ticks)
 }
 
-func (t *tortoiseEnemy) die(level *Level, ticks uint32) {
+func (t *tortoiseEnemy) dieDown(toRight bool, level *Level, ticks uint32) {
 	t.isDead = true
-	level.AddEffect(NewDeadDownEffect(t.resInside, t.levelRect, ticks))
+	level.AddEffect(NewDeadDownEffect(t.resInside, toRight, t.levelRect, ticks))
 }
 
 func (t *tortoiseEnemy) toInsideState(ticks uint32) {
