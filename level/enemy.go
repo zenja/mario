@@ -135,3 +135,127 @@ func (m *mushroomEnemy) hitByFireball(level *Level, ticks uint32) {
 	m.isDead = true
 	level.AddEffect(NewDeadDownEffect(m.resDown, m.levelRect, ticks))
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// TortoiseEnemy
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type tortoiseEnemy struct {
+	resLeft0      graphic.Resource
+	resLeft1      graphic.Resource
+	resRight0     graphic.Resource
+	resRight1     graphic.Resource
+	resSemiInside graphic.Resource
+	resInside     graphic.Resource
+	currRes       graphic.Resource
+
+	isFacingRight bool
+	levelRect     sdl.Rect
+	velocity      vector.Vec2D
+	lastTicks     uint32
+	isDead        bool
+}
+
+func NewTortoiseEnemy(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Enemy {
+	resLeft0 := resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_LEFT_0]
+	return &tortoiseEnemy{
+		resLeft0:      resLeft0,
+		resLeft1:      resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_LEFT_1],
+		resRight0:     resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_RIGHT_0],
+		resRight1:     resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_RIGHT_1],
+		resSemiInside: resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_SEMI_INSIDE],
+		resInside:     resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_INSIDE],
+		currRes:       resLeft0,
+		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
+		velocity:      vector.Vec2D{-100, 0},
+	}
+}
+
+func (t *tortoiseEnemy) GetRect() sdl.Rect {
+	return t.levelRect
+}
+
+func (t *tortoiseEnemy) GetZIndex() int {
+	return ZINDEX_4
+}
+
+func (t *tortoiseEnemy) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+	if t.lastTicks == 0 {
+		t.lastTicks = ticks
+		return
+	}
+
+	gravity := vector.Vec2D{0, 50}
+	t.velocity.Add(gravity)
+
+	maxVel := vector.Vec2D{int32(graphic.TILE_SIZE * 30 / 100), int32(graphic.TILE_SIZE * 30 / 100)}
+	velocityStep := CalcVelocityStep(t.velocity, ticks, t.lastTicks, &maxVel)
+	t.levelRect.X += velocityStep.X
+	t.levelRect.Y += velocityStep.Y
+
+	_, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&t.levelRect)
+
+	if hitRight {
+		t.velocity.X = -100
+		t.isFacingRight = false
+	}
+	if hitLeft {
+		t.velocity.X = 100
+		t.isFacingRight = true
+	}
+
+	// prevent too big down velocity
+	if velocityStep.Y > 0 && hitBottom {
+		t.velocity.Y = 0
+	}
+
+	t.updateResource(ticks)
+
+	t.lastTicks = ticks
+}
+
+func (t *tortoiseEnemy) Draw(g *graphic.Graphic, camPos vector.Pos) {
+	g.DrawResource(t.currRes, t.levelRect, camPos)
+}
+
+func (t *tortoiseEnemy) IsDead() bool {
+	return t.isDead
+}
+
+func (t *tortoiseEnemy) updateResource(ticks uint32) {
+	if ticks%1000 < 500 {
+		if t.isFacingRight {
+			t.currRes = t.resRight0
+		} else {
+			t.currRes = t.resLeft0
+		}
+	} else {
+		if t.isFacingRight {
+			t.currRes = t.resRight1
+		} else {
+			t.currRes = t.resLeft1
+		}
+	}
+}
+
+func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	if direction == HIT_FROM_TOP_W_INTENT {
+		// dead immediately!
+		t.isDead = true
+
+		// bounce the hero up
+		h.velocity.Y = -1200
+
+		// add dead effect
+		level.AddEffect(NewShowOnceEffect(t.resInside, t.levelRect, ticks, 500))
+	} else {
+		// hero is hurt
+		h.Hurt()
+	}
+}
+
+func (t *tortoiseEnemy) hitByFireball(level *Level, ticks uint32) {
+	t.isDead = true
+	level.AddEffect(NewDeadDownEffect(t.resInside, t.levelRect, ticks))
+
+}

@@ -94,6 +94,10 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 			case '1':
 				enemies = append(enemies, NewMushroomEnemy(currentPos, resourceRegistry))
 
+			// Enemy 2: tortoise enemy
+			case '2':
+				enemies = append(enemies, NewTortoiseEnemy(currentPos, resourceRegistry))
+
 			// Hero
 			case 'H':
 				if hero != nil {

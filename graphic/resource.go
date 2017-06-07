@@ -40,6 +40,13 @@ const (
 	RESOURCE_TYPE_MUSHROOM_ENEMY_HIT
 	RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN
 
+	RESOURCE_TYPE_TORTOISE_LEFT_0
+	RESOURCE_TYPE_TORTOISE_LEFT_1
+	RESOURCE_TYPE_TORTOISE_RIGHT_0
+	RESOURCE_TYPE_TORTOISE_RIGHT_1
+	RESOURCE_TYPE_TORTOISE_INSIDE
+	RESOURCE_TYPE_TORTOISE_SEMI_INSIDE
+
 	RESOURCE_TYPE_FIREBALL_0
 	RESOURCE_TYPE_FIREBALL_1
 	RESOURCE_TYPE_FIREBALL_2
@@ -340,6 +347,14 @@ func (g *Graphic) loadAllResources() {
 	g.registerScaledNonTileResource("assets/mushroom-enemy-1.png", RESOURCE_TYPE_MUSHROOM_ENEMY_1, TILE_SIZE, TILE_SIZE)
 	g.registerScaledNonTileResource("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT, TILE_SIZE, TILE_SIZE)
 	g.registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
+
+	// tortoise enemy
+	g.registerScaledNonTileResource("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_RIGHT_0, TILE_SIZE, TILE_SIZE)
+	g.registerScaledNonTileResource("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_RIGHT_1, TILE_SIZE, TILE_SIZE)
+	g.registerResourceEx("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_LEFT_0, TILE_SIZE, TILE_SIZE, false, true, false)
+	g.registerResourceEx("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_LEFT_1, TILE_SIZE, TILE_SIZE, false, true, false)
+	g.registerScaledNonTileResource("assets/tortoise-inside.png", RESOURCE_TYPE_TORTOISE_INSIDE, TILE_SIZE, TILE_SIZE)
+	g.registerScaledNonTileResource("assets/tortoise-semi-inside.png", RESOURCE_TYPE_TORTOISE_SEMI_INSIDE, TILE_SIZE, TILE_SIZE)
 
 	// fireball
 	g.registerScaledNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)
