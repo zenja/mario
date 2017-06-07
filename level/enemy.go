@@ -13,6 +13,10 @@ type hittableByHero interface {
 	hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32)
 }
 
+type hittableByBrokenTile interface {
+	hitByBrokenTile(level *Level, ticks uint32)
+}
+
 type hittableByFireball interface {
 	hitByFireball(level *Level, ticks uint32)
 }
@@ -23,6 +27,9 @@ type Enemy interface {
 
 	// Enemy is hittable by hero
 	hittableByHero
+
+	// Enemy is hittable by breaking tile (from enemy's bottom tile)
+	hittableByBrokenTile
 
 	// Enemy is hittable by fireball
 	hittableByFireball
@@ -133,7 +140,15 @@ func (m *mushroomEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 	}
 }
 
+func (m *mushroomEnemy) hitByBrokenTile(level *Level, ticks uint32) {
+	m.die(level, ticks)
+}
+
 func (m *mushroomEnemy) hitByFireball(level *Level, ticks uint32) {
+	m.die(level, ticks)
+}
+
+func (m *mushroomEnemy) die(level *Level, ticks uint32) {
 	m.isDead = true
 	level.AddEffect(NewDeadDownEffect(m.resDown, m.levelRect, ticks))
 }
@@ -304,7 +319,16 @@ func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 	}
 }
 
+func (t *tortoiseEnemy) hitByBrokenTile(level *Level, ticks uint32) {
+	t.die(level, ticks)
+}
+
 func (t *tortoiseEnemy) hitByFireball(level *Level, ticks uint32) {
+	t.isDead = true
+	level.AddEffect(NewDeadDownEffect(t.resInside, t.levelRect, ticks))
+}
+
+func (t *tortoiseEnemy) die(level *Level, ticks uint32) {
 	t.isDead = true
 	level.AddEffect(NewDeadDownEffect(t.resInside, t.levelRect, ticks))
 }

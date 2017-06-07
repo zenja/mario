@@ -48,6 +48,21 @@ func (bto *breakableTileObject) hitByHero(h *Hero, direction hitDirection, level
 		return
 	}
 
+	// check if any enemy stand on this tile, hit them
+	for _, e := range level.Enemies {
+		emyRectLower := sdl.Rect{
+			X: e.GetRect().X,
+			Y: e.GetRect().Y + 1,
+			W: e.GetRect().W,
+			H: e.GetRect().H,
+		}
+		if emyRectLower.HasIntersection(&bto.levelRect) {
+			if !e.IsDead() {
+				e.hitByBrokenTile(level, ticks)
+			}
+		}
+	}
+
 	// remove object and obstacle
 	tid := GetTileID(vector.Pos{bto.levelRect.X, bto.levelRect.Y}, false, false)
 	level.RemoveObstacleTileObject(tid)
