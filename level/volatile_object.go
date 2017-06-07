@@ -108,14 +108,7 @@ func (f *fireball) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 
 	// if hit top/right/left, die, show boom effect
 	if hitTop || hitRight || hitLeft {
-		f.isDead = true
-		boomRect := sdl.Rect{
-			X: f.levelRect.X,
-			Y: f.levelRect.Y,
-			W: f.resBoom.GetW(),
-			H: f.resBoom.GetH(),
-		}
-		level.AddEffect(NewShowOnceEffect(f.resBoom, boomRect, ticks, fireballBoomDurationMS))
+		f.boom(level, ticks)
 		return
 	}
 
@@ -146,6 +139,7 @@ func (f *fireball) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		emyRect := emy.GetRect()
 		if f.levelRect.HasIntersection(&emyRect) {
 			emy.hitByFireball(level, ticks)
+			f.boom(level, ticks)
 		}
 	}
 
@@ -163,4 +157,15 @@ func (f *fireball) GetZIndex() int {
 
 func (f *fireball) IsDead() bool {
 	return f.isDead
+}
+
+func (f *fireball) boom(level *Level, ticks uint32) {
+	f.isDead = true
+	boomRect := sdl.Rect{
+		X: f.levelRect.X,
+		Y: f.levelRect.Y,
+		W: f.resBoom.GetW(),
+		H: f.resBoom.GetH(),
+	}
+	level.AddEffect(NewShowOnceEffect(f.resBoom, boomRect, ticks, fireballBoomDurationMS))
 }
