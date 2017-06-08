@@ -31,6 +31,13 @@ const (
 	RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT
 	RESOURCE_TYPE_MYTH_BOX_EMPTY
 
+	RESOURCE_TYPE_PIPE_LEFT_TOP
+	RESOURCE_TYPE_PIPE_RIGHT_TOP
+	RESOURCE_TYPE_PIPE_LEFT_MID
+	RESOURCE_TYPE_PIPE_RIGHT_MID
+	RESOURCE_TYPE_PIPE_LEFT_BOTTOM
+	RESOURCE_TYPE_PIPE_RIGHT_BOTTOM
+
 	RESOURCE_TYPE_COIN
 
 	RESOURCE_TYPE_BRICK_PIECE
@@ -315,18 +322,31 @@ func (g *Graphic) loadAllResources() {
 	// load tile resources
 	// -------------------------------
 
+	// brick
 	g.registerTileResource("assets/brick.png", RESOURCE_TYPE_BRICK)
 
+	// grass
 	g.registerTileResource("assets/ground-grass-left.png", RESOURCE_TYPE_GROUD_GRASS_LEFT)
 	g.registerTileResource("assets/ground-grass-mid.png", RESOURCE_TYPE_GROUD_GRASS_MID)
 	g.registerTileResource("assets/ground-grass-right.png", RESOURCE_TYPE_GROUD_GRASS_RIGHT)
 
+	// ground
 	g.registerTileResource("assets/ground-inner-mid.png", RESOURCE_TYPE_GROUD_INNER_MID)
 
+	// myth box
 	g.registerTileResource("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
 	g.registerTileResource("assets/myth-box-normal-light.png", RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
 	g.registerTileResource("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
 
+	// pipe
+	g.registerTileResource("assets/pipe-left-top.png", RESOURCE_TYPE_PIPE_LEFT_TOP)
+	g.registerTileResource("assets/pipe-right-top.png", RESOURCE_TYPE_PIPE_RIGHT_TOP)
+	g.registerTileResource("assets/pipe-left-mid.png", RESOURCE_TYPE_PIPE_LEFT_MID)
+	g.registerTileResource("assets/pipe-right-mid.png", RESOURCE_TYPE_PIPE_RIGHT_MID)
+	g.registerTileResource("assets/pipe-left-bottom.png", RESOURCE_TYPE_PIPE_LEFT_BOTTOM)
+	g.registerTileResource("assets/pipe-right-bottom.png", RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
+
+	// coin
 	g.registerTileResource("assets/coin.png", RESOURCE_TYPE_COIN)
 
 	// -------------------------------

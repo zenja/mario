@@ -73,32 +73,32 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 
 			// Ground with left grass
 			case 'L':
-				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT]
-				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				res := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
 				enemyObstMngr.AddTileObst(tid)
 
 			// Ground with mid grass
 			case 'G':
-				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_MID]
-				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				res := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_MID]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
 				enemyObstMngr.AddTileObst(tid)
 
 			// Ground with right grass
 			case 'R':
-				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT]
-				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				res := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
 				enemyObstMngr.AddTileObst(tid)
 
 			// Inner ground in middle
 			case 'I':
-				resource := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_INNER_MID]
-				tileObjs[tidX][tidY] = NewSingleTileObject(resource, currentPos, ZINDEX_0)
+				res := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_INNER_MID]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
 				enemyObstMngr.AddTileObst(tid)
@@ -106,6 +106,54 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 			// Myth box
 			case 'M':
 				tileObjs[tidX][tidY] = NewMythBox(currentPos, 1, resourceRegistry)
+				// this is obstacle
+				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
+
+			// left middle of pipe
+			case '[':
+				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_LEFT_MID]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
+				// this is obstacle
+				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
+
+			// right middle of pipe
+			case ']':
+				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_RIGHT_MID]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
+				// this is obstacle
+				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
+
+			// left top of pipe
+			case '{':
+				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_LEFT_TOP]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
+				// this is obstacle
+				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
+
+			// right top of pipe
+			case '}':
+				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
+				// this is obstacle
+				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
+
+			// left bottom of pipe
+			case '<':
+				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_LEFT_BOTTOM]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
+				// this is obstacle
+				obstMngr.AddTileObst(tid)
+				enemyObstMngr.AddTileObst(tid)
+
+			// right bottom of pipe
+			case '>':
+				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_RIGHT_BOTTOM]
+				tileObjs[tidX][tidY] = NewSingleTileObject(res, currentPos, ZINDEX_0)
 				// this is obstacle
 				obstMngr.AddTileObst(tid)
 				enemyObstMngr.AddTileObst(tid)
