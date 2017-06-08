@@ -40,6 +40,8 @@ const (
 
 	RESOURCE_TYPE_COIN
 
+	RESOURCE_TYPE_GOOD_MUSHROOM
+
 	RESOURCE_TYPE_BRICK_PIECE
 
 	RESOURCE_TYPE_MUSHROOM_ENEMY_0
@@ -348,6 +350,9 @@ func (g *Graphic) loadAllResources() {
 
 	// coin
 	g.registerTileResource("assets/coin.png", RESOURCE_TYPE_COIN)
+
+	// good mushroom
+	g.registerTileResource("assets/mushroom.png", RESOURCE_TYPE_GOOD_MUSHROOM)
 
 	// -------------------------------
 	// Load non-tile resources
