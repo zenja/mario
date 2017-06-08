@@ -22,14 +22,55 @@ type mythBox struct {
 	tileRect  sdl.Rect
 	levelRect sdl.Rect
 
-	numCoinsLeft int
+	actor mythBoxActor
 
 	isBounding bool
+	isEmpty    bool
 	velocity   vector.Vec2D
 	lastTicks  uint32
 }
 
-func NewMythBox(startPos vector.Pos, numCoins int, resourceRegistry map[graphic.ResourceID]graphic.Resource) Object {
+type mythBoxActor interface {
+	onEffectiveBottomHit(mb *mythBox, level *Level, ticks uint32)
+	onBoundingFinished(mb *mythBox, level *Level, ticks uint32)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Coin actor
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// coinActor is an mythBoxActor
+var _ mythBoxActor = &coinActor{}
+
+type coinActor struct {
+	numCoinsLeft int
+}
+
+func (ca *coinActor) onEffectiveBottomHit(mb *mythBox, level *Level, ticks uint32) {
+	if ca.numCoinsLeft > 0 {
+		// add a coin effect
+		mbTID := GetTileID(vector.Pos{mb.tileRect.X, mb.tileRect.Y}, false, false)
+		level.AddEffect(NewCoinEffect(vector.TileID{mbTID.X, mbTID.Y - 1}, level.ResourceRegistry, ticks))
+	}
+}
+
+func (ca *coinActor) onBoundingFinished(mb *mythBox, level *Level, ticks uint32) {
+	ca.numCoinsLeft--
+	if ca.numCoinsLeft <= 0 {
+		mb.Empty()
+	}
+}
+
+func NewCoinMythBox(startPos vector.Pos, numCoins int, resourceRegistry map[graphic.ResourceID]graphic.Resource) *mythBox {
+	actor := coinActor{numCoinsLeft: numCoins}
+	return newMythBox(startPos, &actor, resourceRegistry)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Myth box methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func newMythBox(startPos vector.Pos, actor mythBoxActor, resourceRegistry map[graphic.ResourceID]graphic.Resource) *mythBox {
 	resNormal, _ := resourceRegistry[graphic.RESOURCE_TYPE_MYTH_BOX_NORMAL]
 	resNormalLight, _ := resourceRegistry[graphic.RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT]
 	resEmpty, _ := resourceRegistry[graphic.RESOURCE_TYPE_MYTH_BOX_EMPTY]
@@ -41,7 +82,7 @@ func NewMythBox(startPos vector.Pos, numCoins int, resourceRegistry map[graphic.
 		currRes:        resNormal,
 		tileRect:       tileRect,
 		levelRect:      tileRect,
-		numCoinsLeft:   numCoins,
+		actor:          actor,
 	}
 }
 
@@ -56,7 +97,7 @@ func (mb *mythBox) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	}
 
 	// if has coin, show blink animation
-	if mb.numCoinsLeft > 0 {
+	if !mb.isEmpty {
 		// update res for blink animation
 		if ticks%400 < 200 {
 			mb.currRes = mb.resNormal
@@ -75,16 +116,11 @@ func (mb *mythBox) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 		mb.levelRect.X += velocityStep.X
 		mb.levelRect.Y += velocityStep.Y
 
-		// update coin, set empty res if no coin
-		mb.numCoinsLeft--
-		if mb.numCoinsLeft <= 0 {
-			mb.currRes = mb.resEmpty
-		}
-
 		// if reach origin (Y) position, the bounding is stopped
 		if mb.levelRect.Y >= mb.tileRect.Y {
 			mb.levelRect.Y = mb.tileRect.Y
 			mb.isBounding = false
+			mb.actor.onBoundingFinished(mb, level, ticks)
 		}
 	} else {
 		mb.levelRect.X = mb.tileRect.X
@@ -102,6 +138,32 @@ func (mb *mythBox) GetZIndex() int {
 	return ZINDEX_1
 }
 
+func (mb *mythBox) Empty() {
+	mb.isEmpty = true
+	mb.currRes = mb.resEmpty
+}
+
+func (mb *mythBox) IsEmpty() bool {
+	return mb.isEmpty
+}
+
+func (mb *mythBox) StartBounding() {
+	mb.isBounding = true
+	mb.velocity.Y = -100
+}
+
+func (mb *mythBox) StopBoundingIfNeeded() {
+	// if reach origin (Y) position, the bounding is stopped
+	if mb.levelRect.Y >= mb.tileRect.Y {
+		mb.levelRect.Y = mb.tileRect.Y
+		mb.isBounding = false
+	}
+}
+
+func (mb *mythBox) IsBounding() bool {
+	return mb.isBounding
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Private major methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,13 +174,15 @@ func (mb *mythBox) hitByHero(h *Hero, direction hitDirection, level *Level, tick
 		return
 	}
 
-	if !mb.isBounding && mb.numCoinsLeft > 0 {
-		mb.isBounding = true
-		mb.velocity.Y = -100
+	// empty myth box won't react to hit
+	if mb.isEmpty {
+		return
+	}
 
-		// add a coin effect
-		mbTID := GetTileID(vector.Pos{mb.tileRect.X, mb.tileRect.Y}, false, false)
-		level.AddEffect(NewCoinEffect(vector.TileID{mbTID.X, mbTID.Y - 1}, level.ResourceRegistry, ticks))
+	// only react if box is not bounding, to avoid bounding on bounding
+	if !mb.isBounding {
+		mb.StartBounding()
+		mb.actor.onEffectiveBottomHit(mb, level, ticks)
 	}
 }
 

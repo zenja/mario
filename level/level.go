@@ -101,9 +101,9 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-			// Myth box
+			// Myth box for coins
 			case 'M':
-				addAsFullObstTile(tid, NewMythBox(currentPos, 1, resourceRegistry))
+				addAsFullObstTile(tid, NewCoinMythBox(currentPos, 1, resourceRegistry))
 
 			// left middle of pipe
 			case '[':
@@ -297,4 +297,8 @@ func (l *Level) RemoveObstacleTileObject(tid vector.TileID) {
 
 func (l *Level) AddVolatileObject(vo volatileObject) {
 	l.VolatileObjs.PushBack(vo)
+}
+
+func (l *Level) AddEnemy(e Enemy) {
+	l.Enemies = append(l.Enemies, e)
 }
