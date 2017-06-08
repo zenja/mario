@@ -81,27 +81,7 @@ func (m *mushroomEnemy) Update(events *intsets.Sparse, ticks uint32, level *Leve
 		return
 	}
 
-	gravity := vector.Vec2D{0, 50}
-	m.velocity.Add(gravity)
-
-	maxVel := vector.Vec2D{int32(graphic.TILE_SIZE * 30 / 100), int32(graphic.TILE_SIZE * 30 / 100)}
-	velocityStep := CalcVelocityStep(m.velocity, ticks, m.lastTicks, &maxVel)
-	m.levelRect.X += velocityStep.X
-	m.levelRect.Y += velocityStep.Y
-
-	_, hitRight, hitBottom, hitLeft, _ := level.EnemyObstMngr.SolveCollision(&m.levelRect)
-
-	if hitRight {
-		m.velocity.X = -100
-	}
-	if hitLeft {
-		m.velocity.X = 100
-	}
-
-	// prevent too big down velocity
-	if velocityStep.Y > 0 && hitBottom {
-		m.velocity.Y = 0
-	}
+	enemySimpleMove(ticks, m.lastTicks, &m.velocity, &m.levelRect, level)
 
 	m.updateResource(ticks)
 
@@ -214,29 +194,9 @@ func (t *tortoiseEnemy) Update(events *intsets.Sparse, ticks uint32, level *Leve
 		return
 	}
 
-	gravity := vector.Vec2D{0, tortoiseInitVelocityX}
-	t.velocity.Add(gravity)
-
-	maxVel := vector.Vec2D{int32(graphic.TILE_SIZE * 30 / 100), int32(graphic.TILE_SIZE * 30 / 100)}
-	velocityStep := CalcVelocityStep(t.velocity, ticks, t.lastTicks, &maxVel)
-	t.levelRect.X += velocityStep.X
-	t.levelRect.Y += velocityStep.Y
-
-	_, hitRight, hitBottom, hitLeft, _ := level.EnemyObstMngr.SolveCollision(&t.levelRect)
-
-	if hitRight {
-		t.velocity.X = -t.velocity.X
-		t.isFacingRight = false
-	}
-	if hitLeft {
-		t.velocity.X = -t.velocity.X
-		t.isFacingRight = true
-	}
-
-	// prevent too big down velocity
-	if velocityStep.Y > 0 && hitBottom {
-		t.velocity.Y = 0
-	}
+	onHitLeft := func() { t.isFacingRight = true }
+	onHitRight := func() { t.isFacingRight = false }
+	enemySimpleMoveEx(ticks, t.lastTicks, &t.velocity, &t.levelRect, level, onHitLeft, onHitRight)
 
 	t.updateResource(ticks)
 
@@ -359,5 +319,118 @@ func (t *tortoiseEnemy) toBumpingState(ticks uint32, toRight bool) {
 	} else {
 		// move left
 		t.velocity.X = -tortoiseBumpingVelocityXRight
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GoodMushroom
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type goodMushroom struct {
+	res       graphic.Resource
+	levelRect sdl.Rect
+	lastTicks uint32
+	velocity  vector.Vec2D
+	isDead    bool
+}
+
+func NewGoodMushroom(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Enemy {
+	res := resourceRegistry[graphic.RESOURCE_TYPE_GOOD_MUSHROOM]
+	return &goodMushroom{
+		res:       res,
+		levelRect: sdl.Rect{startPos.X, startPos.Y, res.GetW(), res.GetH()},
+		velocity:  vector.Vec2D{-100, 0},
+	}
+}
+
+func (gm *goodMushroom) GetRect() sdl.Rect {
+	return gm.levelRect
+}
+
+func (gm *goodMushroom) GetZIndex() int {
+	return ZINDEX_4
+}
+
+func (gm *goodMushroom) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+	if gm.lastTicks == 0 {
+		gm.lastTicks = ticks
+		return
+	}
+
+	enemySimpleMove(ticks, gm.lastTicks, &gm.velocity, &gm.levelRect, level)
+
+	gm.lastTicks = ticks
+}
+
+func (gm *goodMushroom) Draw(g *graphic.Graphic, camPos vector.Pos) {
+	g.DrawResource(gm.res, gm.levelRect, camPos)
+}
+
+func (gm *goodMushroom) IsDead() bool {
+	return gm.isDead
+}
+
+func (gm *goodMushroom) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	// TODO change hero state
+}
+
+func (gm *goodMushroom) hitByBrokenTile(level *Level, ticks uint32) {
+	// bounce up
+	gm.velocity.Y -= 500
+}
+
+func (gm *goodMushroom) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+	// No interaction with fireball; Do nothing
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helper functions
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func enemySimpleMove(
+	ticks uint32,
+	lastTicks uint32,
+	vel *vector.Vec2D,
+	levelRect *sdl.Rect,
+	level *Level) {
+
+	enemySimpleMoveEx(ticks, lastTicks, vel, levelRect, level, nil, nil)
+}
+
+func enemySimpleMoveEx(
+	ticks uint32,
+	lastTicks uint32,
+	vel *vector.Vec2D,
+	levelRect *sdl.Rect,
+	level *Level,
+	onHitLeft func(),
+	onHitRight func()) {
+
+	gravity := vector.Vec2D{0, 50}
+	vel.Add(gravity)
+
+	maxVel := vector.Vec2D{int32(graphic.TILE_SIZE * 30 / 100), int32(graphic.TILE_SIZE * 30 / 100)}
+	velocityStep := CalcVelocityStep(*vel, ticks, lastTicks, &maxVel)
+	levelRect.X += velocityStep.X
+	levelRect.Y += velocityStep.Y
+
+	_, hitRight, hitBottom, hitLeft, _ := level.EnemyObstMngr.SolveCollision(levelRect)
+
+	if hitRight {
+		vel.X = -vel.X
+		if onHitRight != nil {
+			onHitRight()
+		}
+	}
+	if hitLeft {
+		vel.X = -vel.X
+		if onHitLeft != nil {
+			onHitLeft()
+		}
+	}
+
+	// prevent too big down velocity
+	if velocityStep.Y > 0 && hitBottom {
+		vel.Y = 0
 	}
 }
