@@ -54,7 +54,7 @@ type mushroomEnemy struct {
 	isDead    bool
 }
 
-func NewMushroomEnemy(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Enemy {
+func NewMushroomEnemy(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) *mushroomEnemy {
 	res0 := resourceRegistry[graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_0]
 	return &mushroomEnemy{
 		res0:      res0,
@@ -334,7 +334,7 @@ type goodMushroom struct {
 	isDead    bool
 }
 
-func NewGoodMushroom(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Enemy {
+func NewGoodMushroom(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) *goodMushroom {
 	res := resourceRegistry[graphic.RESOURCE_TYPE_GOOD_MUSHROOM]
 	return &goodMushroom{
 		res:       res,
@@ -371,6 +371,7 @@ func (gm *goodMushroom) IsDead() bool {
 }
 
 func (gm *goodMushroom) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	gm.isDead = true
 	// TODO change hero state
 }
 

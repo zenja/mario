@@ -102,8 +102,12 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				addAsFullObstTile(tid, o)
 
 			// Myth box for coins
+			case 'C':
+				addAsFullObstTile(tid, NewCoinMythBox(currentPos, 3, resourceRegistry))
+
+			// Myth box for mushrooms
 			case 'M':
-				addAsFullObstTile(tid, NewCoinMythBox(currentPos, 1, resourceRegistry))
+				addAsFullObstTile(tid, NewMushroomMythBox(currentPos, resourceRegistry))
 
 			// left middle of pipe
 			case '[':

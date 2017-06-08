@@ -67,6 +67,31 @@ func NewCoinMythBox(startPos vector.Pos, numCoins int, resourceRegistry map[grap
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Mushroom actor
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var _ mythBoxActor = &mushroomActor{}
+
+type mushroomActor struct {
+	enemy *goodMushroom
+}
+
+func (ma *mushroomActor) onEffectiveBottomHit(mb *mythBox, level *Level, ticks uint32) {
+	level.AddEnemy(ma.enemy)
+}
+
+func (ma *mushroomActor) onBoundingFinished(mb *mythBox, level *Level, ticks uint32) {
+	mb.Empty()
+}
+
+func NewMushroomMythBox(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) *mythBox {
+	enemyStartPos := vector.Pos{startPos.X, startPos.Y - graphic.TILE_SIZE}
+	enemy := NewGoodMushroom(enemyStartPos, resourceRegistry)
+	actor := mushroomActor{enemy}
+	return newMythBox(startPos, &actor, resourceRegistry)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Myth box methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
