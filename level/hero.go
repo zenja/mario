@@ -24,8 +24,15 @@ type Hero struct {
 	// current resource
 	currRes graphic.Resource
 
-	// current rect in level
+	// current rect in level, it is a hit box, not a render box
+	// for hero its hit box and render box are different, hit box is smaller
 	levelRect sdl.Rect
+
+	// render box
+	renderBoxXDelta int32
+	renderBoxYDelta int32
+	renderBoxW      int32
+	renderBoxH      int32
 
 	// current velocity, unit is pixels per second
 	velocity vector.Vec2D
@@ -46,18 +53,34 @@ type Hero struct {
 	hurtStartTicks uint32
 }
 
-func NewHero(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Hero {
+func NewHero(
+	renderBoxStartPos vector.Pos,
+	hitBoxXDelta, hitBoxYDelta, hitBoxWDelta, hitBoxHDelta int32,
+	resourceRegistry map[graphic.ResourceID]graphic.Resource) *Hero {
+
 	resStandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND_RIGHT]
 	resWalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING_RIGHT]
 	resStandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND_LEFT]
 	resWalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING_LEFT]
+
+	hitBox := sdl.Rect{
+		renderBoxStartPos.X + hitBoxXDelta,
+		renderBoxStartPos.Y + hitBoxYDelta,
+		resStandLeft.GetW() + hitBoxWDelta,
+		resStandLeft.GetH() + hitBoxHDelta,
+	}
+
 	h := &Hero{
 		resStandRight:   resStandRight,
 		resWalkingRight: resWalkingRight,
 		resStandLeft:    resStandLeft,
 		resWalkingLeft:  resWalkingLeft,
 		currRes:         resStandRight,
-		levelRect:       sdl.Rect{startPos.X, startPos.Y, resStandLeft.GetW(), resStandLeft.GetH()},
+		levelRect:       hitBox,
+		renderBoxXDelta: -hitBoxXDelta,
+		renderBoxYDelta: -hitBoxYDelta,
+		renderBoxW:      resStandLeft.GetW(),
+		renderBoxH:      resStandLeft.GetH(),
 		velocity:        vector.Vec2D{0, 0},
 		isOnGround:      false,
 		isFacingRight:   true,
@@ -71,12 +94,12 @@ func (h *Hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	ticks := sdl.GetTicks()
 	if h.hurtStartTicks > 0 && ticks-h.hurtStartTicks < hurtAnimationMS {
 		if (ticks-h.hurtStartTicks)%200 > 100 {
-			g.DrawResource(h.currRes, h.levelRect, camPos)
+			g.DrawResource(h.currRes, h.getRenderRect(), camPos)
 		} else {
 			// Draw nothing to create a blink effect
 		}
 	} else {
-		g.DrawResource(h.currRes, h.levelRect, camPos)
+		g.DrawResource(h.currRes, h.getRenderRect(), camPos)
 	}
 }
 
@@ -294,4 +317,13 @@ func isHitEnemy(heroVelStep vector.Vec2D, heroRect sdl.Rect, enemyRect sdl.Rect)
 	}
 
 	return
+}
+
+func (h *Hero) getRenderRect() sdl.Rect {
+	return sdl.Rect{
+		h.levelRect.X + h.renderBoxXDelta,
+		h.levelRect.Y + h.renderBoxYDelta,
+		h.renderBoxW,
+		h.renderBoxH,
+	}
 }

@@ -123,7 +123,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 				if hero != nil {
 					log.Fatal("more than one hero found")
 				}
-				hero = NewHero(currentPos, resourceRegistry)
+				hero = NewHero(currentPos, 8, 2, -16, -4, resourceRegistry)
 			}
 			currentPos.X += graphic.TILE_SIZE
 		}

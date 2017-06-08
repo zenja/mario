@@ -66,6 +66,7 @@ func (sto *singleTileObject) Update(events *intsets.Sparse, ticks uint32, level 
 	// Do nothing
 }
 
+// object hit box (not render box)
 func (sto *singleTileObject) GetRect() sdl.Rect {
 	return sto.levelRect
 }
