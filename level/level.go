@@ -15,6 +15,7 @@ import (
 type Level struct {
 	// Public
 	BGRes            graphic.Resource
+	Decorations      []Object
 	TileObjects      [][]Object
 	Enemies          []Enemy
 	VolatileObjs     *list.List // a list of volatileObject objects
@@ -29,8 +30,8 @@ type Level struct {
 	effects *list.List
 }
 
-func ParseLevel(bgFilename string, gra *graphic.Graphic, arr [][]byte) *Level {
-	gra.RegisterBackgroundResource(bgFilename, graphic.RESOURCE_TYPE_BG_0, len(arr))
+func ParseLevel(bgFilename string, gra *graphic.Graphic, levelArr [][]byte, decArr [][]byte) *Level {
+	gra.RegisterBackgroundResource(bgFilename, graphic.RESOURCE_TYPE_BG_0, len(levelArr))
 	bgRes := gra.ResourceRegistry[graphic.RESOURCE_TYPE_BG_0]
 
 	// NOTE: index is tid.X, tid.Y
@@ -38,9 +39,9 @@ func ParseLevel(bgFilename string, gra *graphic.Graphic, arr [][]byte) *Level {
 
 	var enemies []Enemy
 
-	numTiles := vector.Vec2D{int32(len(arr[0])), int32(len(arr))}
-	obstMngr := NewObstacleManager(len(arr[0]), len(arr))
-	enemyObstMngr := NewObstacleManager(len(arr[0]), len(arr))
+	numTiles := vector.Vec2D{int32(len(levelArr[0])), int32(len(levelArr))}
+	obstMngr := NewObstacleManager(len(levelArr[0]), len(levelArr))
+	enemyObstMngr := NewObstacleManager(len(levelArr[0]), len(levelArr))
 	var hero *Hero
 
 	// init tileObjs array
@@ -59,13 +60,19 @@ func ParseLevel(bgFilename string, gra *graphic.Graphic, arr [][]byte) *Level {
 		enemyObstMngr.AddTileObst(tid)
 	}
 
+	var decorations []Object
+	addDecoration := func(d *decoration) {
+		decorations = append(decorations, d)
+	}
+
+	// parse level
 	var currentPos vector.Pos
 	for tidY := 0; tidY < int(numTiles.Y); tidY++ {
 		currentPos.X = 0
 		for tidX := 0; tidX < int(numTiles.X); tidX++ {
 			tid := vector.TileID{int32(tidX), int32(tidY)}
-			// note that arr's index is not TID, need reverse
-			switch arr[tidY][tidX] {
+			// note that levelArr's index is not TID, need reverse
+			switch levelArr[tidY][tidX] {
 			// Invisible block
 			case '#':
 				addAsFullObstTile(tid, NewInvisibleTileObject(tid))
@@ -169,12 +176,31 @@ func ParseLevel(bgFilename string, gra *graphic.Graphic, arr [][]byte) *Level {
 		currentPos.Y += graphic.TILE_SIZE
 	}
 
+	// parse decorations
+	currentPos = vector.Pos{}
+	for tidY := 0; tidY < int(numTiles.Y); tidY++ {
+		currentPos.X = 0
+		for tidX := 0; tidX < int(numTiles.X); tidX++ {
+			tid := vector.TileID{int32(tidX), int32(tidY)}
+			// note that decArr's index is not TID, need reverse
+			switch decArr[tidY][tidX] {
+			case '1':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_GRASS_0,
+					graphic.RESOURCE_TYPE_DEC_GRASS_1,
+				}
+				addDecoration(NewDecoration(tid, resIds, gra.ResourceRegistry, 800))
+			}
+		}
+	}
+
 	if hero == nil {
 		log.Fatal("no hero found when parsing level")
 	}
 
 	return &Level{
 		BGRes:            bgRes,
+		Decorations:      decorations,
 		TileObjects:      tileObjs,
 		Enemies:          enemies,
 		VolatileObjs:     list.New(),
@@ -201,14 +227,38 @@ func ParseLevelFromFile(filename string, gra *graphic.Graphic) *Level {
 	scanner.Scan()
 	bgFilename := scanner.Text()
 
-	var arr [][]byte
-	for scanner.Scan() {
-		if len(scanner.Text()) == 0 {
-			continue
-		}
-		arr = append(arr, []byte(scanner.Text()))
+	// the second line is a "~"
+	scanner.Scan()
+	if scanner.Text() != "~" {
+		log.Fatal("should meet \"~\"")
 	}
-	return ParseLevel(bgFilename, gra, arr)
+
+	// parse level
+	var levelArr [][]byte
+	for scanner.Scan() {
+		// stops when meet "~" line
+		if scanner.Text() == "~" {
+			break
+		}
+
+		levelArr = append(levelArr, []byte(scanner.Text()))
+	}
+
+	// parse decorations
+	var decArr [][]byte
+	for scanner.Scan() {
+		decArr = append(decArr, []byte(scanner.Text()))
+	}
+
+	if len(levelArr) != len(decArr) {
+		log.Fatal("level arr and decoration arr should have same height")
+	}
+
+	if len(levelArr[0]) != len(decArr[0]) {
+		log.Fatal("level arr and decoration arr should have same width")
+	}
+
+	return ParseLevel(bgFilename, gra, levelArr, decArr)
 }
 
 func (l *Level) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos) {
@@ -222,6 +272,12 @@ func (l *Level) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos) {
 		l.BGRes.GetH(),
 	}
 	g.DrawResource(l.BGRes, bgLevelRect, camPos)
+
+	// render decorations
+	for _, d := range l.Decorations {
+		d.Update(nil, ticks, l)
+		d.Draw(g, camPos)
+	}
 
 	var zIndexObjs [ZINDEX_NUM][]Object
 	// draw lowest z-index, bookkeeping higher z-index for later rendering

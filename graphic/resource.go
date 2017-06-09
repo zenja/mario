@@ -27,6 +27,9 @@ const (
 	RESOURCE_TYPE_GROUD_GRASS_MID
 	RESOURCE_TYPE_GROUD_GRASS_RIGHT
 
+	RESOURCE_TYPE_DEC_GRASS_0
+	RESOURCE_TYPE_DEC_GRASS_1
+
 	RESOURCE_TYPE_GROUD_INNER_MID
 
 	RESOURCE_TYPE_MYTH_BOX_NORMAL
@@ -380,6 +383,10 @@ func (g *Graphic) loadAllResources() {
 	g.registerNonTileResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_RIGHT)
 	g.registerFlippedNonTileResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_LEFT, true)
 	g.registerFlippedNonTileResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_LEFT, true)
+
+	// decoration: grass
+	g.registerNonTileResource("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
+	g.registerNonTileResource("assets/dec-grass-1.png", RESOURCE_TYPE_DEC_GRASS_1)
 
 	// broken pieces
 	g.registerScaledNonTileResource("assets/brick-piece.png", RESOURCE_TYPE_BRICK_PIECE, TILE_SIZE/2, TILE_SIZE/2)
