@@ -14,6 +14,7 @@ import (
 
 type Level struct {
 	// Public
+	BGRes            graphic.Resource
 	TileObjects      [][]Object
 	Enemies          []Enemy
 	VolatileObjs     *list.List // a list of volatileObject objects
@@ -28,7 +29,10 @@ type Level struct {
 	effects *list.List
 }
 
-func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
+func ParseLevel(bgFilename string, gra *graphic.Graphic, arr [][]byte) *Level {
+	gra.RegisterBackgroundResource(bgFilename, graphic.RESOURCE_TYPE_BG_0, len(arr))
+	bgRes := gra.ResourceRegistry[graphic.RESOURCE_TYPE_BG_0]
+
 	// NOTE: index is tid.X, tid.Y
 	var tileObjs [][]Object
 
@@ -72,93 +76,93 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 
 			// Brick
 			case 'B':
-				mainRes := resourceRegistry[graphic.RESOURCE_TYPE_BRICK]
-				pieceRes := resourceRegistry[graphic.RESOURCE_TYPE_BRICK_PIECE]
+				mainRes := gra.ResourceRegistry[graphic.RESOURCE_TYPE_BRICK]
+				pieceRes := gra.ResourceRegistry[graphic.RESOURCE_TYPE_BRICK_PIECE]
 				o := NewBreakableTileObject(mainRes, pieceRes, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// Ground with left grass
 			case 'L':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// Ground with mid grass
 			case 'G':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_MID]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_MID]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// Ground with right grass
 			case 'R':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// Inner ground in middle
 			case 'I':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_GROUD_INNER_MID]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_GROUD_INNER_MID]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// Myth box for coins
 			case 'C':
-				addAsFullObstTile(tid, NewCoinMythBox(currentPos, 3, resourceRegistry))
+				addAsFullObstTile(tid, NewCoinMythBox(currentPos, 3, gra.ResourceRegistry))
 
 			// Myth box for mushrooms
 			case 'M':
-				addAsFullObstTile(tid, NewMushroomMythBox(currentPos, resourceRegistry))
+				addAsFullObstTile(tid, NewMushroomMythBox(currentPos, gra.ResourceRegistry))
 
 			// left middle of pipe
 			case '[':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_LEFT_MID]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_PIPE_LEFT_MID]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// right middle of pipe
 			case ']':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_RIGHT_MID]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_PIPE_RIGHT_MID]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// left top of pipe
 			case '{':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_LEFT_TOP]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_PIPE_LEFT_TOP]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// right top of pipe
 			case '}':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// left bottom of pipe
 			case '<':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_LEFT_BOTTOM]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_PIPE_LEFT_BOTTOM]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// right bottom of pipe
 			case '>':
-				res := resourceRegistry[graphic.RESOURCE_TYPE_PIPE_RIGHT_BOTTOM]
+				res := gra.ResourceRegistry[graphic.RESOURCE_TYPE_PIPE_RIGHT_BOTTOM]
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
 			// Enemy 1: mushroom enemy
 			case '1':
-				enemies = append(enemies, NewMushroomEnemy(currentPos, resourceRegistry))
+				enemies = append(enemies, NewMushroomEnemy(currentPos, gra.ResourceRegistry))
 
 			// Enemy 2: tortoise enemy
 			case '2':
-				enemies = append(enemies, NewTortoiseEnemy(currentPos, resourceRegistry))
+				enemies = append(enemies, NewTortoiseEnemy(currentPos, gra.ResourceRegistry))
 
 			// Hero
 			case 'H':
 				if hero != nil {
 					log.Fatal("more than one hero found")
 				}
-				hero = NewHero(currentPos, 8, 2, -16, -4, resourceRegistry)
+				hero = NewHero(currentPos, 8, 2, -16, -4, gra.ResourceRegistry)
 			}
 			currentPos.X += graphic.TILE_SIZE
 		}
@@ -170,6 +174,7 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 	}
 
 	return &Level{
+		BGRes:            bgRes,
 		TileObjects:      tileObjs,
 		Enemies:          enemies,
 		VolatileObjs:     list.New(),
@@ -178,12 +183,12 @@ func ParseLevel(arr [][]byte, resourceRegistry map[graphic.ResourceID]graphic.Re
 		TheHero:          hero,
 		BGColor:          sdl.Color{204, 237, 255, 255},
 		NumTiles:         numTiles,
-		ResourceRegistry: resourceRegistry,
+		ResourceRegistry: gra.ResourceRegistry,
 		effects:          list.New(),
 	}
 }
 
-func ParseLevelFromFile(filename string, resourceRegistry map[graphic.ResourceID]graphic.Resource) *Level {
+func ParseLevelFromFile(filename string, gra *graphic.Graphic) *Level {
 	f, err := os.Open(filename)
 	if err != nil {
 		log.Fatalf("failed to open file %s", filename)
@@ -191,15 +196,32 @@ func ParseLevelFromFile(filename string, resourceRegistry map[graphic.ResourceID
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
+
+	// first line is background pic filename
+	scanner.Scan()
+	bgFilename := scanner.Text()
+
 	var arr [][]byte
 	for scanner.Scan() {
+		if len(scanner.Text()) == 0 {
+			continue
+		}
 		arr = append(arr, []byte(scanner.Text()))
 	}
-	return ParseLevel(arr, resourceRegistry)
+	return ParseLevel(bgFilename, gra, arr)
 }
 
 func (l *Level) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos) {
 	var ticks = sdl.GetTicks()
+
+	// render background
+	bgLevelRect := sdl.Rect{
+		camPos.X * 80 / 100,
+		0,
+		l.BGRes.GetW(),
+		l.BGRes.GetH(),
+	}
+	g.DrawResource(l.BGRes, bgLevelRect, camPos)
 
 	var zIndexObjs [ZINDEX_NUM][]Object
 	// draw lowest z-index, bookkeeping higher z-index for later rendering

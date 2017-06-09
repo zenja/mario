@@ -37,7 +37,7 @@ func NewGame() *Game {
 }
 
 func (game *Game) LoadLevel(filename string) {
-	game.currentLevel = level.ParseLevelFromFile(filename, game.Gra.ResourceRegistry)
+	game.currentLevel = level.ParseLevelFromFile(filename, game.Gra)
 }
 
 func (game *Game) Quit() {

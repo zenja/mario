@@ -21,6 +21,8 @@ type Resource interface {
 const (
 	RESOURCE_TYPE_BRICK = iota
 
+	RESOURCE_TYPE_BG_0
+
 	RESOURCE_TYPE_GROUD_GRASS_LEFT
 	RESOURCE_TYPE_GROUD_GRASS_MID
 	RESOURCE_TYPE_GROUD_GRASS_RIGHT
@@ -209,6 +211,21 @@ func (g *Graphic) registerFlippedNonTileResource(filename string, id ResourceID,
 	defer surface.Free()
 
 	g.registerFlippedNonTileFromSurface(surface, id, flipHorizontal)
+}
+
+// RegisterBackgroundResource register a level background resource, scale it to have level's height
+// This function has to be public because it is used when parsing a level
+func (g *Graphic) RegisterBackgroundResource(filename string, id ResourceID, tilesInY int) {
+	surface, err := img.Load(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer surface.Free()
+
+	dstHeight := int32(tilesInY * TILE_SIZE)
+	dstWidth := surface.W * (dstHeight / surface.H)
+
+	g.registerScaledNonTileFromSurface(surface, id, dstWidth, dstHeight)
 }
 
 func (g *Graphic) registerResourceEx(
