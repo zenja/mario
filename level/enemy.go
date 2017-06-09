@@ -339,7 +339,7 @@ func NewGoodMushroom(startPos vector.Pos, resourceRegistry map[graphic.ResourceI
 	return &goodMushroom{
 		res:       res,
 		levelRect: sdl.Rect{startPos.X, startPos.Y, res.GetW(), res.GetH()},
-		velocity:  vector.Vec2D{-100, 0},
+		velocity:  vector.Vec2D{-100, -500},
 	}
 }
 
