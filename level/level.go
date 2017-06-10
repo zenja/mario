@@ -340,8 +340,8 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
 		d.Draw(g, camPos)
 	}
 
+	// put all tile objects in render list
 	var zIndexObjs [ZINDEX_NUM][]Object
-	// draw lowest z-index, bookkeeping higher z-index for later rendering
 	for i := 0; i < int(l.NumTiles.X); i++ {
 		for j := 0; j < int(l.NumTiles.Y); j++ {
 			o := l.TileObjects[i][j]
@@ -350,11 +350,7 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
 			}
 
 			z := o.GetZIndex()
-			if z == ZINDEX_0 {
-				o.Draw(g, camPos)
-			} else {
-				zIndexObjs[z] = append(zIndexObjs[z], o)
-			}
+			zIndexObjs[z] = append(zIndexObjs[z], o)
 		}
 	}
 
@@ -363,6 +359,16 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
 		log.Fatal("hero's z-index cannot be lowest")
 	}
 	zIndexObjs[l.TheHero.GetZIndex()] = append(zIndexObjs[l.TheHero.GetZIndex()], l.TheHero)
+
+	// render live enemies
+	for _, e := range l.Enemies {
+		if e.IsDead() {
+			continue
+		}
+
+		z := e.GetZIndex()
+		zIndexObjs[z] = append(zIndexObjs[z], e)
+	}
 
 	// render higher z-index one-by-one
 	for _, objs := range zIndexObjs {
@@ -373,16 +379,7 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
 		}
 	}
 
-	// render live enemies
-	for _, e := range l.Enemies {
-		if e.IsDead() {
-			continue
-		}
-
-		e.Draw(g, camPos)
-	}
-
-	// render volatile objects
+	// render volatile objects (don't care z-index)
 	for e := l.VolatileObjs.Front(); e != nil; e = e.Next() {
 		vo, _ := e.Value.(volatileObject)
 
@@ -391,7 +388,7 @@ func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
 		}
 	}
 
-	// render effects
+	// render effects (don't care z-index)
 	for e := l.effects.Front(); e != nil; e = e.Next() {
 		eff, _ := e.Value.(Effect)
 
