@@ -8,10 +8,10 @@ import (
 	"container/list"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
-	"github.com/zenja/mario/event"
 )
 
 type Level struct {
@@ -265,9 +265,13 @@ func ParseLevelFromFile(filename string, gra *graphic.Graphic) *Level {
 	return ParseLevel(bgFilename, gra, levelArr, decArr)
 }
 
+func (l *Level) Init() {
+	l.fadeIn()
+}
+
 func (l *Level) HandleEvents(events *intsets.Sparse) {
 	if events.Has(int(event.EVENT_KEYDOWN_F4)) {
-		l.AddEffect(NewScreenFadeEffect(l.ResourceRegistry, true, 2000, sdl.GetTicks()))
+		l.fadeIn()
 	}
 }
 
@@ -432,5 +436,14 @@ func (l *Level) AddEnemy(e Enemy) {
 }
 
 func (l *Level) Restart() {
+	l.fadeIn()
 	l.TheHero.levelRect = l.InitHeroRect
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Private helpers
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (l *Level) fadeIn() {
+	l.AddEffect(NewScreenFadeEffect(l.ResourceRegistry, true, 1500, sdl.GetTicks()))
 }

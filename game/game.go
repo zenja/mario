@@ -38,6 +38,7 @@ func NewGame() *Game {
 
 func (game *Game) LoadLevel(filename string) {
 	game.currentLevel = level.ParseLevelFromFile(filename, game.Gra)
+	game.currentLevel.Init()
 }
 
 func (game *Game) Quit() {
