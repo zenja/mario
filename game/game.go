@@ -52,7 +52,8 @@ func (game *Game) StartGameLoop() {
 	for game.running {
 		frameStart := sdl.GetTicks()
 
-		events := game.handleEvents()
+		events := game.gatherEvents()
+		game.handleGlobalEvents(events)
 
 		// update tile objects
 		for i := 0; i < int(game.currentLevel.NumTiles.X); i++ {
@@ -97,7 +98,7 @@ func (game *Game) StartGameLoop() {
 // Helper methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (game *Game) handleEvents() *intsets.Sparse {
+func (game *Game) gatherEvents() *intsets.Sparse {
 	var events intsets.Sparse
 	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
 		switch e.(type) {
@@ -121,6 +122,9 @@ func (game *Game) handleEvents() *intsets.Sparse {
 	}
 	if kbState[int(sdl.SCANCODE_F)] == 1 {
 		events.Insert(int(event.EVENT_KEYDOWN_F))
+	}
+	if kbState[int(sdl.SCANCODE_F1)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_F1))
 	}
 	return &events
 }
@@ -149,5 +153,11 @@ func (game *Game) updateCamPos() {
 	// check bottom
 	if perfectY+graphic.SCREEN_HEIGHT > game.currentLevel.GetLevelHeight() {
 		game.camPos.Y = game.currentLevel.GetLevelHeight() - graphic.SCREEN_HEIGHT
+	}
+}
+
+func (game *Game) handleGlobalEvents(events *intsets.Sparse) {
+	if events.Has(int(event.EVENT_KEYDOWN_F1)) {
+		game.currentLevel.Restart()
 	}
 }

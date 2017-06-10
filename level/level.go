@@ -22,6 +22,7 @@ type Level struct {
 	ObstMngr         *ObstacleManager
 	EnemyObstMngr    *ObstacleManager // obstacle manager for enemies
 	TheHero          *Hero
+	InitHeroRect     sdl.Rect
 	BGColor          sdl.Color
 	NumTiles         vector.Vec2D // NOTE: X, Y is TID
 	ResourceRegistry map[graphic.ResourceID]graphic.Resource
@@ -207,6 +208,7 @@ func ParseLevel(bgFilename string, gra *graphic.Graphic, levelArr [][]byte, decA
 		ObstMngr:         obstMngr,
 		EnemyObstMngr:    enemyObstMngr,
 		TheHero:          hero,
+		InitHeroRect:     hero.levelRect,
 		BGColor:          sdl.Color{204, 237, 255, 255},
 		NumTiles:         numTiles,
 		ResourceRegistry: gra.ResourceRegistry,
@@ -383,4 +385,8 @@ func (l *Level) AddVolatileObject(vo volatileObject) {
 
 func (l *Level) AddEnemy(e Enemy) {
 	l.Enemies = append(l.Enemies, e)
+}
+
+func (l *Level) Restart() {
+	l.TheHero.levelRect = l.InitHeroRect
 }
