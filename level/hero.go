@@ -16,6 +16,8 @@ const hurtAnimationMS = 2000
 var _ Object = &Hero{}
 
 type Hero struct {
+	resourceRegistry map[graphic.ResourceID]graphic.Resource
+
 	// hero 0 res
 	res0StandRight   graphic.Resource
 	res0WalkingRight graphic.Resource
@@ -121,6 +123,8 @@ func NewHero(
 	}
 
 	h := &Hero{
+		resourceRegistry: resourceRegistry,
+
 		res0StandRight:   res0StandRight,
 		res0WalkingRight: res0WalkingRight,
 		res0StandLeft:    res0StandLeft,
@@ -186,7 +190,7 @@ func (h *Hero) HandleEvents(events *intsets.Sparse, level *Level) {
 		h.upgrade(level)
 	}
 	if events.Has(int(event.EVENT_KEYDOWN_F3)) {
-		h.downgrade(level)
+		h.downgrade()
 	}
 }
 
@@ -295,6 +299,8 @@ func (h *Hero) Hurt() {
 		h.lives--
 		h.hurtStartTicks = sdl.GetTicks()
 	}
+
+	h.downgrade()
 }
 
 func (h *Hero) GetLives() int {
@@ -422,7 +428,7 @@ func (h *Hero) upgrade(level *Level) {
 	level.AddEffect(NewShineEffect(level.ResourceRegistry, h, sdl.GetTicks()))
 }
 
-func (h *Hero) downgrade(level *Level) {
+func (h *Hero) downgrade() {
 	switch h.grade {
 	case 1:
 		h.grade = 0
