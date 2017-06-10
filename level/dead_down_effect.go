@@ -35,7 +35,7 @@ func NewDeadDownEffect(res graphic.Resource, toRight bool, levelRect sdl.Rect, t
 	}
 }
 
-func (dde *deadDownEffect) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+func (dde *deadDownEffect) Update(ticks uint32) {
 	if ticks-dde.startTicks > 2000 {
 		dde.finished = true
 		return
@@ -47,9 +47,13 @@ func (dde *deadDownEffect) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos, 
 	dde.levelRect.X += velStep.X
 	dde.levelRect.Y += velStep.Y
 
-	g.DrawResource(dde.res, dde.levelRect, camPos)
-
 	dde.lastTicks = ticks
+}
+
+func (dde *deadDownEffect) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+	if !dde.Finished() {
+		g.DrawResource(dde.res, dde.levelRect, camPos)
+	}
 }
 
 func (dde *deadDownEffect) Finished() bool {

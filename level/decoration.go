@@ -4,7 +4,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
-	"golang.org/x/tools/container/intsets"
 )
 
 var _ Object = &decoration{}
@@ -46,7 +45,7 @@ func (d *decoration) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	g.DrawResource(d.reses[d.currResIdx], d.GetRect(), camPos)
 }
 
-func (d *decoration) Update(_ *intsets.Sparse, ticks uint32, _ *Level) {
+func (d *decoration) Update(ticks uint32, _ *Level) {
 	d.currResIdx = int((ticks / d.frameMs) % uint32(len(d.reses)))
 }
 

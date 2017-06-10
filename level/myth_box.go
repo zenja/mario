@@ -4,7 +4,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
-	"golang.org/x/tools/container/intsets"
 )
 
 // assert that mythBox is hit-able by hero
@@ -115,7 +114,7 @@ func (mb *mythBox) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	g.DrawResource(mb.currRes, mb.levelRect, camPos)
 }
 
-func (mb *mythBox) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (mb *mythBox) Update(ticks uint32, level *Level) {
 	if mb.lastTicks == 0 {
 		mb.lastTicks = ticks
 		return

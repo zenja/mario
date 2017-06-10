@@ -6,6 +6,7 @@ import (
 )
 
 type Effect interface {
-	UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos, ticks uint32)
+	Update(ticks uint32)
+	Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32)
 	Finished() bool
 }

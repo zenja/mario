@@ -34,6 +34,10 @@ type Hero struct {
 	renderBoxW      int32
 	renderBoxH      int32
 
+	// event state
+	upPressed bool
+	fPressed  bool
+
 	// current velocity, unit is pixels per second
 	velocity vector.Vec2D
 
@@ -89,6 +93,36 @@ func NewHero(
 	return h
 }
 
+func (h *Hero) HandleEvents(events *intsets.Sparse) {
+	// standing on ground will absorb all X-velocity
+	if h.isOnGround {
+		h.velocity.X = 0
+	}
+
+	if events.Has(int(event.EVENT_KEYDOWN_LEFT)) {
+		h.isFacingRight = false
+		h.velocity.X = -350
+	} else if events.Has(int(event.EVENT_KEYDOWN_RIGHT)) {
+		h.isFacingRight = true
+		h.velocity.X = 350
+	}
+	if events.Has(int(event.EVENT_KEYDOWN_SPACE)) {
+		if h.isOnGround {
+			h.velocity.Y = -1000
+		}
+	}
+	if events.Has(int(event.EVENT_KEYDOWN_F)) {
+		h.fPressed = true
+	} else {
+		h.fPressed = false
+	}
+	if events.Has(int(event.EVENT_KEYDOWN_UP)) {
+		h.upPressed = true
+	} else {
+		h.upPressed = false
+	}
+}
+
 func (h *Hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	// if hurt, blink for a while, otherwise just draw the hero
 	ticks := sdl.GetTicks()
@@ -103,40 +137,11 @@ func (h *Hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	}
 }
 
-func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (h *Hero) Update(ticks uint32, level *Level) {
 	// skip first update due to lack of ticks
 	if h.lastTicks == 0 {
 		h.lastTicks = ticks
 		return
-	}
-
-	// standing on ground will absorb all X-velocity
-	if h.isOnGround {
-		h.velocity.X = 0
-	}
-
-	// ---------------------------------------
-	// Handle events
-	// ---------------------------------------
-	var upPressed bool
-	var fPressed bool
-	if events.Has(int(event.EVENT_KEYDOWN_LEFT)) {
-		h.isFacingRight = false
-		h.velocity.X = -350
-	} else if events.Has(int(event.EVENT_KEYDOWN_RIGHT)) {
-		h.isFacingRight = true
-		h.velocity.X = 350
-	}
-	if events.Has(int(event.EVENT_KEYDOWN_SPACE)) {
-		if h.isOnGround {
-			h.velocity.Y = -1000
-		}
-	}
-	if events.Has(int(event.EVENT_KEYDOWN_F)) {
-		fPressed = true
-	}
-	if events.Has(int(event.EVENT_KEYDOWN_UP)) {
-		upPressed = true
 	}
 
 	// gravity: unit is pixels per second
@@ -188,8 +193,8 @@ func (h *Hero) Update(events *intsets.Sparse, ticks uint32, level *Level) {
 	}
 
 	// fire if needed and not too frequent
-	if fPressed && ticks-h.lastFireTicks > 400 {
-		level.AddVolatileObject(NewFireball(h.levelRect, h.isFacingRight, upPressed, ticks, level.ResourceRegistry))
+	if h.fPressed && ticks-h.lastFireTicks > 400 {
+		level.AddVolatileObject(NewFireball(h.levelRect, h.isFacingRight, h.upPressed, ticks, level.ResourceRegistry))
 		h.lastFireTicks = ticks
 	}
 

@@ -28,13 +28,16 @@ func NewShowOnceEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32, d
 	}
 }
 
-func (soe *showOnceEffect) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+func (soe *showOnceEffect) Update(ticks uint32) {
 	if ticks-soe.startTicks > soe.durationMs {
 		soe.finished = true
-		return
 	}
+}
 
-	g.DrawResource(soe.res, soe.levelRect, camPos)
+func (soe *showOnceEffect) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+	if !soe.Finished() {
+		g.DrawResource(soe.res, soe.levelRect, camPos)
+	}
 }
 
 func (soe *showOnceEffect) Finished() bool {

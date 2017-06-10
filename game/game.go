@@ -55,26 +55,17 @@ func (game *Game) StartGameLoop() {
 		events := game.gatherEvents()
 		game.handleGlobalEvents(events)
 
-		// update tile objects
-		for i := 0; i < int(game.currentLevel.NumTiles.X); i++ {
-			for j := 0; j < int(game.currentLevel.NumTiles.Y); j++ {
-				o := game.currentLevel.TileObjects[i][j]
-				if o == nil {
-					continue
-				}
-				o.Update(events, sdl.GetTicks(), game.currentLevel)
-			}
-		}
-
-		// update non-tile objects
-		game.currentLevel.TheHero.Update(events, sdl.GetTicks(), game.currentLevel)
+		// update current level
+		game.currentLevel.Update(events, sdl.GetTicks())
 
 		// update camera position
 		game.updateCamPos()
 
 		// start render
 		game.Gra.ClearScreenWithColor(game.currentLevel.BGColor)
-		game.currentLevel.UpdateAndDraw(game.Gra, game.camPos)
+
+		// render current level
+		game.currentLevel.Draw(game.Gra, game.camPos, sdl.GetTicks())
 
 		// render overlays
 		for _, ol := range game.overlays {

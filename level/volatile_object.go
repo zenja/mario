@@ -4,7 +4,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
-	"golang.org/x/tools/container/intsets"
 )
 
 type volatileObject interface {
@@ -89,7 +88,7 @@ func (f *fireball) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	g.DrawResource(f.currRes, f.levelRect, camPos)
 }
 
-func (f *fireball) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (f *fireball) Update(ticks uint32, level *Level) {
 	// a fireball should not last long
 	if ticks-f.startTicks > fireballMaxDurationMS {
 		f.isDead = true

@@ -4,7 +4,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
-	"golang.org/x/tools/container/intsets"
 )
 
 // assert that breakableTileObject is hit-able by hero
@@ -29,7 +28,7 @@ func (bto *breakableTileObject) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	g.DrawResource(bto.mainRes, bto.levelRect, camPos)
 }
 
-func (bto *breakableTileObject) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (bto *breakableTileObject) Update(ticks uint32, level *Level) {
 	// Do nothing
 }
 

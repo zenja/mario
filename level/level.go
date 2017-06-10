@@ -10,6 +10,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
+	"golang.org/x/tools/container/intsets"
 )
 
 type Level struct {
@@ -263,9 +264,67 @@ func ParseLevelFromFile(filename string, gra *graphic.Graphic) *Level {
 	return ParseLevel(bgFilename, gra, levelArr, decArr)
 }
 
-func (l *Level) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos) {
-	var ticks = sdl.GetTicks()
+func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
+	// update tile objects
+	for i := 0; i < int(l.NumTiles.X); i++ {
+		for j := 0; j < int(l.NumTiles.Y); j++ {
+			o := l.TileObjects[i][j]
+			if o == nil {
+				continue
+			}
+			o.Update(ticks, l)
+		}
+	}
 
+	// update hero with events
+	l.TheHero.HandleEvents(events)
+	l.TheHero.Update(ticks, l)
+
+	// update live enemies
+	for _, e := range l.Enemies {
+		if e.IsDead() {
+			continue
+		}
+
+		e.Update(ticks, l)
+	}
+
+	// update volatile objects
+	var deadVolatileObjs []*list.Element
+	for e := l.VolatileObjs.Front(); e != nil; e = e.Next() {
+		vo, ok := e.Value.(volatileObject)
+		if !ok {
+			log.Fatalf("eff is not an volatile object: %T", e.Value)
+		}
+		vo.Update(ticks, l)
+
+		if vo.IsDead() {
+			deadVolatileObjs = append(deadVolatileObjs, e)
+		}
+	}
+	for _, e := range deadVolatileObjs {
+		l.VolatileObjs.Remove(e)
+	}
+
+	// update effects and remove finished effects
+	var finishedEffs []*list.Element
+	for e := l.effects.Front(); e != nil; e = e.Next() {
+		eff, ok := e.Value.(Effect)
+		if !ok {
+			log.Fatalf("eff is not an effect object: %T", e.Value)
+		}
+		eff.Update(ticks)
+
+		if eff.Finished() {
+			finishedEffs = append(finishedEffs, e)
+		}
+	}
+	for _, e := range finishedEffs {
+		l.effects.Remove(e)
+	}
+}
+
+func (l *Level) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
 	// render background
 	bgLevelRect := sdl.Rect{
 		camPos.X * 80 / 100,
@@ -277,7 +336,7 @@ func (l *Level) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos) {
 
 	// render decorations
 	for _, d := range l.Decorations {
-		d.Update(nil, ticks, l)
+		d.Update(ticks, l)
 		d.Draw(g, camPos)
 	}
 
@@ -314,50 +373,31 @@ func (l *Level) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos) {
 		}
 	}
 
-	// update and render live enemies
+	// render live enemies
 	for _, e := range l.Enemies {
 		if e.IsDead() {
 			continue
 		}
 
-		e.Update(nil, ticks, l)
 		e.Draw(g, camPos)
 	}
 
-	// update and render volatile objects
-	var deadVolatileObjs []*list.Element
+	// render volatile objects
 	for e := l.VolatileObjs.Front(); e != nil; e = e.Next() {
-		vo, ok := e.Value.(volatileObject)
-		if !ok {
-			log.Fatalf("eff is not an volatile object: %T", e.Value)
-		}
-		vo.Update(nil, ticks, l)
+		vo, _ := e.Value.(volatileObject)
 
-		if vo.IsDead() {
-			deadVolatileObjs = append(deadVolatileObjs, e)
-		} else {
+		if !vo.IsDead() {
 			vo.Draw(g, camPos)
 		}
 	}
-	for _, e := range deadVolatileObjs {
-		l.VolatileObjs.Remove(e)
-	}
 
-	// render effects and remove finished effects
-	var finishedEffs []*list.Element
+	// render effects
 	for e := l.effects.Front(); e != nil; e = e.Next() {
-		eff, ok := e.Value.(Effect)
-		if !ok {
-			log.Fatalf("eff is not an effect object: %T", e.Value)
-		}
-		eff.UpdateAndDraw(g, camPos, ticks)
+		eff, _ := e.Value.(Effect)
 
-		if eff.Finished() {
-			finishedEffs = append(finishedEffs, e)
+		if !eff.Finished() {
+			eff.Draw(g, camPos, ticks)
 		}
-	}
-	for _, e := range finishedEffs {
-		l.effects.Remove(e)
 	}
 }
 

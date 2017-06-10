@@ -4,7 +4,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
-	"golang.org/x/tools/container/intsets"
 )
 
 // Note that Z-Index must start from 0 and increase one-by-one
@@ -19,7 +18,7 @@ const (
 
 type Object interface {
 	Draw(g *graphic.Graphic, camPos vector.Pos)
-	Update(events *intsets.Sparse, ticks uint32, level *Level)
+	Update(ticks uint32, level *Level)
 	GetRect() sdl.Rect
 	GetZIndex() int
 }
@@ -62,7 +61,7 @@ func (sto *singleTileObject) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	g.DrawResource(sto.resource, sto.levelRect, camPos)
 }
 
-func (sto *singleTileObject) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (sto *singleTileObject) Update(ticks uint32, level *Level) {
 	// Do nothing
 }
 
@@ -91,7 +90,7 @@ func (ito *invisibleTileObject) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	// Do nothing
 }
 
-func (ito *invisibleTileObject) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (ito *invisibleTileObject) Update(ticks uint32, level *Level) {
 	// Do nothing
 }
 

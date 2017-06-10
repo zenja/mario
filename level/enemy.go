@@ -6,7 +6,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
-	"golang.org/x/tools/container/intsets"
 )
 
 type hittableByHero interface {
@@ -75,7 +74,7 @@ func (m *mushroomEnemy) GetZIndex() int {
 	return ZINDEX_4
 }
 
-func (m *mushroomEnemy) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (m *mushroomEnemy) Update(ticks uint32, level *Level) {
 	if m.lastTicks == 0 {
 		m.lastTicks = ticks
 		return
@@ -188,7 +187,7 @@ func (t *tortoiseEnemy) GetZIndex() int {
 	return ZINDEX_4
 }
 
-func (t *tortoiseEnemy) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (t *tortoiseEnemy) Update(ticks uint32, level *Level) {
 	if t.lastTicks == 0 {
 		t.lastTicks = ticks
 		return
@@ -351,7 +350,7 @@ func (gm *goodMushroom) GetZIndex() int {
 	return ZINDEX_4
 }
 
-func (gm *goodMushroom) Update(events *intsets.Sparse, ticks uint32, level *Level) {
+func (gm *goodMushroom) Update(ticks uint32, level *Level) {
 	if gm.lastTicks == 0 {
 		gm.lastTicks = ticks
 		return

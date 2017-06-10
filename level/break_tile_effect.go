@@ -47,8 +47,7 @@ func NewBreakTileEffect(pieceRes graphic.Resource, tid vector.TileID, ticks uint
 	}
 }
 
-func (bte *breakTileEffect) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
-
+func (bte *breakTileEffect) Update(ticks uint32) {
 	vels := []*vector.Vec2D{
 		&bte.velLT,
 		&bte.velRT,
@@ -71,14 +70,19 @@ func (bte *breakTileEffect) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos,
 
 	if ticks-bte.startTicks > 1000 {
 		bte.finished = true
-	} else {
+	}
+
+	bte.lastTicks = ticks
+}
+
+func (bte *breakTileEffect) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+
+	if !bte.Finished() {
 		g.DrawResource(bte.pieceRes, bte.rectLT, camPos)
 		g.DrawResource(bte.pieceRes, bte.rectRT, camPos)
 		g.DrawResource(bte.pieceRes, bte.rectLB, camPos)
 		g.DrawResource(bte.pieceRes, bte.rectRB, camPos)
 	}
-
-	bte.lastTicks = ticks
 }
 
 func (bte *breakTileEffect) Finished() bool {

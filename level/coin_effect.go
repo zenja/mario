@@ -33,7 +33,7 @@ func NewCoinEffect(tid vector.TileID, resourceRegistry map[graphic.ResourceID]gr
 	}
 }
 
-func (ci *coinEffect) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+func (ci *coinEffect) Update(ticks uint32) {
 	// speed up
 	ci.velocity.Y -= 50
 
@@ -43,11 +43,15 @@ func (ci *coinEffect) UpdateAndDraw(g *graphic.Graphic, camPos vector.Pos, ticks
 
 	if ticks-ci.startTicks > 100 {
 		ci.finished = true
-	} else {
-		g.DrawResource(ci.coinRes, ci.tileRect, camPos)
 	}
 
 	ci.lastTicks = ticks
+}
+
+func (ci *coinEffect) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+	if !ci.Finished() {
+		g.DrawResource(ci.coinRes, ci.tileRect, camPos)
+	}
 }
 
 func (ci *coinEffect) Finished() bool {
