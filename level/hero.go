@@ -62,10 +62,10 @@ func NewHero(
 	hitBoxXDelta, hitBoxYDelta, hitBoxWDelta, hitBoxHDelta int32,
 	resourceRegistry map[graphic.ResourceID]graphic.Resource) *Hero {
 
-	resStandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND_RIGHT]
-	resWalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING_RIGHT]
-	resStandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_STAND_LEFT]
-	resWalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_WALKING_LEFT]
+	resStandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_STAND_RIGHT]
+	resWalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_WALKING_RIGHT]
+	resStandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_STAND_LEFT]
+	resWalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_WALKING_LEFT]
 
 	hitBox := sdl.Rect{
 		renderBoxStartPos.X + hitBoxXDelta,

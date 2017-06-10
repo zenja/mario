@@ -67,13 +67,18 @@ const (
 	RESOURCE_TYPE_FIREBALL_3
 	RESOURCE_TYPE_FIREBALL_BOOM
 
-	RESOURCE_TYPE_HERO_STAND_LEFT
-	RESOURCE_TYPE_HERO_WALKING_LEFT
-	RESOURCE_TYPE_HERO_STAND_RIGHT
-	RESOURCE_TYPE_HERO_WALKING_RIGHT
+	RESOURCE_TYPE_HERO_0_STAND_LEFT
+	RESOURCE_TYPE_HERO_0_WALKING_LEFT
+	RESOURCE_TYPE_HERO_0_STAND_RIGHT
+	RESOURCE_TYPE_HERO_0_WALKING_RIGHT
 )
 
 const TILE_SIZE = 50
+
+const (
+	hero_0_width  = 50
+	hero_0_height = 80
+)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TileResource
@@ -379,10 +384,10 @@ func (g *Graphic) loadAllResources() {
 	// -------------------------------
 
 	// hero
-	g.registerNonTileResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_RIGHT)
-	g.registerNonTileResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_RIGHT)
-	g.registerFlippedNonTileResource("assets/hero-stand.png", RESOURCE_TYPE_HERO_STAND_LEFT, true)
-	g.registerFlippedNonTileResource("assets/hero-walking.png", RESOURCE_TYPE_HERO_WALKING_LEFT, true)
+	g.registerScaledNonTileResource("assets/hero-0-stand.png", RESOURCE_TYPE_HERO_0_STAND_RIGHT, hero_0_width, hero_0_height)
+	g.registerScaledNonTileResource("assets/hero-0-walking.png", RESOURCE_TYPE_HERO_0_WALKING_RIGHT, hero_0_width, hero_0_height)
+	g.registerResourceEx("assets/hero-0-stand.png", RESOURCE_TYPE_HERO_0_STAND_LEFT, hero_0_width, hero_0_height, false, true, false)
+	g.registerResourceEx("assets/hero-0-walking.png", RESOURCE_TYPE_HERO_0_WALKING_LEFT, hero_0_width, hero_0_height, false, true, false)
 
 	// decoration: grass
 	g.registerNonTileResource("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
