@@ -121,12 +121,12 @@ func (game *Game) gatherEvents() *intsets.Sparse {
 }
 
 // updateCamPos update the position of camera based on hero's position
-// It tries to put hero center in vertical, 2/3 camera height from top,
+// It tries to put hero center in vertical & top,
 // but when that exceeds level boundary, it will respect level boundary
 func (game *Game) updateCamPos() {
 	heroRect := game.currentLevel.TheHero.GetRect()
 	perfectX := heroRect.X - (graphic.SCREEN_WIDTH-heroRect.W)/2
-	perfectY := heroRect.Y - (graphic.SCREEN_HEIGHT-heroRect.H)*2/3
+	perfectY := heroRect.Y - (graphic.SCREEN_HEIGHT-heroRect.H)/2
 	game.camPos.X = perfectX
 	game.camPos.Y = perfectY
 	// check left
