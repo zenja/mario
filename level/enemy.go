@@ -371,7 +371,8 @@ func (gm *goodMushroom) IsDead() bool {
 
 func (gm *goodMushroom) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
 	gm.isDead = true
-	// TODO change hero state
+	// upgrade hero
+	h.upgrade()
 }
 
 func (gm *goodMushroom) hitByBrokenTile(level *Level, ticks uint32) {

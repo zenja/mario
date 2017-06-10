@@ -171,7 +171,7 @@ func ParseLevel(bgFilename string, gra *graphic.Graphic, levelArr [][]byte, decA
 				if hero != nil {
 					log.Fatal("more than one hero found")
 				}
-				hero = NewHero(currentPos, 8, 2, -16, -4, gra.ResourceRegistry)
+				hero = NewHero(currentPos, 0.2, 0.1, gra.ResourceRegistry)
 			}
 			currentPos.X += graphic.TILE_SIZE
 		}

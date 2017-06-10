@@ -16,23 +16,47 @@ const hurtAnimationMS = 2000
 var _ Object = &Hero{}
 
 type Hero struct {
-	resStandRight   graphic.Resource
-	resWalkingRight graphic.Resource
-	resStandLeft    graphic.Resource
-	resWalkingLeft  graphic.Resource
+	// hero 0 res
+	res0StandRight   graphic.Resource
+	res0WalkingRight graphic.Resource
+	res0StandLeft    graphic.Resource
+	res0WalkingLeft  graphic.Resource
+
+	// hero 1 res
+	res1StandRight   graphic.Resource
+	res1WalkingRight graphic.Resource
+	res1StandLeft    graphic.Resource
+	res1WalkingLeft  graphic.Resource
+
+	// hero 2 res
+	res2StandRight   graphic.Resource
+	res2WalkingRight graphic.Resource
+	res2StandLeft    graphic.Resource
+	res2WalkingLeft  graphic.Resource
+
+	// current set of resource
+	currResStandRight   graphic.Resource
+	currResWalkingRight graphic.Resource
+	currResStandLeft    graphic.Resource
+	currResWalkingLeft  graphic.Resource
 
 	// current resource
 	currRes graphic.Resource
+
+	// hero's level: 0, 1, 2
+	grade int
 
 	// current rect in level, it is a hit box, not a render box
 	// for hero its hit box and render box are different, hit box is smaller
 	levelRect sdl.Rect
 
 	// render box
-	renderBoxXDelta int32
-	renderBoxYDelta int32
-	renderBoxW      int32
-	renderBoxH      int32
+	// for X direction, shrink area includes both left and right
+	renderBoxWExpandRatio float64
+	// for Y direction, shrink area includes top but not bottom, to make sure correct standing
+	renderBoxHExpandRatio float64
+	renderBoxW            int32
+	renderBoxH            int32
 
 	// event state
 	upPressed bool
@@ -59,36 +83,73 @@ type Hero struct {
 
 func NewHero(
 	renderBoxStartPos vector.Pos,
-	hitBoxXDelta, hitBoxYDelta, hitBoxWDelta, hitBoxHDelta int32,
+	renderBoxWExpandRatio, renderBoxHExpandRatio float64,
 	resourceRegistry map[graphic.ResourceID]graphic.Resource) *Hero {
 
-	resStandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_STAND_RIGHT]
-	resWalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_WALKING_RIGHT]
-	resStandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_STAND_LEFT]
-	resWalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_WALKING_LEFT]
+	if renderBoxWExpandRatio <= -1 || renderBoxWExpandRatio >= 1 {
+		log.Fatalf("render box X expand ratio should be (-1, 1) but was %f", renderBoxWExpandRatio)
+	}
+	if renderBoxHExpandRatio <= -1 || renderBoxHExpandRatio >= 1 {
+		log.Fatalf("render box Y expand ratio should be (-1, 1) but was %f", renderBoxHExpandRatio)
+	}
+
+	res0StandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_STAND_RIGHT]
+	res0WalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_WALKING_RIGHT]
+	res0StandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_STAND_LEFT]
+	res0WalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_WALKING_LEFT]
+
+	res1StandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_1_STAND_RIGHT]
+	res1WalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_1_WALKING_RIGHT]
+	res1StandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_1_STAND_LEFT]
+	res1WalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_1_WALKING_LEFT]
+
+	res2StandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_2_STAND_RIGHT]
+	res2WalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_2_WALKING_RIGHT]
+	res2StandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_2_STAND_LEFT]
+	res2WalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_2_WALKING_LEFT]
+
+	resX := renderBoxStartPos.X
+	resY := renderBoxStartPos.Y
+	resW := res0StandLeft.GetW()
+	resH := res0StandLeft.GetH()
 
 	hitBox := sdl.Rect{
-		renderBoxStartPos.X + hitBoxXDelta,
-		renderBoxStartPos.Y + hitBoxYDelta,
-		resStandLeft.GetW() + hitBoxWDelta,
-		resStandLeft.GetH() + hitBoxHDelta,
+		resX + int32(float64(resW)*renderBoxWExpandRatio/2),
+		resY + int32(float64(resH)*renderBoxHExpandRatio),
+		resW - int32(float64(resW)*renderBoxWExpandRatio),
+		resH - int32(float64(resH)*renderBoxHExpandRatio),
 	}
 
 	h := &Hero{
-		resStandRight:   resStandRight,
-		resWalkingRight: resWalkingRight,
-		resStandLeft:    resStandLeft,
-		resWalkingLeft:  resWalkingLeft,
-		currRes:         resStandRight,
-		levelRect:       hitBox,
-		renderBoxXDelta: -hitBoxXDelta,
-		renderBoxYDelta: -hitBoxYDelta,
-		renderBoxW:      resStandLeft.GetW(),
-		renderBoxH:      resStandLeft.GetH(),
-		velocity:        vector.Vec2D{0, 0},
-		isOnGround:      false,
-		isFacingRight:   true,
-		lives:           3,
+		res0StandRight:   res0StandRight,
+		res0WalkingRight: res0WalkingRight,
+		res0StandLeft:    res0StandLeft,
+		res0WalkingLeft:  res0WalkingLeft,
+		res1StandRight:   res1StandRight,
+		res1WalkingRight: res1WalkingRight,
+		res1StandLeft:    res1StandLeft,
+		res1WalkingLeft:  res1WalkingLeft,
+		res2StandRight:   res2StandRight,
+		res2WalkingRight: res2WalkingRight,
+		res2StandLeft:    res2StandLeft,
+		res2WalkingLeft:  res2WalkingLeft,
+
+		currResStandRight:   res0StandRight,
+		currResWalkingRight: res0WalkingRight,
+		currResStandLeft:    res0StandLeft,
+		currResWalkingLeft:  res0WalkingLeft,
+		currRes:             res0StandRight,
+
+		grade:                 0,
+		levelRect:             hitBox,
+		renderBoxWExpandRatio: renderBoxWExpandRatio,
+		renderBoxHExpandRatio: renderBoxHExpandRatio,
+		renderBoxW:            res0StandLeft.GetW(),
+		renderBoxH:            res0StandLeft.GetH(),
+		velocity:              vector.Vec2D{0, 0},
+		isOnGround:            false,
+		isFacingRight:         true,
+		lives:                 3,
 	}
 	return h
 }
@@ -121,6 +182,12 @@ func (h *Hero) HandleEvents(events *intsets.Sparse) {
 	} else {
 		h.upPressed = false
 	}
+	if events.Has(int(event.EVENT_KEYDOWN_F2)) {
+		h.upgrade()
+	}
+	if events.Has(int(event.EVENT_KEYDOWN_F3)) {
+		h.downgrade()
+	}
 }
 
 func (h *Hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
@@ -135,6 +202,10 @@ func (h *Hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 	} else {
 		g.DrawResource(h.currRes, h.getRenderRect(), camPos)
 	}
+
+	// FIXME for debug only
+	//g.DrawRect(h.getRenderRect(), camPos)
+	//g.DrawRect(h.levelRect, camPos)
 }
 
 func (h *Hero) Update(ticks uint32, level *Level) {
@@ -237,15 +308,15 @@ func (h *Hero) GetLives() int {
 func (h *Hero) updateRes() {
 	if h.velocity.X == 0 || h.lastTicks%600 < 300 {
 		if h.isFacingRight {
-			h.currRes = h.resStandRight
+			h.currRes = h.currResStandRight
 		} else {
-			h.currRes = h.resStandLeft
+			h.currRes = h.currResStandLeft
 		}
 	} else if h.velocity.X != 0 && h.lastTicks%600 >= 300 {
 		if h.isFacingRight {
-			h.currRes = h.resWalkingRight
+			h.currRes = h.currResWalkingRight
 		} else {
-			h.currRes = h.resWalkingLeft
+			h.currRes = h.currResWalkingLeft
 		}
 	}
 }
@@ -325,10 +396,81 @@ func isHitEnemy(heroVelStep vector.Vec2D, heroRect sdl.Rect, enemyRect sdl.Rect)
 }
 
 func (h *Hero) getRenderRect() sdl.Rect {
+	resW := h.currResStandLeft.GetW()
+	resH := h.currResStandLeft.GetH()
 	return sdl.Rect{
-		h.levelRect.X + h.renderBoxXDelta,
-		h.levelRect.Y + h.renderBoxYDelta,
-		h.renderBoxW,
-		h.renderBoxH,
+		h.levelRect.X - int32(float64(resW)*h.renderBoxWExpandRatio/2),
+		h.levelRect.Y - int32(float64(resH)*h.renderBoxHExpandRatio),
+		resW,
+		resH,
 	}
+}
+
+func (h *Hero) upgrade() {
+	switch h.grade {
+	case 0:
+		h.grade = 1
+		h.switchResSet(1)
+	case 1:
+		h.grade = 2
+		h.switchResSet(2)
+	}
+
+	h.reCalcLevelRectSize()
+}
+
+func (h *Hero) downgrade() {
+	switch h.grade {
+	case 1:
+		h.grade = 0
+		h.switchResSet(0)
+	case 2:
+		h.grade = 1
+		h.switchResSet(1)
+	}
+
+	h.reCalcLevelRectSize()
+}
+
+func (h *Hero) switchResSet(grade int) {
+	if grade < 0 || grade > 2 {
+		log.Fatalf("cannot switch resource set: grade (%d) should be 0, 1 or 2", grade)
+	}
+	switch grade {
+	case 0:
+		h.currResStandRight = h.res0StandRight
+		h.currResWalkingRight = h.res0WalkingRight
+		h.currResStandLeft = h.res0StandLeft
+		h.currResWalkingLeft = h.res0WalkingLeft
+	case 1:
+		h.currResStandRight = h.res1StandRight
+		h.currResWalkingRight = h.res1WalkingRight
+		h.currResStandLeft = h.res1StandLeft
+		h.currResWalkingLeft = h.res1WalkingLeft
+	case 2:
+		h.currResStandRight = h.res2StandRight
+		h.currResWalkingRight = h.res2WalkingRight
+		h.currResStandLeft = h.res2StandLeft
+		h.currResWalkingLeft = h.res2WalkingLeft
+	}
+}
+
+// reCalcLevelRectSize reset the width and height of hit box to match current resource set
+func (h *Hero) reCalcLevelRectSize() {
+	preLevelRect := h.levelRect
+
+	renderRect := h.getRenderRect()
+	resX := renderRect.X
+	resY := renderRect.Y
+	resW := renderRect.W
+	resH := renderRect.H
+	h.levelRect = sdl.Rect{
+		resX + int32(float64(resW)*h.renderBoxWExpandRatio/2),
+		resY + int32(float64(resH)*h.renderBoxHExpandRatio),
+		resW - int32(float64(resW)*h.renderBoxWExpandRatio),
+		resH - int32(float64(resH)*h.renderBoxHExpandRatio),
+	}
+
+	// make sure the new level rect has same bottom position as the old one
+	h.levelRect.Y += preLevelRect.Y + preLevelRect.H - (h.levelRect.Y + h.levelRect.H)
 }
