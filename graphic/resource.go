@@ -67,6 +67,10 @@ const (
 	RESOURCE_TYPE_FIREBALL_3
 	RESOURCE_TYPE_FIREBALL_BOOM
 
+	RESOURCE_TYPE_SHINE_0
+	RESOURCE_TYPE_SHINE_1
+	RESOURCE_TYPE_SHINE_2
+
 	RESOURCE_TYPE_HERO_0_STAND_LEFT
 	RESOURCE_TYPE_HERO_0_WALKING_LEFT
 	RESOURCE_TYPE_HERO_0_STAND_RIGHT
@@ -455,4 +459,9 @@ func (g *Graphic) loadAllResources() {
 	g.registerScaledNonTileResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
 	g.registerScaledNonTileResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
 	g.registerScaledNonTileResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 40, 40)
+
+	// shine effect
+	g.registerNonTileResource("assets/shine-0.png", RESOURCE_TYPE_SHINE_0)
+	g.registerNonTileResource("assets/shine-1.png", RESOURCE_TYPE_SHINE_1)
+	g.registerNonTileResource("assets/shine-2.png", RESOURCE_TYPE_SHINE_2)
 }

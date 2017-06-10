@@ -277,7 +277,7 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 	}
 
 	// update hero with events
-	l.TheHero.HandleEvents(events)
+	l.TheHero.HandleEvents(events, l)
 	l.TheHero.Update(ticks, l)
 
 	// update live enemies

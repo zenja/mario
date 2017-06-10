@@ -154,7 +154,7 @@ func NewHero(
 	return h
 }
 
-func (h *Hero) HandleEvents(events *intsets.Sparse) {
+func (h *Hero) HandleEvents(events *intsets.Sparse, level *Level) {
 	// standing on ground will absorb all X-velocity
 	if h.isOnGround {
 		h.velocity.X = 0
@@ -183,10 +183,10 @@ func (h *Hero) HandleEvents(events *intsets.Sparse) {
 		h.upPressed = false
 	}
 	if events.Has(int(event.EVENT_KEYDOWN_F2)) {
-		h.upgrade()
+		h.upgrade(level)
 	}
 	if events.Has(int(event.EVENT_KEYDOWN_F3)) {
-		h.downgrade()
+		h.downgrade(level)
 	}
 }
 
@@ -406,7 +406,7 @@ func (h *Hero) getRenderRect() sdl.Rect {
 	}
 }
 
-func (h *Hero) upgrade() {
+func (h *Hero) upgrade(level *Level) {
 	switch h.grade {
 	case 0:
 		h.grade = 1
@@ -417,9 +417,12 @@ func (h *Hero) upgrade() {
 	}
 
 	h.reCalcLevelRectSize()
+
+	// show shine effects
+	level.AddEffect(NewShineEffect(level.ResourceRegistry, h, sdl.GetTicks()))
 }
 
-func (h *Hero) downgrade() {
+func (h *Hero) downgrade(level *Level) {
 	switch h.grade {
 	case 1:
 		h.grade = 0
