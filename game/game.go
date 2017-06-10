@@ -53,7 +53,12 @@ func (game *Game) StartGameLoop() {
 		frameStart := sdl.GetTicks()
 
 		events := game.gatherEvents()
+
+		// game event handling
 		game.handleGlobalEvents(events)
+
+		// level event handling
+		game.currentLevel.HandleEvents(events)
 
 		// update current level
 		game.currentLevel.Update(events, sdl.GetTicks())
@@ -122,6 +127,9 @@ func (game *Game) gatherEvents() *intsets.Sparse {
 	}
 	if kbState[int(sdl.SCANCODE_F3)] == 1 {
 		events.Insert(int(event.EVENT_KEYDOWN_F3))
+	}
+	if kbState[int(sdl.SCANCODE_F4)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_F4))
 	}
 	return &events
 }

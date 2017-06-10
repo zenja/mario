@@ -11,6 +11,7 @@ import (
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
+	"github.com/zenja/mario/event"
 )
 
 type Level struct {
@@ -262,6 +263,12 @@ func ParseLevelFromFile(filename string, gra *graphic.Graphic) *Level {
 	}
 
 	return ParseLevel(bgFilename, gra, levelArr, decArr)
+}
+
+func (l *Level) HandleEvents(events *intsets.Sparse) {
+	if events.Has(int(event.EVENT_KEYDOWN_F4)) {
+		l.AddEffect(NewScreenFadeEffect(l.ResourceRegistry, true, 2000, sdl.GetTicks()))
+	}
 }
 
 func (l *Level) Update(events *intsets.Sparse, ticks uint32) {

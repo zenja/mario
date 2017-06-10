@@ -15,6 +15,7 @@ type Resource interface {
 	GetTexture() *sdl.Texture
 	GetW() int32
 	GetH() int32
+	SetResourceAlpha(alpha uint8)
 }
 
 // Resource IDs
@@ -71,6 +72,8 @@ const (
 	RESOURCE_TYPE_SHINE_1
 	RESOURCE_TYPE_SHINE_2
 
+	RESOURCE_TYPE_BLACK_SCREEN
+
 	RESOURCE_TYPE_HERO_0_STAND_LEFT
 	RESOURCE_TYPE_HERO_0_WALKING_LEFT
 	RESOURCE_TYPE_HERO_0_STAND_RIGHT
@@ -116,6 +119,10 @@ func (tr *TileResource) GetH() int32 {
 	return TILE_SIZE
 }
 
+func (tr *TileResource) SetResourceAlpha(alpha uint8) {
+	tr.GetTexture().SetAlphaMod(alpha)
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // NonTileResource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,6 +142,10 @@ func (ntr *NonTileResource) GetW() int32 {
 
 func (ntr *NonTileResource) GetH() int32 {
 	return ntr.h
+}
+
+func (ntr *NonTileResource) SetResourceAlpha(alpha uint8) {
+	ntr.GetTexture().SetAlphaMod(alpha)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -464,4 +475,7 @@ func (g *Graphic) loadAllResources() {
 	g.registerNonTileResource("assets/shine-0.png", RESOURCE_TYPE_SHINE_0)
 	g.registerNonTileResource("assets/shine-1.png", RESOURCE_TYPE_SHINE_1)
 	g.registerNonTileResource("assets/shine-2.png", RESOURCE_TYPE_SHINE_2)
+
+	// black screen
+	g.registerScaledNonTileResource("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
 }
