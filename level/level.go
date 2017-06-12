@@ -276,6 +276,10 @@ func (l *Level) HandleEvents(events *intsets.Sparse) {
 }
 
 func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
+	if l.TheHero.IsDead() {
+		l.Restart()
+	}
+
 	// update tile objects
 	for i := 0; i < int(l.NumTiles.X); i++ {
 		for j := 0; j < int(l.NumTiles.Y); j++ {

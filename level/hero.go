@@ -77,6 +77,13 @@ type Hero struct {
 
 	lives int
 
+	// the time when hero should die (which is the time start playing dying effect)
+	dyingTicks            uint32
+	shouldPlayDyingEffect bool
+
+	// after dying effect isDead should be set to true
+	isDead bool
+
 	// a non-zero hurtStartTicks means it has been hurt before and the "hurt" (or "super") status is still in effect
 	// when hero got hurt, it will be set to current ticks
 	// will be reset after a while
@@ -203,9 +210,16 @@ func (h *Hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 		} else {
 			// Draw nothing to create a blink effect
 		}
-	} else {
-		g.DrawResource(h.currRes, h.getRenderRect(), camPos)
+		return
 	}
+
+	// when in dying process, do not draw hero,
+	// because a dying effect should be showing at the moment
+	if h.dyingTicks > 0 {
+		return
+	}
+
+	g.DrawResource(h.currRes, h.getRenderRect(), camPos)
 
 	// FIXME for debug only
 	//g.DrawRect(h.getRenderRect(), camPos)
@@ -216,6 +230,34 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 	// skip first update due to lack of ticks
 	if h.lastTicks == 0 {
 		h.lastTicks = ticks
+		return
+	}
+
+	if h.isDead {
+		log.Fatal("bug! hero is dead, hero's update method should not be called")
+	}
+
+	// handling dying
+	if h.dyingTicks > 0 {
+		// show die effect, just once
+		if h.shouldPlayDyingEffect {
+			var deadRes graphic.Resource
+			if h.isFacingRight {
+				deadRes = h.currResStandRight
+			} else {
+				deadRes = h.currResStandRight
+			}
+			level.AddEffect(NewStraightDeadDownEffect(deadRes, h.getRenderRect(), h.dyingTicks))
+
+			h.shouldPlayDyingEffect = false
+		}
+
+		// wait a while after dying, then die
+		if ticks-h.dyingTicks > 2000 {
+			h.isDead = true
+		}
+
+		// if dying, no update for rest
 		return
 	}
 
@@ -296,11 +338,19 @@ func (h *Hero) GetZIndex() int {
 func (h *Hero) Hurt() {
 	// cannot hurt during super time
 	if h.hurtStartTicks == 0 {
-		h.lives--
-		h.hurtStartTicks = sdl.GetTicks()
+		if h.grade > 0 {
+			h.downgrade()
+			h.hurtStartTicks = sdl.GetTicks()
+		} else {
+			h.Kill()
+		}
 	}
+}
 
-	h.downgrade()
+func (h *Hero) Kill() {
+	h.lives--
+	h.dyingTicks = sdl.GetTicks()
+	h.shouldPlayDyingEffect = true
 }
 
 func (h *Hero) GetLives() int {
@@ -309,9 +359,15 @@ func (h *Hero) GetLives() int {
 
 func (h *Hero) Reborn(initRect sdl.Rect) {
 	h.levelRect = initRect
+	h.isDead = false
 	h.grade = 0
 	h.lastFireTicks = 0
 	h.hurtStartTicks = 0
+	h.dyingTicks = 0
+}
+
+func (h *Hero) IsDead() bool {
+	return h.isDead
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

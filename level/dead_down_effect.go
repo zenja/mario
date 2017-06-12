@@ -35,6 +35,17 @@ func NewDeadDownEffect(res graphic.Resource, toRight bool, levelRect sdl.Rect, t
 	}
 }
 
+func NewStraightDeadDownEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32) *deadDownEffect {
+	return &deadDownEffect{
+		res:        res,
+		levelRect:  levelRect,
+		velocity:   vector.Vec2D{0, -1000},
+		startTicks: ticks,
+		lastTicks:  ticks,
+		finished:   false,
+	}
+}
+
 func (dde *deadDownEffect) Update(ticks uint32) {
 	if ticks-dde.startTicks > 2000 {
 		dde.finished = true
