@@ -92,11 +92,11 @@ const TILE_SIZE = 50
 
 const (
 	hero_0_width  = 50
-	hero_0_height = 75
+	hero_0_height = 70
 	hero_1_width  = 55
-	hero_1_height = 80
+	hero_1_height = 85
 	hero_2_width  = 55
-	hero_2_height = 80
+	hero_2_height = 85
 )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
