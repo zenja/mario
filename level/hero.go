@@ -267,8 +267,8 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 		h.velocity.Y = 0
 	}
 
-	// fire if needed and not too frequent
-	if h.fPressed && ticks-h.lastFireTicks > 400 {
+	// fire if needed and capable and not too frequent
+	if h.fPressed && h.grade == 2 && ticks-h.lastFireTicks > 400 {
 		level.AddVolatileObject(NewFireball(h.levelRect, h.isFacingRight, h.upPressed, ticks, level.ResourceRegistry))
 		h.lastFireTicks = ticks
 	}
