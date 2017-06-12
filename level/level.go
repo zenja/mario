@@ -437,7 +437,7 @@ func (l *Level) AddEnemy(e Enemy) {
 
 func (l *Level) Restart() {
 	l.fadeIn()
-	l.TheHero.levelRect = l.InitHeroRect
+	l.TheHero.Reborn(l.InitHeroRect)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -445,5 +445,5 @@ func (l *Level) Restart() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func (l *Level) fadeIn() {
-	l.AddEffect(NewScreenFadeEffect(l.ResourceRegistry, true, 1500, sdl.GetTicks()))
+	l.AddEffect(NewScreenFadeEffect(l.ResourceRegistry, true, 1000, sdl.GetTicks()))
 }
