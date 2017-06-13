@@ -49,7 +49,7 @@ func (ca *coinActor) onEffectiveBottomHit(mb *mythBox, level *Level, ticks uint3
 	if ca.numCoinsLeft > 0 {
 		// add a coin effect
 		mbTID := GetTileID(vector.Pos{mb.tileRect.X, mb.tileRect.Y}, false, false)
-		level.AddEffect(NewCoinEffect(vector.TileID{mbTID.X, mbTID.Y - 1}, level.ResourceRegistry, ticks))
+		level.AddEffect(NewCoinEffect(vector.TileID{mbTID.X, mbTID.Y - 1}, ticks))
 	}
 }
 
@@ -60,9 +60,9 @@ func (ca *coinActor) onBoundingFinished(mb *mythBox, level *Level, ticks uint32)
 	}
 }
 
-func NewCoinMythBox(startPos vector.Pos, numCoins int, resourceRegistry map[graphic.ResourceID]graphic.Resource) *mythBox {
+func NewCoinMythBox(startPos vector.Pos, numCoins int) *mythBox {
 	actor := coinActor{numCoinsLeft: numCoins}
-	return newMythBox(startPos, &actor, resourceRegistry)
+	return newMythBox(startPos, &actor)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,21 +83,21 @@ func (ma *mushroomActor) onBoundingFinished(mb *mythBox, level *Level, ticks uin
 	mb.Empty()
 }
 
-func NewMushroomMythBox(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) *mythBox {
+func NewMushroomMythBox(startPos vector.Pos) *mythBox {
 	enemyStartPos := vector.Pos{startPos.X, startPos.Y - graphic.TILE_SIZE}
-	enemy := NewGoodMushroom(enemyStartPos, resourceRegistry)
+	enemy := NewGoodMushroom(enemyStartPos)
 	actor := mushroomActor{enemy}
-	return newMythBox(startPos, &actor, resourceRegistry)
+	return newMythBox(startPos, &actor)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Myth box methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func newMythBox(startPos vector.Pos, actor mythBoxActor, resourceRegistry map[graphic.ResourceID]graphic.Resource) *mythBox {
-	resNormal, _ := resourceRegistry[graphic.RESOURCE_TYPE_MYTH_BOX_NORMAL]
-	resNormalLight, _ := resourceRegistry[graphic.RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT]
-	resEmpty, _ := resourceRegistry[graphic.RESOURCE_TYPE_MYTH_BOX_EMPTY]
+func newMythBox(startPos vector.Pos, actor mythBoxActor) *mythBox {
+	resNormal := graphic.Res(graphic.RESOURCE_TYPE_MYTH_BOX_NORMAL)
+	resNormalLight := graphic.Res(graphic.RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
+	resEmpty := graphic.Res(graphic.RESOURCE_TYPE_MYTH_BOX_EMPTY)
 	tileRect := sdl.Rect{startPos.X, startPos.Y, graphic.TILE_SIZE, graphic.TILE_SIZE}
 	return &mythBox{
 		resNormal:      resNormal,
@@ -110,8 +110,8 @@ func newMythBox(startPos vector.Pos, actor mythBoxActor, resourceRegistry map[gr
 	}
 }
 
-func (mb *mythBox) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	g.DrawResource(mb.currRes, mb.levelRect, camPos)
+func (mb *mythBox) Draw(camPos vector.Pos) {
+	graphic.DrawResource(mb.currRes, mb.levelRect, camPos)
 }
 
 func (mb *mythBox) Update(ticks uint32, level *Level) {

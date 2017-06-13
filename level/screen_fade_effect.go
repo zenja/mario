@@ -16,9 +16,9 @@ type screenFadeEffect struct {
 	finished   bool
 }
 
-func NewScreenFadeEffect(resourceRegistry map[graphic.ResourceID]graphic.Resource, fadeIn bool, durationMs uint32, ticks uint32) *screenFadeEffect {
+func NewScreenFadeEffect(fadeIn bool, durationMs uint32, ticks uint32) *screenFadeEffect {
 	return &screenFadeEffect{
-		res:        resourceRegistry[graphic.RESOURCE_TYPE_BLACK_SCREEN],
+		res:        graphic.Res(graphic.RESOURCE_TYPE_BLACK_SCREEN),
 		fadeIn:     fadeIn,
 		durationMs: durationMs,
 		startTicks: ticks,
@@ -39,8 +39,8 @@ func (sfe *screenFadeEffect) Update(ticks uint32) {
 	}
 }
 
-func (sfe *screenFadeEffect) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
-	g.DrawResource(sfe.res, sdl.Rect{0, 0, graphic.SCREEN_WIDTH, graphic.SCREEN_HEIGHT}, vector.Pos{0, 0})
+func (sfe *screenFadeEffect) Draw(camPos vector.Pos, ticks uint32) {
+	graphic.DrawResource(sfe.res, sdl.Rect{0, 0, graphic.SCREEN_WIDTH, graphic.SCREEN_HEIGHT}, vector.Pos{0, 0})
 }
 
 func (sfe *screenFadeEffect) Finished() bool {

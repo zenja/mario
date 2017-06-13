@@ -53,13 +53,13 @@ type mushroomEnemy struct {
 	isDead    bool
 }
 
-func NewMushroomEnemy(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) *mushroomEnemy {
-	res0 := resourceRegistry[graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_0]
+func NewMushroomEnemy(startPos vector.Pos) *mushroomEnemy {
+	res0 := graphic.Res(graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_0)
 	return &mushroomEnemy{
 		res0:      res0,
-		res1:      resourceRegistry[graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_1],
-		resHit:    resourceRegistry[graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_HIT],
-		resDown:   resourceRegistry[graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN],
+		res1:      graphic.Res(graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_1),
+		resHit:    graphic.Res(graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_HIT),
+		resDown:   graphic.Res(graphic.RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN),
 		currRes:   res0,
 		levelRect: sdl.Rect{startPos.X, startPos.Y, res0.GetW(), res0.GetH()},
 		velocity:  vector.Vec2D{100, 0},
@@ -87,8 +87,8 @@ func (m *mushroomEnemy) Update(ticks uint32, level *Level) {
 	m.lastTicks = ticks
 }
 
-func (m *mushroomEnemy) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	g.DrawResource(m.currRes, m.levelRect, camPos)
+func (m *mushroomEnemy) Draw(camPos vector.Pos) {
+	graphic.DrawResource(m.currRes, m.levelRect, camPos)
 }
 
 func (m *mushroomEnemy) IsDead() bool {
@@ -164,15 +164,15 @@ type tortoiseEnemy struct {
 	bumpStartTicks   uint32 // when tortoise start bumping
 }
 
-func NewTortoiseEnemy(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) Enemy {
-	resLeft0 := resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_LEFT_0]
+func NewTortoiseEnemy(startPos vector.Pos) Enemy {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_LEFT_0)
 	return &tortoiseEnemy{
 		resLeft0:      resLeft0,
-		resLeft1:      resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_LEFT_1],
-		resRight0:     resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_RIGHT_0],
-		resRight1:     resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_RIGHT_1],
-		resSemiInside: resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_SEMI_INSIDE],
-		resInside:     resourceRegistry[graphic.RESOURCE_TYPE_TORTOISE_INSIDE],
+		resLeft1:      graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_LEFT_1),
+		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RIGHT_0),
+		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RIGHT_1),
+		resSemiInside: graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_SEMI_INSIDE),
+		resInside:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_INSIDE),
 		currRes:       resLeft0,
 		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
 		velocity:      vector.Vec2D{-100, 0},
@@ -202,8 +202,8 @@ func (t *tortoiseEnemy) Update(ticks uint32, level *Level) {
 	t.lastTicks = ticks
 }
 
-func (t *tortoiseEnemy) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	g.DrawResource(t.currRes, t.levelRect, camPos)
+func (t *tortoiseEnemy) Draw(camPos vector.Pos) {
+	graphic.DrawResource(t.currRes, t.levelRect, camPos)
 }
 
 func (t *tortoiseEnemy) IsDead() bool {
@@ -333,8 +333,8 @@ type goodMushroom struct {
 	isDead    bool
 }
 
-func NewGoodMushroom(startPos vector.Pos, resourceRegistry map[graphic.ResourceID]graphic.Resource) *goodMushroom {
-	res := resourceRegistry[graphic.RESOURCE_TYPE_GOOD_MUSHROOM]
+func NewGoodMushroom(startPos vector.Pos) *goodMushroom {
+	res := graphic.Res(graphic.RESOURCE_TYPE_GOOD_MUSHROOM)
 	return &goodMushroom{
 		res:       res,
 		levelRect: sdl.Rect{startPos.X, startPos.Y, res.GetW(), res.GetH()},
@@ -361,8 +361,8 @@ func (gm *goodMushroom) Update(ticks uint32, level *Level) {
 	gm.lastTicks = ticks
 }
 
-func (gm *goodMushroom) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	g.DrawResource(gm.res, gm.levelRect, camPos)
+func (gm *goodMushroom) Draw(camPos vector.Pos) {
+	graphic.DrawResource(gm.res, gm.levelRect, camPos)
 }
 
 func (gm *goodMushroom) IsDead() bool {

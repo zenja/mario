@@ -13,8 +13,6 @@ import (
 )
 
 type Game struct {
-	Gra *graphic.Graphic
-
 	// start position (left top) of camera
 	camPos       vector.Pos
 	currentLevel *level.Level
@@ -23,26 +21,23 @@ type Game struct {
 }
 
 func NewGame() *Game {
-	gra := graphic.New()
-
 	// register overlays
 	var overlays []overlay.Overlay
 	overlays = append(overlays, &overlay.FPSOverlay{})
 	overlays = append(overlays, &overlay.HeroLiveOverlay{})
 
 	return &Game{
-		Gra:      gra,
 		overlays: overlays,
 	}
 }
 
 func (game *Game) LoadLevel(filename string) {
-	game.currentLevel = level.ParseLevelFromFile(filename, game.Gra)
+	game.currentLevel = level.ParseLevelFromFile(filename)
 	game.currentLevel.Init()
 }
 
 func (game *Game) Quit() {
-	game.Gra.DestroyAndQuit()
+	graphic.DestroyAndQuit()
 }
 
 func (game *Game) StartGameLoop() {
@@ -68,18 +63,18 @@ func (game *Game) StartGameLoop() {
 		game.updateCamPos()
 
 		// start render
-		game.Gra.ClearScreenWithColor(game.currentLevel.BGColor)
+		graphic.ClearScreenWithColor(game.currentLevel.BGColor)
 
 		// render current level
-		game.currentLevel.Draw(game.Gra, game.camPos, sdl.GetTicks())
+		game.currentLevel.Draw(game.camPos, sdl.GetTicks())
 
 		// render overlays
 		for _, ol := range game.overlays {
-			ol.Draw(game.Gra, game.currentLevel.TheHero, sdl.GetTicks())
+			ol.Draw(game.currentLevel.TheHero, sdl.GetTicks())
 		}
 
 		// show screen
-		game.Gra.ShowScreen()
+		graphic.ShowScreen()
 
 		frameTime := sdl.GetTicks() - frameStart
 

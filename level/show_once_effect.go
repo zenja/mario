@@ -34,9 +34,9 @@ func (soe *showOnceEffect) Update(ticks uint32) {
 	}
 }
 
-func (soe *showOnceEffect) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+func (soe *showOnceEffect) Draw(camPos vector.Pos, ticks uint32) {
 	if !soe.Finished() {
-		g.DrawResource(soe.res, soe.levelRect, camPos)
+		graphic.DrawResource(soe.res, soe.levelRect, camPos)
 	}
 }
 

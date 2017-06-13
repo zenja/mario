@@ -99,6 +99,10 @@ const (
 	hero_2_height = 85
 )
 
+func Res(id ResourceID) Resource {
+	return resourceRegistry[id]
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TileResource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +153,7 @@ func (ntr *NonTileResource) SetResourceAlpha(alpha uint8) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Public helper methods
+// Public helper functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // visibleRectInCamera returns a rect relative to camera which is (partly) visible
@@ -190,23 +194,23 @@ func VisibleRectInCamera(rect sdl.Rect, xCamStart, yCamStart int32) (rectInTile 
 // Other public utils
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (g *Graphic) DrawRect(rect sdl.Rect, camPos vector.Pos) {
-	r, green, b, a, err := g.renderer.GetDrawColor()
+func DrawRect(rect sdl.Rect, camPos vector.Pos) {
+	r, green, b, a, err := renderer.GetDrawColor()
 	if err != nil {
 		log.Fatalf("failed to get draw color: %s", err)
 	}
-	g.renderer.SetDrawColor(255, 255, 255, 255)
+	renderer.SetDrawColor(255, 255, 255, 255)
 	_, rectInCam := VisibleRectInCamera(rect, camPos.X, camPos.Y)
-	g.renderer.DrawRect(rectInCam)
-	g.renderer.SetDrawColor(r, green, b, a)
+	renderer.DrawRect(rectInCam)
+	renderer.SetDrawColor(r, green, b, a)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Graphic methods relative to resource
+// Graphic functions relative to resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (g *Graphic) GetResource(resourceID ResourceID) Resource {
-	r, ok := g.ResourceRegistry[resourceID]
+func GetResource(resourceID ResourceID) Resource {
+	r, ok := resourceRegistry[resourceID]
 	if !ok {
 		log.Fatalf("ResourceID %d not found in resource registry", resourceID)
 	}
@@ -214,58 +218,58 @@ func (g *Graphic) GetResource(resourceID ResourceID) Resource {
 }
 
 // drawResource is a helper function to draw a resource on level to camera
-func (g *Graphic) DrawResource(resource Resource, levelRect sdl.Rect, camPos vector.Pos) {
+func DrawResource(resource Resource, levelRect sdl.Rect, camPos vector.Pos) {
 	rectInResource, rectInCamera := VisibleRectInCamera(levelRect, camPos.X, camPos.Y)
 	if rectInResource != nil {
-		g.RenderResource(resource, rectInResource, rectInCamera)
+		RenderResource(resource, rectInResource, rectInCamera)
 	}
 }
 
 // registerTileResource loads a sprite into a TileResource from a file
-func (g *Graphic) registerTileResource(filename string, id ResourceID) {
+func registerTileResource(filename string, id ResourceID) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer surface.Free()
 
-	g.registerTileFromSurface(surface, id)
+	registerTileFromSurface(surface, id)
 }
 
 // registerNonTileResource loads a sprite into a NonTileResource from a file
-func (g *Graphic) registerNonTileResource(filename string, id ResourceID) {
+func registerNonTileResource(filename string, id ResourceID) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer surface.Free()
 
-	g.registerNonTileFromSurface(surface, id)
+	registerNonTileFromSurface(surface, id)
 }
 
-func (g *Graphic) registerScaledNonTileResource(filename string, id ResourceID, dstWidth int32, dstHeight int32) {
+func registerScaledNonTileResource(filename string, id ResourceID, dstWidth int32, dstHeight int32) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer surface.Free()
 
-	g.registerScaledNonTileFromSurface(surface, id, dstWidth, dstHeight)
+	registerScaledNonTileFromSurface(surface, id, dstWidth, dstHeight)
 }
 
-func (g *Graphic) registerFlippedNonTileResource(filename string, id ResourceID, flipHorizontal bool) {
+func registerFlippedNonTileResource(filename string, id ResourceID, flipHorizontal bool) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer surface.Free()
 
-	g.registerFlippedNonTileFromSurface(surface, id, flipHorizontal)
+	registerFlippedNonTileFromSurface(surface, id, flipHorizontal)
 }
 
 // RegisterBackgroundResource register a level background resource, scale it to have level's height
 // This function has to be public because it is used when parsing a level
-func (g *Graphic) RegisterBackgroundResource(filename string, id ResourceID, tilesInY int) {
+func RegisterBackgroundResource(filename string, id ResourceID, tilesInY int) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -275,10 +279,10 @@ func (g *Graphic) RegisterBackgroundResource(filename string, id ResourceID, til
 	dstHeight := int32(tilesInY * TILE_SIZE)
 	dstWidth := surface.W * (dstHeight / surface.H)
 
-	g.registerScaledNonTileFromSurface(surface, id, dstWidth, dstHeight)
+	registerScaledNonTileFromSurface(surface, id, dstWidth, dstHeight)
 }
 
-func (g *Graphic) registerResourceEx(
+func registerResourceEx(
 	filename string,
 	id ResourceID,
 	width,
@@ -293,36 +297,36 @@ func (g *Graphic) registerResourceEx(
 	}
 	defer surface.Free()
 
-	g.registerResourceFromSurfaceEx(surface, id, width, height, isTile, flipHorizontal, flipVertical)
+	registerResourceFromSurfaceEx(surface, id, width, height, isTile, flipHorizontal, flipVertical)
 }
 
 // registerTileFromSurface loads a sprite from a surface into a TileResource object
 // User need to free the surface himself
-func (g *Graphic) registerTileFromSurface(surface *sdl.Surface, id ResourceID) {
-	g.registerResourceFromSurface(surface, id, TILE_SIZE, TILE_SIZE, true)
+func registerTileFromSurface(surface *sdl.Surface, id ResourceID) {
+	registerResourceFromSurface(surface, id, TILE_SIZE, TILE_SIZE, true)
 }
 
 // registerNonTileFromSurface loads a sprite from a surface into a NonTileResource object
 // User need to free the surface himself
-func (g *Graphic) registerNonTileFromSurface(surface *sdl.Surface, id ResourceID) {
-	g.registerResourceFromSurface(surface, id, surface.W, surface.H, false)
+func registerNonTileFromSurface(surface *sdl.Surface, id ResourceID) {
+	registerResourceFromSurface(surface, id, surface.W, surface.H, false)
 }
 
-func (g *Graphic) registerScaledNonTileFromSurface(surface *sdl.Surface, id ResourceID, dstWidth, dstHeight int32) {
-	g.registerResourceFromSurface(surface, id, dstWidth, dstHeight, false)
+func registerScaledNonTileFromSurface(surface *sdl.Surface, id ResourceID, dstWidth, dstHeight int32) {
+	registerResourceFromSurface(surface, id, dstWidth, dstHeight, false)
 }
 
-func (g *Graphic) registerFlippedNonTileFromSurface(surface *sdl.Surface, id ResourceID, flipHorizontal bool) {
-	g.registerFlippedResourceFromSurface(surface, id, surface.W, surface.H, false, flipHorizontal)
+func registerFlippedNonTileFromSurface(surface *sdl.Surface, id ResourceID, flipHorizontal bool) {
+	registerFlippedResourceFromSurface(surface, id, surface.W, surface.H, false, flipHorizontal)
 }
 
 // registerResourceFromSurface loads a sprite from a surface into a Resource object
 // User need to free the surface himself
-func (g *Graphic) registerResourceFromSurface(surface *sdl.Surface, id ResourceID, width, height int32, isTile bool) {
-	g.registerResourceFromSurfaceEx(surface, id, width, height, isTile, false, false)
+func registerResourceFromSurface(surface *sdl.Surface, id ResourceID, width, height int32, isTile bool) {
+	registerResourceFromSurfaceEx(surface, id, width, height, isTile, false, false)
 }
 
-func (g *Graphic) registerFlippedResourceFromSurface(
+func registerFlippedResourceFromSurface(
 	surface *sdl.Surface,
 	id ResourceID,
 	width,
@@ -330,10 +334,10 @@ func (g *Graphic) registerFlippedResourceFromSurface(
 	isTile bool,
 	flipHorizontal bool) {
 
-	g.registerResourceFromSurfaceEx(surface, id, width, height, isTile, flipHorizontal, !flipHorizontal)
+	registerResourceFromSurfaceEx(surface, id, width, height, isTile, flipHorizontal, !flipHorizontal)
 }
 
-func (g *Graphic) registerResourceFromSurfaceEx(
+func registerResourceFromSurfaceEx(
 	surface *sdl.Surface,
 	id ResourceID,
 	width,
@@ -346,7 +350,7 @@ func (g *Graphic) registerResourceFromSurfaceEx(
 		log.Fatalf("declared to be tile but has wrong width (%d) or height (%d)", width, height)
 	}
 
-	texture, err := g.renderer.CreateTextureFromSurface(surface)
+	texture, err := renderer.CreateTextureFromSurface(surface)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -354,7 +358,7 @@ func (g *Graphic) registerResourceFromSurfaceEx(
 	// make sure the tile is in good shape
 	if surface.W != width || surface.H != height {
 		oldTexture := texture
-		texture, err = g.clipTexture(oldTexture, &sdl.Rect{0, 0, width, height})
+		texture, err = clipTexture(oldTexture, &sdl.Rect{0, 0, width, height})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -365,117 +369,117 @@ func (g *Graphic) registerResourceFromSurfaceEx(
 	// flip texture if needed
 	if flipHorizontal {
 		oldTexture := texture
-		texture, err = g.flipTexture(texture, width, height, true)
+		texture, err = flipTexture(texture, width, height, true)
 		oldTexture.Destroy()
 	}
 	if flipVertical {
 		oldTexture := texture
-		texture, err = g.flipTexture(texture, width, height, false)
+		texture, err = flipTexture(texture, width, height, false)
 		oldTexture.Destroy()
 	}
 
 	if isTile {
-		g.ResourceRegistry[id] = &TileResource{texture: texture}
+		resourceRegistry[id] = &TileResource{texture: texture}
 	} else {
-		g.ResourceRegistry[id] = &NonTileResource{texture: texture, w: width, h: height}
+		resourceRegistry[id] = &NonTileResource{texture: texture, w: width, h: height}
 	}
 }
 
 // RenderResource renders a tile (or a part of tile specified by srcRect) to a given position in screen
-func (g *Graphic) RenderResource(resource Resource, srcRect *sdl.Rect, dstRect *sdl.Rect) {
-	g.renderer.Copy(resource.GetTexture(), srcRect, dstRect)
+func RenderResource(resource Resource, srcRect *sdl.Rect, dstRect *sdl.Rect) {
+	renderer.Copy(resource.GetTexture(), srcRect, dstRect)
 }
 
-func (g *Graphic) loadAllResources() {
+func loadAllResources() {
 	// -------------------------------
 	// load tile resources
 	// -------------------------------
 
 	// brick
-	g.registerTileResource("assets/brick.png", RESOURCE_TYPE_BRICK)
+	registerTileResource("assets/brick.png", RESOURCE_TYPE_BRICK)
 
 	// grass
-	g.registerTileResource("assets/ground-grass-left.png", RESOURCE_TYPE_GROUD_GRASS_LEFT)
-	g.registerTileResource("assets/ground-grass-mid.png", RESOURCE_TYPE_GROUD_GRASS_MID)
-	g.registerTileResource("assets/ground-grass-right.png", RESOURCE_TYPE_GROUD_GRASS_RIGHT)
+	registerTileResource("assets/ground-grass-left.png", RESOURCE_TYPE_GROUD_GRASS_LEFT)
+	registerTileResource("assets/ground-grass-mid.png", RESOURCE_TYPE_GROUD_GRASS_MID)
+	registerTileResource("assets/ground-grass-right.png", RESOURCE_TYPE_GROUD_GRASS_RIGHT)
 
 	// ground
-	g.registerTileResource("assets/ground-inner-mid.png", RESOURCE_TYPE_GROUD_INNER_MID)
+	registerTileResource("assets/ground-inner-mid.png", RESOURCE_TYPE_GROUD_INNER_MID)
 
 	// myth box
-	g.registerTileResource("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
-	g.registerTileResource("assets/myth-box-normal-light.png", RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
-	g.registerTileResource("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
+	registerTileResource("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
+	registerTileResource("assets/myth-box-normal-light.png", RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
+	registerTileResource("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
 
 	// pipe
-	g.registerTileResource("assets/pipe-left-top.png", RESOURCE_TYPE_PIPE_LEFT_TOP)
-	g.registerTileResource("assets/pipe-right-top.png", RESOURCE_TYPE_PIPE_RIGHT_TOP)
-	g.registerTileResource("assets/pipe-left-mid.png", RESOURCE_TYPE_PIPE_LEFT_MID)
-	g.registerTileResource("assets/pipe-right-mid.png", RESOURCE_TYPE_PIPE_RIGHT_MID)
-	g.registerTileResource("assets/pipe-left-bottom.png", RESOURCE_TYPE_PIPE_LEFT_BOTTOM)
-	g.registerTileResource("assets/pipe-right-bottom.png", RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
+	registerTileResource("assets/pipe-left-top.png", RESOURCE_TYPE_PIPE_LEFT_TOP)
+	registerTileResource("assets/pipe-right-top.png", RESOURCE_TYPE_PIPE_RIGHT_TOP)
+	registerTileResource("assets/pipe-left-mid.png", RESOURCE_TYPE_PIPE_LEFT_MID)
+	registerTileResource("assets/pipe-right-mid.png", RESOURCE_TYPE_PIPE_RIGHT_MID)
+	registerTileResource("assets/pipe-left-bottom.png", RESOURCE_TYPE_PIPE_LEFT_BOTTOM)
+	registerTileResource("assets/pipe-right-bottom.png", RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
 
 	// coin
-	g.registerTileResource("assets/coin.png", RESOURCE_TYPE_COIN)
+	registerTileResource("assets/coin.png", RESOURCE_TYPE_COIN)
 
 	// good mushroom
-	g.registerTileResource("assets/mushroom.png", RESOURCE_TYPE_GOOD_MUSHROOM)
+	registerTileResource("assets/mushroom.png", RESOURCE_TYPE_GOOD_MUSHROOM)
 
 	// -------------------------------
 	// Load non-tile resources
 	// -------------------------------
 
 	// hero 0
-	g.registerScaledNonTileResource("assets/hero-0-stand.png", RESOURCE_TYPE_HERO_0_STAND_RIGHT, hero_0_width, hero_0_height)
-	g.registerScaledNonTileResource("assets/hero-0-walking.png", RESOURCE_TYPE_HERO_0_WALKING_RIGHT, hero_0_width, hero_0_height)
-	g.registerResourceEx("assets/hero-0-stand.png", RESOURCE_TYPE_HERO_0_STAND_LEFT, hero_0_width, hero_0_height, false, true, false)
-	g.registerResourceEx("assets/hero-0-walking.png", RESOURCE_TYPE_HERO_0_WALKING_LEFT, hero_0_width, hero_0_height, false, true, false)
+	registerScaledNonTileResource("assets/hero-0-stand.png", RESOURCE_TYPE_HERO_0_STAND_RIGHT, hero_0_width, hero_0_height)
+	registerScaledNonTileResource("assets/hero-0-walking.png", RESOURCE_TYPE_HERO_0_WALKING_RIGHT, hero_0_width, hero_0_height)
+	registerResourceEx("assets/hero-0-stand.png", RESOURCE_TYPE_HERO_0_STAND_LEFT, hero_0_width, hero_0_height, false, true, false)
+	registerResourceEx("assets/hero-0-walking.png", RESOURCE_TYPE_HERO_0_WALKING_LEFT, hero_0_width, hero_0_height, false, true, false)
 
 	// hero 1
-	g.registerScaledNonTileResource("assets/hero-1-stand.png", RESOURCE_TYPE_HERO_1_STAND_RIGHT, hero_1_width, hero_1_height)
-	g.registerScaledNonTileResource("assets/hero-1-walking.png", RESOURCE_TYPE_HERO_1_WALKING_RIGHT, hero_1_width, hero_1_height)
-	g.registerResourceEx("assets/hero-1-stand.png", RESOURCE_TYPE_HERO_1_STAND_LEFT, hero_1_width, hero_1_height, false, true, false)
-	g.registerResourceEx("assets/hero-1-walking.png", RESOURCE_TYPE_HERO_1_WALKING_LEFT, hero_1_width, hero_1_height, false, true, false)
+	registerScaledNonTileResource("assets/hero-1-stand.png", RESOURCE_TYPE_HERO_1_STAND_RIGHT, hero_1_width, hero_1_height)
+	registerScaledNonTileResource("assets/hero-1-walking.png", RESOURCE_TYPE_HERO_1_WALKING_RIGHT, hero_1_width, hero_1_height)
+	registerResourceEx("assets/hero-1-stand.png", RESOURCE_TYPE_HERO_1_STAND_LEFT, hero_1_width, hero_1_height, false, true, false)
+	registerResourceEx("assets/hero-1-walking.png", RESOURCE_TYPE_HERO_1_WALKING_LEFT, hero_1_width, hero_1_height, false, true, false)
 
 	// hero 2
-	g.registerScaledNonTileResource("assets/hero-2-stand.png", RESOURCE_TYPE_HERO_2_STAND_RIGHT, hero_2_width, hero_2_height)
-	g.registerScaledNonTileResource("assets/hero-2-walking.png", RESOURCE_TYPE_HERO_2_WALKING_RIGHT, hero_2_width, hero_2_height)
-	g.registerResourceEx("assets/hero-2-stand.png", RESOURCE_TYPE_HERO_2_STAND_LEFT, hero_2_width, hero_2_height, false, true, false)
-	g.registerResourceEx("assets/hero-2-walking.png", RESOURCE_TYPE_HERO_2_WALKING_LEFT, hero_2_width, hero_2_height, false, true, false)
+	registerScaledNonTileResource("assets/hero-2-stand.png", RESOURCE_TYPE_HERO_2_STAND_RIGHT, hero_2_width, hero_2_height)
+	registerScaledNonTileResource("assets/hero-2-walking.png", RESOURCE_TYPE_HERO_2_WALKING_RIGHT, hero_2_width, hero_2_height)
+	registerResourceEx("assets/hero-2-stand.png", RESOURCE_TYPE_HERO_2_STAND_LEFT, hero_2_width, hero_2_height, false, true, false)
+	registerResourceEx("assets/hero-2-walking.png", RESOURCE_TYPE_HERO_2_WALKING_LEFT, hero_2_width, hero_2_height, false, true, false)
 
 	// decoration: grass
-	g.registerNonTileResource("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
-	g.registerNonTileResource("assets/dec-grass-1.png", RESOURCE_TYPE_DEC_GRASS_1)
+	registerNonTileResource("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
+	registerNonTileResource("assets/dec-grass-1.png", RESOURCE_TYPE_DEC_GRASS_1)
 
 	// broken pieces
-	g.registerScaledNonTileResource("assets/brick-piece.png", RESOURCE_TYPE_BRICK_PIECE, TILE_SIZE/2, TILE_SIZE/2)
+	registerScaledNonTileResource("assets/brick-piece.png", RESOURCE_TYPE_BRICK_PIECE, TILE_SIZE/2, TILE_SIZE/2)
 
 	// mushroom enemy
-	g.registerScaledNonTileResource("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_0, TILE_SIZE, TILE_SIZE)
-	g.registerScaledNonTileResource("assets/mushroom-enemy-1.png", RESOURCE_TYPE_MUSHROOM_ENEMY_1, TILE_SIZE, TILE_SIZE)
-	g.registerScaledNonTileResource("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT, TILE_SIZE, TILE_SIZE)
-	g.registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
+	registerScaledNonTileResource("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_0, TILE_SIZE, TILE_SIZE)
+	registerScaledNonTileResource("assets/mushroom-enemy-1.png", RESOURCE_TYPE_MUSHROOM_ENEMY_1, TILE_SIZE, TILE_SIZE)
+	registerScaledNonTileResource("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT, TILE_SIZE, TILE_SIZE)
+	registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
 
 	// tortoise enemy
-	g.registerScaledNonTileResource("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_RIGHT_0, TILE_SIZE, TILE_SIZE)
-	g.registerScaledNonTileResource("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_RIGHT_1, TILE_SIZE, TILE_SIZE)
-	g.registerResourceEx("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_LEFT_0, TILE_SIZE, TILE_SIZE, false, true, false)
-	g.registerResourceEx("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_LEFT_1, TILE_SIZE, TILE_SIZE, false, true, false)
-	g.registerScaledNonTileResource("assets/tortoise-inside.png", RESOURCE_TYPE_TORTOISE_INSIDE, TILE_SIZE, TILE_SIZE)
-	g.registerScaledNonTileResource("assets/tortoise-semi-inside.png", RESOURCE_TYPE_TORTOISE_SEMI_INSIDE, TILE_SIZE, TILE_SIZE)
+	registerScaledNonTileResource("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_RIGHT_0, TILE_SIZE, TILE_SIZE)
+	registerScaledNonTileResource("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_RIGHT_1, TILE_SIZE, TILE_SIZE)
+	registerResourceEx("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_LEFT_0, TILE_SIZE, TILE_SIZE, false, true, false)
+	registerResourceEx("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_LEFT_1, TILE_SIZE, TILE_SIZE, false, true, false)
+	registerScaledNonTileResource("assets/tortoise-inside.png", RESOURCE_TYPE_TORTOISE_INSIDE, TILE_SIZE, TILE_SIZE)
+	registerScaledNonTileResource("assets/tortoise-semi-inside.png", RESOURCE_TYPE_TORTOISE_SEMI_INSIDE, TILE_SIZE, TILE_SIZE)
 
 	// fireball
-	g.registerScaledNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)
-	g.registerScaledNonTileResource("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1, 30, 30)
-	g.registerScaledNonTileResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
-	g.registerScaledNonTileResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
-	g.registerScaledNonTileResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 40, 40)
+	registerScaledNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)
+	registerScaledNonTileResource("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1, 30, 30)
+	registerScaledNonTileResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
+	registerScaledNonTileResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
+	registerScaledNonTileResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 40, 40)
 
 	// shine effect
-	g.registerNonTileResource("assets/shine-0.png", RESOURCE_TYPE_SHINE_0)
-	g.registerNonTileResource("assets/shine-1.png", RESOURCE_TYPE_SHINE_1)
-	g.registerNonTileResource("assets/shine-2.png", RESOURCE_TYPE_SHINE_2)
+	registerNonTileResource("assets/shine-0.png", RESOURCE_TYPE_SHINE_0)
+	registerNonTileResource("assets/shine-1.png", RESOURCE_TYPE_SHINE_1)
+	registerNonTileResource("assets/shine-2.png", RESOURCE_TYPE_SHINE_2)
 
 	// black screen
-	g.registerScaledNonTileResource("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
+	registerScaledNonTileResource("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
 }

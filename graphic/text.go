@@ -7,13 +7,13 @@ import (
 	"github.com/zenja/mario/vector"
 )
 
-func (g *Graphic) DrawText(text string, pos vector.Pos, color sdl.Color) {
-	surface, err := g.font.RenderUTF8_Solid(text, color)
+func DrawText(text string, pos vector.Pos, color sdl.Color) {
+	surface, err := font.RenderUTF8_Solid(text, color)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	texture, err := g.renderer.CreateTextureFromSurface(surface)
+	texture, err := renderer.CreateTextureFromSurface(surface)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,5 +24,5 @@ func (g *Graphic) DrawText(text string, pos vector.Pos, color sdl.Color) {
 	// Free loaded surface
 	surface.Free()
 
-	g.renderer.Copy(texture, nil, &sdl.Rect{pos.X, pos.Y, width, height})
+	renderer.Copy(texture, nil, &sdl.Rect{pos.X, pos.Y, width, height})
 }

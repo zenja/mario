@@ -47,10 +47,9 @@ func NewFireball(
 	heroRect sdl.Rect,
 	toRight bool,
 	upper bool,
-	ticks uint32,
-	resourceRegistry map[graphic.ResourceID]graphic.Resource) *fireball {
+	ticks uint32) *fireball {
 
-	res0 := resourceRegistry[graphic.RESOURCE_TYPE_FIREBALL_0]
+	res0 := graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_0)
 
 	var levelRect sdl.Rect
 	if toRight {
@@ -72,10 +71,10 @@ func NewFireball(
 
 	return &fireball{
 		res0:       res0,
-		res1:       resourceRegistry[graphic.RESOURCE_TYPE_FIREBALL_1],
-		res2:       resourceRegistry[graphic.RESOURCE_TYPE_FIREBALL_2],
-		res3:       resourceRegistry[graphic.RESOURCE_TYPE_FIREBALL_3],
-		resBoom:    resourceRegistry[graphic.RESOURCE_TYPE_FIREBALL_BOOM],
+		res1:       graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_1),
+		res2:       graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_2),
+		res3:       graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_3),
+		resBoom:    graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_BOOM),
 		currRes:    res0,
 		startTicks: ticks,
 		lastTicks:  ticks,
@@ -84,8 +83,8 @@ func NewFireball(
 	}
 }
 
-func (f *fireball) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	g.DrawResource(f.currRes, f.levelRect, camPos)
+func (f *fireball) Draw(camPos vector.Pos) {
+	graphic.DrawResource(f.currRes, f.levelRect, camPos)
 }
 
 func (f *fireball) Update(ticks uint32, level *Level) {

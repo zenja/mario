@@ -17,7 +17,7 @@ const (
 )
 
 type Object interface {
-	Draw(g *graphic.Graphic, camPos vector.Pos)
+	Draw(camPos vector.Pos)
 	Update(ticks uint32, level *Level)
 	GetRect() sdl.Rect
 	GetZIndex() int
@@ -57,8 +57,8 @@ func NewSingleTileObject(resource graphic.Resource, startPos vector.Pos, zIndex 
 	}
 }
 
-func (sto *singleTileObject) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	g.DrawResource(sto.resource, sto.levelRect, camPos)
+func (sto *singleTileObject) Draw(camPos vector.Pos) {
+	graphic.DrawResource(sto.resource, sto.levelRect, camPos)
 }
 
 func (sto *singleTileObject) Update(ticks uint32, level *Level) {
@@ -86,7 +86,7 @@ func NewInvisibleTileObject(tid vector.TileID) Object {
 	return &invisibleTileObject{tid}
 }
 
-func (ito *invisibleTileObject) Draw(g *graphic.Graphic, camPos vector.Pos) {
+func (ito *invisibleTileObject) Draw(camPos vector.Pos) {
 	// Do nothing
 }
 

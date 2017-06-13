@@ -75,13 +75,13 @@ func (bte *breakTileEffect) Update(ticks uint32) {
 	bte.lastTicks = ticks
 }
 
-func (bte *breakTileEffect) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+func (bte *breakTileEffect) Draw(camPos vector.Pos, ticks uint32) {
 
 	if !bte.Finished() {
-		g.DrawResource(bte.pieceRes, bte.rectLT, camPos)
-		g.DrawResource(bte.pieceRes, bte.rectRT, camPos)
-		g.DrawResource(bte.pieceRes, bte.rectLB, camPos)
-		g.DrawResource(bte.pieceRes, bte.rectRB, camPos)
+		graphic.DrawResource(bte.pieceRes, bte.rectLT, camPos)
+		graphic.DrawResource(bte.pieceRes, bte.rectRT, camPos)
+		graphic.DrawResource(bte.pieceRes, bte.rectLB, camPos)
+		graphic.DrawResource(bte.pieceRes, bte.rectRB, camPos)
 	}
 }
 

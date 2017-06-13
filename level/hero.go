@@ -16,8 +16,6 @@ const hurtAnimationMS = 2000
 var _ Object = &Hero{}
 
 type Hero struct {
-	resourceRegistry map[graphic.ResourceID]graphic.Resource
-
 	// hero 0 res
 	res0StandRight   graphic.Resource
 	res0WalkingRight graphic.Resource
@@ -92,8 +90,7 @@ type Hero struct {
 
 func NewHero(
 	renderBoxStartPos vector.Pos,
-	renderBoxWExpandRatio, renderBoxHExpandRatio float64,
-	resourceRegistry map[graphic.ResourceID]graphic.Resource) *Hero {
+	renderBoxWExpandRatio, renderBoxHExpandRatio float64) *Hero {
 
 	if renderBoxWExpandRatio <= -1 || renderBoxWExpandRatio >= 1 {
 		log.Fatalf("render box X expand ratio should be (-1, 1) but was %f", renderBoxWExpandRatio)
@@ -102,20 +99,20 @@ func NewHero(
 		log.Fatalf("render box Y expand ratio should be (-1, 1) but was %f", renderBoxHExpandRatio)
 	}
 
-	res0StandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_STAND_RIGHT]
-	res0WalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_WALKING_RIGHT]
-	res0StandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_STAND_LEFT]
-	res0WalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_0_WALKING_LEFT]
+	res0StandRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_STAND_RIGHT)
+	res0WalkingRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_WALKING_RIGHT)
+	res0StandLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_STAND_LEFT)
+	res0WalkingLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_WALKING_LEFT)
 
-	res1StandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_1_STAND_RIGHT]
-	res1WalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_1_WALKING_RIGHT]
-	res1StandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_1_STAND_LEFT]
-	res1WalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_1_WALKING_LEFT]
+	res1StandRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_STAND_RIGHT)
+	res1WalkingRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_WALKING_RIGHT)
+	res1StandLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_STAND_LEFT)
+	res1WalkingLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_WALKING_LEFT)
 
-	res2StandRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_2_STAND_RIGHT]
-	res2WalkingRight, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_2_WALKING_RIGHT]
-	res2StandLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_2_STAND_LEFT]
-	res2WalkingLeft, _ := resourceRegistry[graphic.RESOURCE_TYPE_HERO_2_WALKING_LEFT]
+	res2StandRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_STAND_RIGHT)
+	res2WalkingRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_WALKING_RIGHT)
+	res2StandLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_STAND_LEFT)
+	res2WalkingLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_WALKING_LEFT)
 
 	resX := renderBoxStartPos.X
 	resY := renderBoxStartPos.Y
@@ -130,8 +127,6 @@ func NewHero(
 	}
 
 	h := &Hero{
-		resourceRegistry: resourceRegistry,
-
 		res0StandRight:   res0StandRight,
 		res0WalkingRight: res0WalkingRight,
 		res0StandLeft:    res0StandLeft,
@@ -201,12 +196,12 @@ func (h *Hero) HandleEvents(events *intsets.Sparse, level *Level) {
 	}
 }
 
-func (h *Hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
+func (h *Hero) Draw(camPos vector.Pos) {
 	// if hurt, blink for a while, otherwise just draw the hero
 	ticks := sdl.GetTicks()
 	if h.hurtStartTicks > 0 && ticks-h.hurtStartTicks < hurtAnimationMS {
 		if (ticks-h.hurtStartTicks)%200 > 100 {
-			g.DrawResource(h.currRes, h.getRenderRect(), camPos)
+			graphic.DrawResource(h.currRes, h.getRenderRect(), camPos)
 		} else {
 			// Draw nothing to create a blink effect
 		}
@@ -219,7 +214,7 @@ func (h *Hero) Draw(g *graphic.Graphic, camPos vector.Pos) {
 		return
 	}
 
-	g.DrawResource(h.currRes, h.getRenderRect(), camPos)
+	graphic.DrawResource(h.currRes, h.getRenderRect(), camPos)
 
 	// FIXME for debug only
 	//g.DrawRect(h.getRenderRect(), camPos)
@@ -311,7 +306,7 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 
 	// fire if needed and capable and not too frequent
 	if h.fPressed && h.grade == 2 && ticks-h.lastFireTicks > 400 {
-		level.AddVolatileObject(NewFireball(h.levelRect, h.isFacingRight, h.upPressed, ticks, level.ResourceRegistry))
+		level.AddVolatileObject(NewFireball(h.levelRect, h.isFacingRight, h.upPressed, ticks))
 		h.lastFireTicks = ticks
 	}
 
@@ -488,7 +483,7 @@ func (h *Hero) upgrade(level *Level) {
 	h.reCalcLevelRectSize()
 
 	// show shine effects
-	level.AddEffect(NewShineEffect(level.ResourceRegistry, h, sdl.GetTicks()))
+	level.AddEffect(NewShineEffect(h, sdl.GetTicks()))
 }
 
 func (h *Hero) downgrade() {

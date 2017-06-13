@@ -61,9 +61,9 @@ func (dde *deadDownEffect) Update(ticks uint32) {
 	dde.lastTicks = ticks
 }
 
-func (dde *deadDownEffect) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+func (dde *deadDownEffect) Draw(camPos vector.Pos, ticks uint32) {
 	if !dde.Finished() {
-		g.DrawResource(dde.res, dde.levelRect, camPos)
+		graphic.DrawResource(dde.res, dde.levelRect, camPos)
 	}
 }
 

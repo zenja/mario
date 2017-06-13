@@ -12,7 +12,7 @@ import (
 )
 
 type Overlay interface {
-	Draw(g *graphic.Graphic, h *level.Hero, ticks uint32)
+	Draw(h *level.Hero, ticks uint32)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ type FPSOverlay struct {
 	currentTicks uint32
 }
 
-func (fo *FPSOverlay) Draw(g *graphic.Graphic, h *level.Hero, ticks uint32) {
+func (fo *FPSOverlay) Draw(h *level.Hero, ticks uint32) {
 	var fps uint32
 	pos := vector.Pos{50, 50}
 	color := sdl.Color{255, 255, 255, 0}
@@ -33,11 +33,11 @@ func (fo *FPSOverlay) Draw(g *graphic.Graphic, h *level.Hero, ticks uint32) {
 	}
 	if ticks-fo.currentTicks <= 0 {
 		log.Printf("FPSOverlay: strange, ticks (%d) <= fo.currentTicks (%d)", ticks, fo.currentTicks)
-		g.DrawText(fmt.Sprint("FPS: NaN"), pos, color)
+		graphic.DrawText(fmt.Sprint("FPS: NaN"), pos, color)
 		return
 	}
 	fps = 1000 / (ticks - fo.currentTicks)
-	g.DrawText(fmt.Sprintf("FPS: %d", fps), pos, color)
+	graphic.DrawText(fmt.Sprintf("FPS: %d", fps), pos, color)
 	fo.currentTicks = ticks
 }
 
@@ -47,8 +47,8 @@ func (fo *FPSOverlay) Draw(g *graphic.Graphic, h *level.Hero, ticks uint32) {
 
 type HeroLiveOverlay struct{}
 
-func (hlo *HeroLiveOverlay) Draw(g *graphic.Graphic, h *level.Hero, ticks uint32) {
+func (hlo *HeroLiveOverlay) Draw(h *level.Hero, ticks uint32) {
 	pos := vector.Pos{graphic.SCREEN_WIDTH - 150, 50}
 	color := sdl.Color{255, 255, 255, 0}
-	g.DrawText(fmt.Sprintf("Lives: %d", h.GetLives()), pos, color)
+	graphic.DrawText(fmt.Sprintf("Lives: %d", h.GetLives()), pos, color)
 }

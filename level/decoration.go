@@ -15,15 +15,11 @@ type decoration struct {
 	frameMs    uint32
 }
 
-func NewDecoration(
-	tid vector.TileID,
-	resIDs []graphic.ResourceID,
-	resourceRegistry map[graphic.ResourceID]graphic.Resource,
-	frameMs uint32) *decoration {
+func NewDecoration(tid vector.TileID, resIDs []graphic.ResourceID, frameMs uint32) *decoration {
 
 	var reses []graphic.Resource
 	for _, id := range resIDs {
-		reses = append(reses, resourceRegistry[id])
+		reses = append(reses, graphic.Res(id))
 	}
 
 	tidRect := GetTileRect(tid)
@@ -41,8 +37,8 @@ func NewDecoration(
 	}
 }
 
-func (d *decoration) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	g.DrawResource(d.reses[d.currResIdx], d.GetRect(), camPos)
+func (d *decoration) Draw(camPos vector.Pos) {
+	graphic.DrawResource(d.reses[d.currResIdx], d.GetRect(), camPos)
 }
 
 func (d *decoration) Update(ticks uint32, _ *Level) {

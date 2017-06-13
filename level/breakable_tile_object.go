@@ -24,8 +24,8 @@ func NewBreakableTileObject(mainRes graphic.Resource, pieceRes graphic.Resource,
 	}
 }
 
-func (bto *breakableTileObject) Draw(g *graphic.Graphic, camPos vector.Pos) {
-	g.DrawResource(bto.mainRes, bto.levelRect, camPos)
+func (bto *breakableTileObject) Draw(camPos vector.Pos) {
+	graphic.DrawResource(bto.mainRes, bto.levelRect, camPos)
 }
 
 func (bto *breakableTileObject) Update(ticks uint32, level *Level) {

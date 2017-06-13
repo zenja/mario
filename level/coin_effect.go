@@ -19,8 +19,8 @@ type coinEffect struct {
 	finished   bool
 }
 
-func NewCoinEffect(tid vector.TileID, resourceRegistry map[graphic.ResourceID]graphic.Resource, ticks uint32) *coinEffect {
-	coinRes, _ := resourceRegistry[graphic.RESOURCE_TYPE_COIN]
+func NewCoinEffect(tid vector.TileID, ticks uint32) *coinEffect {
+	coinRes := graphic.Res(graphic.RESOURCE_TYPE_COIN)
 	tileRect := *GetTileRect(tid)
 	return &coinEffect{
 		coinRes:    coinRes,
@@ -48,9 +48,9 @@ func (ci *coinEffect) Update(ticks uint32) {
 	ci.lastTicks = ticks
 }
 
-func (ci *coinEffect) Draw(g *graphic.Graphic, camPos vector.Pos, ticks uint32) {
+func (ci *coinEffect) Draw(camPos vector.Pos, ticks uint32) {
 	if !ci.Finished() {
-		g.DrawResource(ci.coinRes, ci.tileRect, camPos)
+		graphic.DrawResource(ci.coinRes, ci.tileRect, camPos)
 	}
 }
 
