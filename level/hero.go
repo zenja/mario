@@ -81,6 +81,9 @@ type Hero struct {
 	// after dying effect isDead should be set to true
 	isDead bool
 
+	// the grade when hero died, used for deciding which res to show in die effect
+	gradeWhenDie int
+
 	// a non-zero hurtStartTicks means it has been hurt before and the "hurt" (or "super") status is still in effect
 	// when hero got hurt, it will be set to current ticks
 	// will be reset after a while
@@ -323,6 +326,7 @@ func (h *Hero) Hurt() {
 }
 
 func (h *Hero) Kill() {
+	h.gradeWhenDie = h.grade
 	h.downgradeToLowest()
 	h.lives--
 	h.diedTicks = sdl.GetTicks()
@@ -527,4 +531,36 @@ func (h *Hero) reCalcLevelRectSize() {
 
 	// make sure the new level rect has same bottom position as the old one
 	h.levelRect.Y += preLevelRect.Y + preLevelRect.H - (h.levelRect.Y + h.levelRect.H)
+}
+
+func (h *Hero) getDieEffectResAndRect() (graphic.Resource, sdl.Rect) {
+	var res graphic.Resource
+	if h.isFacingRight {
+		switch h.gradeWhenDie {
+		case 0:
+			res = h.res0StandRight
+		case 1:
+			res = h.res1StandRight
+		case 2:
+			res = h.res2StandRight
+		default:
+			log.Fatalf("bug! hero's grade should be 0, 1, 2 but was %d", h.gradeWhenDie)
+		}
+	} else {
+		switch h.gradeWhenDie {
+		case 0:
+			res = h.res0StandLeft
+		case 1:
+			res = h.res1StandLeft
+		case 2:
+			res = h.res2StandLeft
+		default:
+			log.Fatalf("bug! hero's grade should be 0, 1, 2 but was %d", h.gradeWhenDie)
+		}
+	}
+
+	x := h.GetRect().X
+	y := h.GetRect().Y
+
+	return res, sdl.Rect{x, y, res.GetW(), res.GetH()}
 }

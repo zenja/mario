@@ -7,6 +7,8 @@ import (
 
 	"container/list"
 
+	"fmt"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
@@ -304,13 +306,9 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 
 	if l.TheHero.diedTicks > 0 {
 		// if hero just died, show hero die effects
-		var deadRes graphic.Resource
-		if l.TheHero.isFacingRight {
-			deadRes = l.TheHero.currResStandRight
-		} else {
-			deadRes = l.TheHero.currResStandLeft
-		}
-		l.AddEffect(NewStraightDeadDownEffect(deadRes, l.TheHero.getRenderRect(), l.TheHero.diedTicks))
+		dieRes, dieRect := l.TheHero.getDieEffectResAndRect()
+		fmt.Println(dieRect)
+		l.AddEffect(NewStraightDeadDownEffect(dieRes, dieRect, l.TheHero.diedTicks))
 
 		// and reset hero's diedTicks so that the effect will only be added once
 		l.TheHero.diedTicks = 0
