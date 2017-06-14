@@ -196,6 +196,11 @@ func (h *Hero) HandleEvents(events *intsets.Sparse, level *Level) {
 }
 
 func (h *Hero) Draw(camPos vector.Pos) {
+	// don't draw if hero is dead
+	if h.isDead {
+		return
+	}
+
 	// if hurt, blink for a while, otherwise just draw the hero
 	ticks := sdl.GetTicks()
 	if h.hurtStartTicks > 0 && ticks-h.hurtStartTicks < hurtAnimationMS {

@@ -30,6 +30,12 @@ type Level struct {
 
 	// Private
 	effects *list.List
+
+	// ticks when hero died, used to wait for hero die effect to finish
+	lastHeroDieTicks uint32
+
+	// if should restart
+	shouldRestart bool
 }
 
 func ParseLevel(bgFilename string, levelArr [][]byte, decArr [][]byte) *Level {
@@ -274,8 +280,15 @@ func (l *Level) HandleEvents(events *intsets.Sparse) {
 }
 
 func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
-	if l.TheHero.IsDead() {
+	if l.shouldRestart {
+		l.shouldRestart = false
 		l.Restart()
+	}
+
+	// wait for a while after hero died
+	if l.lastHeroDieTicks > 0 && ticks-l.lastHeroDieTicks > 1500 {
+		l.shouldRestart = true
+		l.lastHeroDieTicks = 0
 	}
 
 	// update tile objects
@@ -295,13 +308,16 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 		if l.TheHero.isFacingRight {
 			deadRes = l.TheHero.currResStandRight
 		} else {
-			deadRes = l.TheHero.currResStandRight
+			deadRes = l.TheHero.currResStandLeft
 		}
 		l.AddEffect(NewStraightDeadDownEffect(deadRes, l.TheHero.getRenderRect(), l.TheHero.diedTicks))
 
 		// and reset hero's diedTicks so that the effect will only be added once
 		l.TheHero.diedTicks = 0
-	} else {
+
+		// set lastHeroDieTicks, so we can know we need to wait for a while
+		l.lastHeroDieTicks = ticks
+	} else if !l.TheHero.IsDead() {
 		// update hero with events
 		l.TheHero.HandleEvents(events, l)
 		l.TheHero.Update(ticks, l)
