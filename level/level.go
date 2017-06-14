@@ -19,6 +19,7 @@ type Level struct {
 	BGRes         graphic.Resource
 	Decorations   []Object
 	TileObjects   [][]Object
+	NumTiles      vector.Vec2D // NOTE: X, Y is TID
 	Enemies       []Enemy
 	VolatileObjs  *list.List // a list of volatileObject objects
 	ObstMngr      *ObstacleManager
@@ -26,7 +27,6 @@ type Level struct {
 	TheHero       *Hero
 	InitHeroRect  sdl.Rect
 	BGColor       sdl.Color
-	NumTiles      vector.Vec2D // NOTE: X, Y is TID
 
 	// Private
 	effects *list.List
@@ -293,10 +293,20 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 	l.TheHero.HandleEvents(events, l)
 	l.TheHero.Update(ticks, l)
 
+	// if hero is out of level, kills it
+	if l.isOutOfLevel(l.TheHero.GetRect()) {
+		l.TheHero.Kill()
+	}
+
 	// update live enemies
 	for _, e := range l.Enemies {
 		if e.IsDead() {
 			continue
+		}
+
+		// if enemy is out of level, kills it
+		if l.isOutOfLevel(e.GetRect()) {
+			e.Kill()
 		}
 
 		e.Update(ticks, l)
@@ -448,4 +458,14 @@ func (l *Level) Restart() {
 
 func (l *Level) fadeIn() {
 	l.AddEffect(NewScreenFadeEffect(true, 1000, sdl.GetTicks()))
+}
+
+func (l *Level) isOutOfLevel(rect sdl.Rect) bool {
+	levelWidth := l.NumTiles.X * graphic.TILE_SIZE
+	levelHeight := l.NumTiles.Y * graphic.TILE_SIZE
+	if rect.X > levelWidth || rect.X+rect.W < 0 || rect.Y > levelHeight || rect.Y+rect.H < 0 {
+		return true
+	} else {
+		return false
+	}
 }

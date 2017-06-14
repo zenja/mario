@@ -13,16 +13,16 @@ import (
 type ObstacleManager struct {
 	tilesInRow    int
 	tilesInColumn int
-	isObstTile    [][]bool
+
+	// bool[tilesInRow][tilesInColumn], so that we can use isObstTile[TID.X][TID.Y]
+	// so its shape is a rotation of level's
+	isObstTile [][]bool
 }
 
 func NewObstacleManager(tilesInRow, tilesInColumn int) *ObstacleManager {
 	var isObstTile [][]bool
 	for i := 0; i < tilesInRow; i++ {
-		var row []bool
-		for j := 0; j < tilesInColumn; j++ {
-			row = append(row, false)
-		}
+		row := make([]bool, tilesInColumn)
 		isObstTile = append(isObstTile, row)
 	}
 	return &ObstacleManager{
@@ -43,7 +43,12 @@ func (om *ObstacleManager) RemoveTileObst(tileID vector.TileID) {
 }
 
 func (om *ObstacleManager) IsObstTile(tileID vector.TileID) bool {
-	om.assertLegalTilePos(tileID)
+	if !om.isLegalTilePos(tileID) {
+		// all tiles out of scope are considered not obstacles
+		// so objects can actually update itself to go out of scope, and it is easy to detect this
+		return false
+	}
+
 	return om.isObstTile[tileID.X][tileID.Y]
 }
 
@@ -155,14 +160,27 @@ func GetSurroundingTileIDs(rect sdl.Rect) (tids [8]vector.TileID) {
 	return
 }
 
+func (om *ObstacleManager) isLegalTilePos(tileID vector.TileID) bool {
+	if tileID.X < 0 || tileID.Y < 0 {
+		return false
+	}
+	if int(tileID.X) >= om.tilesInRow {
+		return false
+	}
+	if int(tileID.Y) >= om.tilesInColumn {
+		return false
+	}
+	return true
+}
+
 func (om *ObstacleManager) assertLegalTilePos(tileID vector.TileID) {
 	if tileID.X < 0 || tileID.Y < 0 {
 		log.Fatalf("Tile position cannot be negative: (%d, %d)", tileID.X, tileID.Y)
 	}
-	if int(tileID.X) > om.tilesInRow {
+	if int(tileID.X) >= om.tilesInRow {
 		log.Fatalf("Tile X (%d) exceeds max width (%d)", tileID.X, om.tilesInRow)
 	}
-	if int(tileID.Y) > om.tilesInColumn {
+	if int(tileID.Y) >= om.tilesInColumn {
 		log.Fatalf("Tile Y (%d) exceeds max height (%d)", tileID.Y, om.tilesInColumn)
 	}
 }

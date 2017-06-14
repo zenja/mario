@@ -35,6 +35,21 @@ type Enemy interface {
 
 	// if the enemy is dead, if so, don't need to update/draw
 	IsDead() bool
+
+	// after Kill(), IsDead() should return true
+	Kill()
+}
+
+type basicEnemy struct {
+	isDead bool
+}
+
+func (be *basicEnemy) IsDead() bool {
+	return be.isDead
+}
+
+func (be *basicEnemy) Kill() {
+	be.isDead = true
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,6 +57,8 @@ type Enemy interface {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type mushroomEnemy struct {
+	basicEnemy
+
 	res0      graphic.Resource
 	res1      graphic.Resource
 	resHit    graphic.Resource
@@ -50,7 +67,6 @@ type mushroomEnemy struct {
 	levelRect sdl.Rect
 	lastTicks uint32
 	velocity  vector.Vec2D
-	isDead    bool
 }
 
 func NewMushroomEnemy(startPos vector.Pos) *mushroomEnemy {
@@ -89,10 +105,6 @@ func (m *mushroomEnemy) Update(ticks uint32, level *Level) {
 
 func (m *mushroomEnemy) Draw(camPos vector.Pos) {
 	graphic.DrawResource(m.currRes, m.levelRect, camPos)
-}
-
-func (m *mushroomEnemy) IsDead() bool {
-	return m.isDead
 }
 
 func (m *mushroomEnemy) updateResource(ticks uint32) {
@@ -146,6 +158,8 @@ const (
 )
 
 type tortoiseEnemy struct {
+	basicEnemy
+
 	resLeft0      graphic.Resource
 	resLeft1      graphic.Resource
 	resRight0     graphic.Resource
@@ -158,7 +172,6 @@ type tortoiseEnemy struct {
 	levelRect     sdl.Rect
 	velocity      vector.Vec2D
 	lastTicks     uint32
-	isDead        bool
 
 	insideStartTicks uint32 // when tortoise go inside
 	bumpStartTicks   uint32 // when tortoise start bumping
@@ -204,10 +217,6 @@ func (t *tortoiseEnemy) Update(ticks uint32, level *Level) {
 
 func (t *tortoiseEnemy) Draw(camPos vector.Pos) {
 	graphic.DrawResource(t.currRes, t.levelRect, camPos)
-}
-
-func (t *tortoiseEnemy) IsDead() bool {
-	return t.isDead
 }
 
 func (t *tortoiseEnemy) updateResource(ticks uint32) {
@@ -326,11 +335,12 @@ func (t *tortoiseEnemy) toBumpingState(ticks uint32, toRight bool) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type goodMushroom struct {
+	basicEnemy
+
 	res       graphic.Resource
 	levelRect sdl.Rect
 	lastTicks uint32
 	velocity  vector.Vec2D
-	isDead    bool
 }
 
 func NewGoodMushroom(startPos vector.Pos) *goodMushroom {
@@ -363,10 +373,6 @@ func (gm *goodMushroom) Update(ticks uint32, level *Level) {
 
 func (gm *goodMushroom) Draw(camPos vector.Pos) {
 	graphic.DrawResource(gm.res, gm.levelRect, camPos)
-}
-
-func (gm *goodMushroom) IsDead() bool {
-	return gm.isDead
 }
 
 func (gm *goodMushroom) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
