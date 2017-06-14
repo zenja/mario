@@ -289,13 +289,27 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 		}
 	}
 
-	// update hero with events
-	l.TheHero.HandleEvents(events, l)
-	l.TheHero.Update(ticks, l)
+	if l.TheHero.diedTicks > 0 {
+		// if hero just died, show hero die effects
+		var deadRes graphic.Resource
+		if l.TheHero.isFacingRight {
+			deadRes = l.TheHero.currResStandRight
+		} else {
+			deadRes = l.TheHero.currResStandRight
+		}
+		l.AddEffect(NewStraightDeadDownEffect(deadRes, l.TheHero.getRenderRect(), l.TheHero.diedTicks))
 
-	// if hero is out of level, kills it
-	if l.isOutOfLevel(l.TheHero.GetRect()) {
-		l.TheHero.Kill()
+		// and reset hero's diedTicks so that the effect will only be added once
+		l.TheHero.diedTicks = 0
+	} else {
+		// update hero with events
+		l.TheHero.HandleEvents(events, l)
+		l.TheHero.Update(ticks, l)
+
+		// if hero is out of level, kills it
+		if l.isOutOfLevel(l.TheHero.GetRect()) {
+			l.TheHero.Kill()
+		}
 	}
 
 	// update live enemies

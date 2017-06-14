@@ -75,9 +75,8 @@ type Hero struct {
 
 	lives int
 
-	// the time when hero should die (which is the time start playing dying effect)
-	dyingTicks            uint32
-	shouldPlayDyingEffect bool
+	// the time when hero died
+	diedTicks uint32
 
 	// after dying effect isDead should be set to true
 	isDead bool
@@ -210,7 +209,7 @@ func (h *Hero) Draw(camPos vector.Pos) {
 
 	// when in dying process, do not draw hero,
 	// because a dying effect should be showing at the moment
-	if h.dyingTicks > 0 {
+	if h.diedTicks > 0 {
 		return
 	}
 
@@ -230,30 +229,6 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 
 	if h.isDead {
 		log.Fatal("bug! hero is dead, hero's update method should not be called")
-	}
-
-	// handling dying
-	if h.dyingTicks > 0 {
-		// show die effect, just once
-		if h.shouldPlayDyingEffect {
-			var deadRes graphic.Resource
-			if h.isFacingRight {
-				deadRes = h.currResStandRight
-			} else {
-				deadRes = h.currResStandRight
-			}
-			level.AddEffect(NewStraightDeadDownEffect(deadRes, h.getRenderRect(), h.dyingTicks))
-
-			h.shouldPlayDyingEffect = false
-		}
-
-		// wait a while after dying, then die
-		if ticks-h.dyingTicks > 2000 {
-			h.isDead = true
-		}
-
-		// if dying, no update for rest
-		return
 	}
 
 	// gravity: unit is pixels per second
@@ -344,8 +319,8 @@ func (h *Hero) Hurt() {
 
 func (h *Hero) Kill() {
 	h.lives--
-	h.dyingTicks = sdl.GetTicks()
-	h.shouldPlayDyingEffect = true
+	h.diedTicks = sdl.GetTicks()
+	h.isDead = true
 }
 
 func (h *Hero) GetLives() int {
@@ -358,7 +333,7 @@ func (h *Hero) Reborn(initRect sdl.Rect) {
 	h.grade = 0
 	h.lastFireTicks = 0
 	h.hurtStartTicks = 0
-	h.dyingTicks = 0
+	h.diedTicks = 0
 }
 
 func (h *Hero) IsDead() bool {
