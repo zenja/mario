@@ -28,6 +28,15 @@ const (
 	RESOURCE_TYPE_GROUD_GRASS_MID
 	RESOURCE_TYPE_GROUD_GRASS_RIGHT
 
+	RESOURCE_TYPE_WATER_0
+	RESOURCE_TYPE_WATER_1
+	RESOURCE_TYPE_WATER_2
+	RESOURCE_TYPE_WATER_3
+	RESOURCE_TYPE_WATER_4
+	RESOURCE_TYPE_WATER_5
+	RESOURCE_TYPE_WATER_6
+	RESOURCE_TYPE_WATER_FULL
+
 	RESOURCE_TYPE_DEC_GRASS_0
 	RESOURCE_TYPE_DEC_GRASS_1
 
@@ -424,6 +433,16 @@ func loadAllResources() {
 
 	// good mushroom
 	registerTileResource("assets/mushroom.png", RESOURCE_TYPE_GOOD_MUSHROOM)
+
+	// water
+	registerTileResource("assets/water-0.png", RESOURCE_TYPE_WATER_0)
+	registerTileResource("assets/water-1.png", RESOURCE_TYPE_WATER_1)
+	registerTileResource("assets/water-2.png", RESOURCE_TYPE_WATER_2)
+	registerTileResource("assets/water-3.png", RESOURCE_TYPE_WATER_3)
+	registerTileResource("assets/water-4.png", RESOURCE_TYPE_WATER_4)
+	registerTileResource("assets/water-5.png", RESOURCE_TYPE_WATER_5)
+	registerTileResource("assets/water-6.png", RESOURCE_TYPE_WATER_6)
+	registerTileResource("assets/water-pixel.png", RESOURCE_TYPE_WATER_FULL)
 
 	// -------------------------------
 	// Load non-tile resources

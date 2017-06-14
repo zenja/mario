@@ -70,6 +70,10 @@ func ParseLevel(bgFilename string, levelArr [][]byte, decArr [][]byte) *Level {
 		enemyObstMngr.AddTileObst(tid)
 	}
 
+	addAsNoObstTile := func(tid vector.TileID, o Object) {
+		tileObjs[tid.X][tid.Y] = o
+	}
+
 	var decorations []Object
 	addDecoration := func(d *decoration) {
 		decorations = append(decorations, d)
@@ -165,6 +169,17 @@ func ParseLevel(bgFilename string, levelArr [][]byte, decArr [][]byte) *Level {
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
+
+			// water surface
+			case 'W':
+				o := NewWaterSurfaceAnimationObject(tid)
+				addAsNoObstTile(tid, o)
+
+			// water inside
+			case 'w':
+				res := graphic.Res(graphic.RESOURCE_TYPE_WATER_FULL)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
+				addAsNoObstTile(tid, o)
 
 			// Enemy 1: mushroom enemy
 			case '1':

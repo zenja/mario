@@ -19,6 +19,7 @@ const (
 type Object interface {
 	Draw(camPos vector.Pos)
 	Update(ticks uint32, level *Level)
+	// object hit box (not render box)
 	GetRect() sdl.Rect
 	GetZIndex() int
 }
