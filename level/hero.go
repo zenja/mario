@@ -318,6 +318,7 @@ func (h *Hero) Hurt() {
 }
 
 func (h *Hero) Kill() {
+	h.downgradeToLowest()
 	h.lives--
 	h.diedTicks = sdl.GetTicks()
 	h.isDead = true
@@ -471,6 +472,12 @@ func (h *Hero) downgrade() {
 		h.switchResSet(1)
 	}
 
+	h.reCalcLevelRectSize()
+}
+
+func (h *Hero) downgradeToLowest() {
+	h.grade = 0
+	h.switchResSet(0)
 	h.reCalcLevelRectSize()
 }
 
