@@ -22,6 +22,6 @@ func main() {
 	defer quit()
 
 	G = game.NewGame()
-	G.LoadLevel("assets/levels/level1.txt")
+	G.LoadLevel("assets/levels/level1.toml")
 	G.StartGameLoop()
 }

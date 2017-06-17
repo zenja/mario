@@ -1,5 +1,13 @@
-assets/bg-0.png
-~
+[basic]
+name = "level-0"
+next-level-name = "level-0"
+
+[graphic]
+bg-file = "assets/bg-0.png"
+bg-color-rgb = "204, 237, 255"
+
+[level]
+def = """
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 B##..........[].......................................................................................................BB
 B##..........[].......................................................................................................BB
@@ -28,7 +36,9 @@ B##...LGR..............BBBBBBBBB..............BBBB..............................
 BGGGGGIIIGGGGGGGGGGG.GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG...GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGBB
 BIIIIIIIIIIIIIIIIIII.IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIWWWIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIBB
 BIIIIIIIIIIIIIIIIIII.IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIwwwIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIBB
-~
+"""
+
+dec-def = """
 ........................................................................................................................
 ........................................................................................................................
 ........................................................................................................................
@@ -57,3 +67,4 @@ BIIIIIIIIIIIIIIIIIII.IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIwwwIIIIIIIIIIIIII
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
+"""

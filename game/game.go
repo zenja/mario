@@ -32,7 +32,7 @@ func NewGame() *Game {
 }
 
 func (game *Game) LoadLevel(filename string) {
-	game.currentLevel = level.ParseLevelFromFile(filename)
+	game.currentLevel = level.BuildLevel(level.ParseLevelSpec(filename))
 	game.currentLevel.Init()
 }
 
