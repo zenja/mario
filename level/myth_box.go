@@ -84,7 +84,7 @@ func (ma *mushroomActor) onBoundingFinished(mb *mythBox, level *Level, ticks uin
 }
 
 func NewMushroomMythBox(startPos vector.Pos) *mythBox {
-	enemyStartPos := vector.Pos{startPos.X, startPos.Y - graphic.TILE_SIZE}
+	enemyStartPos := vector.Pos{startPos.X, startPos.Y}
 	enemy := NewGoodMushroom(enemyStartPos)
 	actor := mushroomActor{enemy}
 	return newMythBox(startPos, &actor)
@@ -159,7 +159,7 @@ func (mb *mythBox) GetRect() sdl.Rect {
 }
 
 func (mb *mythBox) GetZIndex() int {
-	return ZINDEX_1
+	return ZINDEX_2
 }
 
 func (mb *mythBox) Empty() {

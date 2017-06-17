@@ -357,7 +357,7 @@ func (gm *goodMushroom) GetRect() sdl.Rect {
 }
 
 func (gm *goodMushroom) GetZIndex() int {
-	return ZINDEX_4
+	return ZINDEX_1
 }
 
 func (gm *goodMushroom) Update(ticks uint32, level *Level) {
