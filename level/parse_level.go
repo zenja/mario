@@ -208,6 +208,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 	}
 
 	return &Level{
+		spec:          spec,
 		BGRes:         bgRes,
 		Decorations:   decorations,
 		TileObjects:   tileObjs,

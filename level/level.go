@@ -29,11 +29,10 @@ type Level struct {
 	BGColor       sdl.Color
 
 	// Private
+	spec    *LevelSpec
 	effects *list.List
-
 	// ticks when hero died, used to wait for hero die effect to finish
 	lastHeroDieTicks uint32
-
 	// if should restart
 	shouldRestart bool
 }
@@ -243,6 +242,13 @@ func (l *Level) AddEnemy(e Enemy) {
 }
 
 func (l *Level) Restart() {
+	// reset things needs to be reset with new level
+	newLevel := BuildLevel(l.spec)
+	l.TileObjects = newLevel.TileObjects
+	l.Enemies = newLevel.Enemies
+	l.ObstMngr = newLevel.ObstMngr
+	l.EnemyObstMngr = newLevel.EnemyObstMngr
+
 	l.fadeIn()
 	l.TheHero.Reborn(l.InitHeroRect)
 }
