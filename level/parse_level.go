@@ -15,21 +15,17 @@ import (
 	"github.com/zenja/mario/vector"
 )
 
-const (
-	level_dir = "assets/levels"
-)
-
-type levelSpec struct {
-	name          string
-	nextLevelName string
-	bgFilename    string // file name of background file
-	bgColor       sdl.Color
-	levelArr      [][]byte
-	decArr        [][]byte // decoration array
+type LevelSpec struct {
+	Name          string
+	NextLevelName string
+	BgFilename    string // file name of background file
+	BgColor       sdl.Color
+	LevelArr      [][]byte
+	DecArr        [][]byte // decoration array
 }
 
-func BuildLevel(spec *levelSpec) *Level {
-	graphic.RegisterBackgroundResource(spec.bgFilename, graphic.RESOURCE_TYPE_BG_0, len(spec.levelArr))
+func BuildLevel(spec *LevelSpec) *Level {
+	graphic.RegisterBackgroundResource(spec.BgFilename, graphic.RESOURCE_TYPE_BG_0, len(spec.LevelArr))
 	bgRes := graphic.Res(graphic.RESOURCE_TYPE_BG_0)
 
 	// NOTE: index is tid.X, tid.Y
@@ -37,9 +33,9 @@ func BuildLevel(spec *levelSpec) *Level {
 
 	var enemies []Enemy
 
-	numTiles := vector.Vec2D{int32(len(spec.levelArr[0])), int32(len(spec.levelArr))}
-	obstMngr := NewObstacleManager(len(spec.levelArr[0]), len(spec.levelArr))
-	enemyObstMngr := NewObstacleManager(len(spec.levelArr[0]), len(spec.levelArr))
+	numTiles := vector.Vec2D{int32(len(spec.LevelArr[0])), int32(len(spec.LevelArr))}
+	obstMngr := NewObstacleManager(len(spec.LevelArr[0]), len(spec.LevelArr))
+	enemyObstMngr := NewObstacleManager(len(spec.LevelArr[0]), len(spec.LevelArr))
 	var hero *Hero
 
 	// init tileObjs array
@@ -74,7 +70,7 @@ func BuildLevel(spec *levelSpec) *Level {
 		for tidX := 0; tidX < int(numTiles.X); tidX++ {
 			tid := vector.TileID{int32(tidX), int32(tidY)}
 			// note that levelArr's index is not TID, need reverse
-			switch spec.levelArr[tidY][tidX] {
+			switch spec.LevelArr[tidY][tidX] {
 			// Invisible block
 			case '#':
 				addAsFullObstTile(tid, NewInvisibleTileObject(tid))
@@ -196,7 +192,7 @@ func BuildLevel(spec *levelSpec) *Level {
 		for tidX := 0; tidX < int(numTiles.X); tidX++ {
 			tid := vector.TileID{int32(tidX), int32(tidY)}
 			// note that decArr's index is not TID, need reverse
-			switch spec.decArr[tidY][tidX] {
+			switch spec.DecArr[tidY][tidX] {
 			case '1':
 				resIds := []graphic.ResourceID{
 					graphic.RESOURCE_TYPE_DEC_GRASS_0,
@@ -221,13 +217,13 @@ func BuildLevel(spec *levelSpec) *Level {
 		EnemyObstMngr: enemyObstMngr,
 		TheHero:       hero,
 		InitHeroRect:  hero.levelRect,
-		BGColor:       spec.bgColor,
+		BGColor:       spec.BgColor,
 		NumTiles:      numTiles,
 		effects:       list.New(),
 	}
 }
 
-func ParseLevelSpec(levelFile string) *levelSpec {
+func ParseLevelSpec(levelFile string) *LevelSpec {
 	conf, err := toml.LoadFile(levelFile)
 	if err != nil {
 		log.Fatal(err)
@@ -253,13 +249,13 @@ func ParseLevelSpec(levelFile string) *levelSpec {
 		log.Fatal(err)
 	}
 
-	return &levelSpec{
-		name:          name,
-		nextLevelName: nextLevelName,
-		bgFilename:    bgFilename,
-		bgColor:       bgColor,
-		levelArr:      levelDef,
-		decArr:        levelDecDef,
+	return &LevelSpec{
+		Name:          name,
+		NextLevelName: nextLevelName,
+		BgFilename:    bgFilename,
+		BgColor:       bgColor,
+		LevelArr:      levelDef,
+		DecArr:        levelDecDef,
 	}
 }
 

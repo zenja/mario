@@ -1,7 +1,8 @@
 package game
 
 import (
-	"runtime"
+	"io/ioutil"
+	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/event"
@@ -12,9 +13,15 @@ import (
 	"golang.org/x/tools/container/intsets"
 )
 
+const (
+	first_level_name = "level-0"
+	level_dir        = "assets/levels"
+)
+
 type Game struct {
 	// start position (left top) of camera
 	camPos       vector.Pos
+	levelSpecs   map[string]*level.LevelSpec
 	currentLevel *level.Level
 	running      bool
 	overlays     []overlay.Overlay
@@ -27,12 +34,13 @@ func NewGame() *Game {
 	overlays = append(overlays, &overlay.HeroLiveOverlay{})
 
 	return &Game{
-		overlays: overlays,
+		levelSpecs: make(map[string]*level.LevelSpec),
+		overlays:   overlays,
 	}
 }
 
-func (game *Game) LoadLevel(filename string) {
-	game.currentLevel = level.BuildLevel(level.ParseLevelSpec(filename))
+func (game *Game) Init() {
+	game.loadLevels()
 	game.currentLevel.Init()
 }
 
@@ -41,9 +49,6 @@ func (game *Game) Quit() {
 }
 
 func (game *Game) StartGameLoop() {
-	// this may prevent window not responding
-	runtime.LockOSThread()
-
 	game.running = true
 	for game.running {
 		frameStart := sdl.GetTicks()
@@ -161,4 +166,33 @@ func (game *Game) handleGlobalEvents(events *intsets.Sparse) {
 	if events.Has(int(event.EVENT_KEYDOWN_F1)) {
 		game.currentLevel.Restart()
 	}
+}
+
+func (game *Game) loadLevels() {
+	fileInfos, err := ioutil.ReadDir(level_dir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, info := range fileInfos {
+		if info.IsDir() {
+			continue
+		}
+		spec := level.ParseLevelSpec(level_dir + "/" + info.Name())
+		game.levelSpecs[spec.Name] = spec
+	}
+
+	// check if the next level of each actually exists
+	for name, spec := range game.levelSpecs {
+		_, ok := game.levelSpecs[spec.NextLevelName]
+		if !ok {
+			log.Fatalf("%s's next level is %s, but not found", name, spec.NextLevelName)
+		}
+	}
+
+	firstLevel, ok := game.levelSpecs[first_level_name]
+	if !ok {
+		log.Fatalf("level not found: %s", first_level_name)
+	}
+	game.currentLevel = level.BuildLevel(firstLevel)
 }

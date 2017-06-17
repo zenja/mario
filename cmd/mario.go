@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 
+	"runtime"
+
 	"github.com/zenja/mario/game"
 )
 
@@ -21,7 +23,10 @@ func must(err error) {
 func main() {
 	defer quit()
 
+	// this will prevent window not responding
+	runtime.LockOSThread()
+
 	G = game.NewGame()
-	G.LoadLevel("assets/levels/level1.toml")
+	G.Init()
 	G.StartGameLoop()
 }
