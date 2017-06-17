@@ -12,8 +12,8 @@ type hittableByHero interface {
 	hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32)
 }
 
-type hittableByBrokenTile interface {
-	hitByBrokenTile(level *Level, ticks uint32)
+type hittableByBottomTile interface {
+	hitByBottomTile(level *Level, ticks uint32)
 }
 
 type hittableByFireball interface {
@@ -28,7 +28,7 @@ type Enemy interface {
 	hittableByHero
 
 	// Enemy is hittable by breaking tile (from enemy's bottom tile)
-	hittableByBrokenTile
+	hittableByBottomTile
 
 	// Enemy is hittable by fireball
 	hittableByFireball
@@ -131,7 +131,7 @@ func (m *mushroomEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 	}
 }
 
-func (m *mushroomEnemy) hitByBrokenTile(level *Level, ticks uint32) {
+func (m *mushroomEnemy) hitByBottomTile(level *Level, ticks uint32) {
 	m.dieDown(true, level, ticks)
 }
 
@@ -291,7 +291,7 @@ func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 	}
 }
 
-func (t *tortoiseEnemy) hitByBrokenTile(level *Level, ticks uint32) {
+func (t *tortoiseEnemy) hitByBottomTile(level *Level, ticks uint32) {
 	t.dieDown(true, level, ticks)
 }
 
@@ -381,7 +381,7 @@ func (gm *goodMushroom) hitByHero(h *Hero, direction hitDirection, level *Level,
 	h.upgrade(level)
 }
 
-func (gm *goodMushroom) hitByBrokenTile(level *Level, ticks uint32) {
+func (gm *goodMushroom) hitByBottomTile(level *Level, ticks uint32) {
 	// bounce up
 	gm.velocity.Y -= 500
 }
@@ -439,5 +439,21 @@ func enemySimpleMoveEx(
 	// prevent too big down velocity
 	if velocityStep.Y > 0 && hitBottom {
 		vel.Y = 0
+	}
+}
+
+func hitEnemiesOnTop(selfRect *sdl.Rect, level *Level, ticks uint32) {
+	for _, e := range level.Enemies {
+		emyRectLower := sdl.Rect{
+			X: e.GetRect().X,
+			Y: e.GetRect().Y + 1,
+			W: e.GetRect().W,
+			H: e.GetRect().H,
+		}
+		if emyRectLower.HasIntersection(selfRect) {
+			if !e.IsDead() {
+				e.hitByBottomTile(level, ticks)
+			}
+		}
 	}
 }

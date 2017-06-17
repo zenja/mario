@@ -208,6 +208,9 @@ func (mb *mythBox) hitByHero(h *Hero, direction hitDirection, level *Level, tick
 		mb.StartBounding()
 		mb.actor.onEffectiveBottomHit(mb, level, ticks)
 	}
+
+	// check if any enemy stand on this tile, hit them
+	hitEnemiesOnTop(&mb.levelRect, level, ticks)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
