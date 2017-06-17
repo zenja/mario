@@ -132,6 +132,9 @@ func (game *Game) gatherEvents() *intsets.Sparse {
 	if kbState[int(sdl.SCANCODE_F4)] == 1 {
 		events.Insert(int(event.EVENT_KEYDOWN_F4))
 	}
+	if kbState[int(sdl.SCANCODE_F5)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_F5))
+	}
 	return &events
 }
 
@@ -166,6 +169,9 @@ func (game *Game) handleGlobalEvents(events *intsets.Sparse) {
 	if events.Has(int(event.EVENT_KEYDOWN_F1)) {
 		game.currentLevel.Restart()
 	}
+	if events.Has(int(event.EVENT_KEYDOWN_F5)) {
+		game.nextLevel()
+	}
 }
 
 func (game *Game) loadLevels() {
@@ -195,4 +201,13 @@ func (game *Game) loadLevels() {
 		log.Fatalf("level not found: %s", first_level_name)
 	}
 	game.currentLevel = level.BuildLevel(firstLevel)
+}
+
+func (game *Game) nextLevel() {
+	nextLevel := level.BuildLevel(game.levelSpecs[game.currentLevel.Spec.NextLevelName])
+
+	// hero keeps unchanged
+	nextLevel.TheHero = game.currentLevel.TheHero
+
+	game.currentLevel.Init()
 }

@@ -16,6 +16,7 @@ import (
 
 type Level struct {
 	// Public
+	Spec          *LevelSpec
 	BGRes         graphic.Resource
 	Decorations   []Object
 	TileObjects   [][]Object
@@ -29,7 +30,6 @@ type Level struct {
 	BGColor       sdl.Color
 
 	// Private
-	spec    *LevelSpec
 	effects *list.List
 	// ticks when hero died, used to wait for hero die effect to finish
 	lastHeroDieTicks uint32
@@ -39,6 +39,7 @@ type Level struct {
 
 func (l *Level) Init() {
 	l.fadeIn()
+	l.TheHero.Reborn(l.InitHeroRect)
 }
 
 func (l *Level) HandleEvents(events *intsets.Sparse) {
@@ -243,14 +244,13 @@ func (l *Level) AddEnemy(e Enemy) {
 
 func (l *Level) Restart() {
 	// reset things needs to be reset with new level
-	newLevel := BuildLevel(l.spec)
+	newLevel := BuildLevel(l.Spec)
 	l.TileObjects = newLevel.TileObjects
 	l.Enemies = newLevel.Enemies
 	l.ObstMngr = newLevel.ObstMngr
 	l.EnemyObstMngr = newLevel.EnemyObstMngr
 
-	l.fadeIn()
-	l.TheHero.Reborn(l.InitHeroRect)
+	l.Init()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
