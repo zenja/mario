@@ -88,3 +88,7 @@ func (bte *breakTileEffect) Draw(camPos vector.Pos, ticks uint32) {
 func (bte *breakTileEffect) Finished() bool {
 	return bte.finished
 }
+
+func (bte *breakTileEffect) OnFinished() {
+	// Do nothing
+}

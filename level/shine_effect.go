@@ -100,3 +100,7 @@ func (se *shineEffect) getRes(ticks uint32, resA, resB, resC graphic.Resource) g
 		return resC
 	}
 }
+
+func (se *shineEffect) OnFinished() {
+	// Do nothing
+}

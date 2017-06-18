@@ -75,7 +75,7 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 		// if hero just died, show hero die effects
 		dieRes, dieRect := l.TheHero.getDieEffectResAndRect()
 		fmt.Println(dieRect)
-		l.AddEffect(NewStraightDeadDownEffect(dieRes, dieRect, l.TheHero.diedTicks))
+		l.AddEffect(NewStraightDeadDownEffect(dieRes, dieRect, l.TheHero.diedTicks, nil))
 
 		// and reset hero's diedTicks so that the effect will only be added once
 		l.TheHero.diedTicks = 0
@@ -124,7 +124,7 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 		l.VolatileObjs.Remove(e)
 	}
 
-	// update effects and remove finished effects
+	// update effects, run on-finished hook and remove finished effects
 	var finishedEffs []*list.Element
 	for e := l.effects.Front(); e != nil; e = e.Next() {
 		eff, ok := e.Value.(Effect)
@@ -134,6 +134,7 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 		eff.Update(ticks)
 
 		if eff.Finished() {
+			eff.OnFinished()
 			finishedEffs = append(finishedEffs, e)
 		}
 	}

@@ -43,3 +43,7 @@ func (soe *showOnceEffect) Draw(camPos vector.Pos, ticks uint32) {
 func (soe *showOnceEffect) Finished() bool {
 	return soe.finished
 }
+
+func (soe *showOnceEffect) OnFinished() {
+	// Do nothing
+}

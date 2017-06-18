@@ -57,3 +57,7 @@ func (ci *coinEffect) Draw(camPos vector.Pos, ticks uint32) {
 func (ci *coinEffect) Finished() bool {
 	return ci.finished
 }
+
+func (ci *coinEffect) OnFinished() {
+	// Do nothing
+}

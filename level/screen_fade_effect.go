@@ -46,3 +46,7 @@ func (sfe *screenFadeEffect) Draw(camPos vector.Pos, ticks uint32) {
 func (sfe *screenFadeEffect) Finished() bool {
 	return sfe.finished
 }
+
+func (sfe *screenFadeEffect) OnFinished() {
+	// Do nothing
+}

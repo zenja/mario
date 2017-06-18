@@ -10,12 +10,13 @@ import (
 var _ Effect = &deadDownEffect{}
 
 type deadDownEffect struct {
-	res        graphic.Resource
-	levelRect  sdl.Rect
-	velocity   vector.Vec2D
-	startTicks uint32
-	lastTicks  uint32
-	finished   bool
+	res            graphic.Resource
+	levelRect      sdl.Rect
+	velocity       vector.Vec2D
+	startTicks     uint32
+	lastTicks      uint32
+	finished       bool
+	onFinishedHook func()
 }
 
 func NewDeadDownEffect(res graphic.Resource, toRight bool, levelRect sdl.Rect, ticks uint32) *deadDownEffect {
@@ -35,14 +36,15 @@ func NewDeadDownEffect(res graphic.Resource, toRight bool, levelRect sdl.Rect, t
 	}
 }
 
-func NewStraightDeadDownEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32) *deadDownEffect {
+func NewStraightDeadDownEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32, onFinishedHook func()) *deadDownEffect {
 	return &deadDownEffect{
-		res:        res,
-		levelRect:  levelRect,
-		velocity:   vector.Vec2D{0, -1000},
-		startTicks: ticks,
-		lastTicks:  ticks,
-		finished:   false,
+		res:            res,
+		levelRect:      levelRect,
+		velocity:       vector.Vec2D{0, -1000},
+		startTicks:     ticks,
+		lastTicks:      ticks,
+		finished:       false,
+		onFinishedHook: onFinishedHook,
 	}
 }
 
@@ -69,4 +71,10 @@ func (dde *deadDownEffect) Draw(camPos vector.Pos, ticks uint32) {
 
 func (dde *deadDownEffect) Finished() bool {
 	return dde.finished
+}
+
+func (dde *deadDownEffect) OnFinished() {
+	if dde.onFinishedHook != nil {
+		dde.onFinishedHook()
+	}
 }
