@@ -16,12 +16,12 @@ import (
 )
 
 type LevelSpec struct {
-	Name          string
-	NextLevelName string
-	BgFilename    string // file name of background file
-	BgColor       sdl.Color
-	LevelArr      [][]byte
-	DecArr        [][]byte // decoration array
+	Name           string
+	NextLevelNames []string
+	BgFilename     string // file name of background file
+	BgColor        sdl.Color
+	LevelArr       [][]byte
+	DecArr         [][]byte // decoration array
 }
 
 func BuildLevel(spec *LevelSpec) *Level {
@@ -65,6 +65,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 
 	// parse level
 	var currentPos vector.Pos
+	var nextLevelJumperIdx int = 0
 	for tidY := 0; tidY < int(numTiles.Y); tidY++ {
 		currentPos.X = 0
 		for tidX := 0; tidX < int(numTiles.X); tidX++ {
@@ -75,105 +76,110 @@ func BuildLevel(spec *LevelSpec) *Level {
 			case '#':
 				addAsFullObstTile(tid, NewInvisibleTileObject(tid))
 
-				// Invisible block only to enemies
+			// Invisible block only to enemies
 			case '"':
 				addAsEnemyOnlyObstTile(tid, NewInvisibleTileObject(tid))
 
-				// Brick
+			// Brick
 			case 'B':
 				mainRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK)
 				pieceRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK_PIECE)
 				o := NewBreakableTileObject(mainRes, pieceRes, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// Ground with left grass
+			// Ground with left grass
 			case 'L':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// Ground with mid grass
+			// Ground with mid grass
 			case 'G':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// Ground with right grass
+			// Ground with right grass
 			case 'R':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// Inner ground in middle
+			// Inner ground in middle
 			case 'I':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_INNER_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// Myth box for coins
+			// Myth box for coins
 			case 'C':
 				addAsFullObstTile(tid, NewCoinMythBox(currentPos, 3))
 
-				// Myth box for mushrooms
+			// Myth box for mushrooms
 			case 'M':
 				addAsFullObstTile(tid, NewMushroomMythBox(currentPos))
 
-				// left middle of pipe
+			// left middle of pipe
 			case '[':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// right middle of pipe
+			// right middle of pipe
 			case ']':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// left top of pipe
+			// left top of pipe that will jump level
 			case '{':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_TOP)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// right top of pipe
+				// also needs to add level jumper
+				nextLevelName := spec.NextLevelNames[nextLevelJumperIdx]
+				enemies = append(enemies, NewLevelJumper(tid, nextLevelName))
+				nextLevelJumperIdx++
+
+			// right top of pipe that will jump level
 			case '}':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// left bottom of pipe
+			// left bottom of pipe
 			case '<':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_BOTTOM)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// right bottom of pipe
+			// right bottom of pipe
 			case '>':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsFullObstTile(tid, o)
 
-				// water surface
+			// water surface
 			case 'W':
 				o := NewWaterSurfaceAnimationObject(tid)
 				addAsNoObstTile(tid, o)
 
-				// water inside
+			// water inside
 			case 'w':
 				res := graphic.Res(graphic.RESOURCE_TYPE_WATER_FULL)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
 				addAsNoObstTile(tid, o)
 
-				// Enemy 1: mushroom enemy
+			// Enemy 1: mushroom enemy
 			case '1':
 				enemies = append(enemies, NewMushroomEnemy(currentPos))
 
-				// Enemy 2: tortoise enemy
+			// Enemy 2: tortoise enemy
 			case '2':
 				enemies = append(enemies, NewTortoiseEnemy(currentPos))
 
-				// Hero
+			// Hero
 			case 'H':
 				if hero != nil {
 					log.Fatal("more than one hero found")
@@ -231,7 +237,10 @@ func ParseLevelSpec(levelFile string) *LevelSpec {
 	}
 
 	name := conf.Get("basic.name").(string)
-	nextLevelName := conf.Get("basic.next-level-name").(string)
+	var nextLevelNames []string
+	for _, name := range conf.Get("transfer.next-levels").([]interface{}) {
+		nextLevelNames = append(nextLevelNames, name.(string))
+	}
 
 	bgFilename := conf.Get("graphic.bg-file").(string)
 
@@ -250,13 +259,20 @@ func ParseLevelSpec(levelFile string) *LevelSpec {
 		log.Fatal(err)
 	}
 
+	// check if num of next levels equals to '{' in level definition
+	leftBracketCnt := strings.Count(conf.Get("level.def").(string), "{")
+	if leftBracketCnt != len(nextLevelNames) {
+		log.Fatalf("failed to parse level %s: there are %d next levels but %d '{'",
+			name, len(nextLevelNames), leftBracketCnt)
+	}
+
 	return &LevelSpec{
-		Name:          name,
-		NextLevelName: nextLevelName,
-		BgFilename:    bgFilename,
-		BgColor:       bgColor,
-		LevelArr:      levelDef,
-		DecArr:        levelDecDef,
+		Name:           name,
+		NextLevelNames: nextLevelNames,
+		BgFilename:     bgFilename,
+		BgColor:        bgColor,
+		LevelArr:       levelDef,
+		DecArr:         levelDecDef,
 	}
 }
 

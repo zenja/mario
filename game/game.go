@@ -64,6 +64,12 @@ func (game *Game) StartGameLoop() {
 		// update current level
 		game.currentLevel.Update(events, sdl.GetTicks())
 
+		// check if need to switch level
+		nextLevel, shouldSwitchLevel := game.currentLevel.GetNextLevel()
+		if shouldSwitchLevel {
+			game.switchLevel(nextLevel)
+		}
+
 		// update camera position
 		game.updateCamPos()
 
@@ -113,6 +119,9 @@ func (game *Game) gatherEvents() *intsets.Sparse {
 	}
 	if kbState[int(sdl.SCANCODE_UP)] == 1 {
 		events.Insert(int(event.EVENT_KEYDOWN_UP))
+	}
+	if kbState[int(sdl.SCANCODE_DOWN)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_DOWN))
 	}
 	if kbState[int(sdl.SCANCODE_SPACE)] == 1 {
 		events.Insert(int(event.EVENT_KEYDOWN_SPACE))
@@ -170,7 +179,8 @@ func (game *Game) handleGlobalEvents(events *intsets.Sparse) {
 		game.currentLevel.Restart()
 	}
 	if events.Has(int(event.EVENT_KEYDOWN_F5)) {
-		game.nextLevel()
+		// FIXME
+		game.switchLevel("level-0")
 	}
 }
 
@@ -188,11 +198,13 @@ func (game *Game) loadLevels() {
 		game.levelSpecs[spec.Name] = spec
 	}
 
-	// check if the next level of each actually exists
+	// check if the next levels of each actually exist
 	for name, spec := range game.levelSpecs {
-		_, ok := game.levelSpecs[spec.NextLevelName]
-		if !ok {
-			log.Fatalf("%s's next level is %s, but not found", name, spec.NextLevelName)
+		for _, nextLevel := range spec.NextLevelNames {
+			_, ok := game.levelSpecs[nextLevel]
+			if !ok {
+				log.Fatalf("one of %s's next level is %s, but not found", name, nextLevel)
+			}
 		}
 	}
 
@@ -203,11 +215,12 @@ func (game *Game) loadLevels() {
 	game.currentLevel = level.BuildLevel(firstLevel)
 }
 
-func (game *Game) nextLevel() {
-	nextLevel := level.BuildLevel(game.levelSpecs[game.currentLevel.Spec.NextLevelName])
+func (game *Game) switchLevel(levelName string) {
+	nextLevel := level.BuildLevel(game.levelSpecs[levelName])
 
 	// hero keeps unchanged
 	nextLevel.TheHero = game.currentLevel.TheHero
 
+	game.currentLevel = nextLevel
 	game.currentLevel.Init()
 }

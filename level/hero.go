@@ -59,8 +59,9 @@ type Hero struct {
 	renderBoxH            int32
 
 	// event state
-	upPressed bool
-	fPressed  bool
+	upPressed   bool
+	fPressed    bool
+	downPressed bool
 
 	// current velocity, unit is pixels per second
 	velocity vector.Vec2D
@@ -194,6 +195,11 @@ func (h *Hero) HandleEvents(events *intsets.Sparse, level *Level) {
 	} else {
 		h.upPressed = false
 	}
+	if events.Has(int(event.EVENT_KEYDOWN_DOWN)) {
+		h.downPressed = true
+	} else {
+		h.downPressed = false
+	}
 	if events.Has(int(event.EVENT_KEYDOWN_F2)) {
 		h.upgrade(level)
 	}
@@ -269,7 +275,17 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 			continue
 		}
 
-		emy.hitByHero(h, direction, level, ticks)
+		switch emy.(type) {
+		case *levelJumper:
+			log.Println(h.downPressed)
+			// only jump level when down is pressed
+			if h.downPressed {
+				emy.hitByHero(h, direction, level, ticks)
+			}
+
+		default:
+			emy.hitByHero(h, direction, level, ticks)
+		}
 	}
 
 	// is on ground

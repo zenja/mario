@@ -28,7 +28,11 @@ type Level struct {
 	BGColor       sdl.Color
 
 	// Private
+
 	effects *list.List
+
+	// if not empty, it means we should switch to next level
+	nextLevelName string
 }
 
 func (l *Level) Init() {
@@ -43,6 +47,11 @@ func (l *Level) HandleEvents(events *intsets.Sparse) {
 }
 
 func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
+	// defensive prevention
+	if nextLevel, shouldSwitch := l.GetNextLevel(); shouldSwitch {
+		log.Fatalf("level should switch to %s, cannot update", nextLevel)
+	}
+
 	// update tile objects
 	for i := 0; i < int(l.NumTiles.X); i++ {
 		for j := 0; j < int(l.NumTiles.Y); j++ {
@@ -224,6 +233,19 @@ func (l *Level) Restart() {
 	l.EnemyObstMngr = newLevel.EnemyObstMngr
 
 	l.Init()
+}
+
+func (l *Level) ShouldSwitchLevel(nextLevelName string) {
+	l.nextLevelName = nextLevelName
+}
+
+// a indicator to upper game that we should switch level
+// return (next level name, should switch level)
+func (l *Level) GetNextLevel() (string, bool) {
+	if len(l.nextLevelName) == 0 {
+		return "", false
+	}
+	return l.nextLevelName, true
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

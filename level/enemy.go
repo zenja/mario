@@ -391,6 +391,75 @@ func (gm *goodMushroom) hitByFireball(fb *fireball, level *Level, ticks uint32) 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// LevelJumper
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var _ Enemy = &levelJumper{}
+
+// levelJumper is a two tile wide invisible "enemy" used to go to another level
+// it is usually placed on a pipe's top
+type levelJumper struct {
+	basicEnemy
+
+	nextLevelName string
+	levelRect     sdl.Rect
+}
+
+// NewLevelJumper
+// leftTID: the tile ID of left pipe top
+func NewLevelJumper(leftTID vector.TileID, nextLevelName string) *levelJumper {
+	leftRect := GetTileRect(leftTID)
+	return &levelJumper{
+		nextLevelName: nextLevelName,
+		levelRect: sdl.Rect{
+			leftRect.X,
+			leftRect.Y - 1, // Y - 1 so hero is able to hit it
+			2 * graphic.TILE_SIZE,
+			graphic.TILE_SIZE,
+		},
+	}
+}
+
+func (lj *levelJumper) GetRect() sdl.Rect {
+	return lj.levelRect
+}
+
+func (lj *levelJumper) GetZIndex() int {
+	// whatever z-index
+	return ZINDEX_1
+}
+
+func (lj *levelJumper) Update(ticks uint32, level *Level) {
+	// Do nothing
+}
+
+func (lj *levelJumper) Draw(camPos vector.Pos) {
+	// Do nothing due to invisible
+}
+
+func (lj *levelJumper) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	log.Println(direction)
+	if direction != HIT_FROM_TOP_W_INTENT {
+		return
+	}
+
+	h.Disable()
+	afterEffect := func() {
+		level.ShouldSwitchLevel(lj.nextLevelName)
+		h.Enable()
+	}
+	level.AddEffect(NewStraightDeadDownEffect(h.res0StandRight, h.levelRect, ticks, afterEffect))
+}
+
+func (lj *levelJumper) hitByBottomTile(level *Level, ticks uint32) {
+	// Do nothing
+}
+
+func (lj *levelJumper) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+	// Do nothing
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
