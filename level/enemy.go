@@ -127,7 +127,7 @@ func (m *mushroomEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 		level.AddEffect(NewShowOnceEffect(m.resHit, m.levelRect, ticks, 500))
 	} else {
 		// hero is hurt
-		hurtHeroIfIntersectEnough(h, m)
+		hurtHeroIfIntersectEnough(h, m, level)
 	}
 }
 
@@ -275,19 +275,19 @@ func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 		if t.insideStartTicks > 0 {
 			t.toBumpingState(ticks, true)
 		} else {
-			hurtHeroIfIntersectEnough(h, t)
+			hurtHeroIfIntersectEnough(h, t, level)
 		}
 
 	case HIT_FROM_RIGHT_W_INTENT:
 		if t.insideStartTicks > 0 {
 			t.toBumpingState(ticks, false)
 		} else {
-			hurtHeroIfIntersectEnough(h, t)
+			hurtHeroIfIntersectEnough(h, t, level)
 		}
 
 	default:
 		// hero is hurt
-		hurtHeroIfIntersectEnough(h, t)
+		hurtHeroIfIntersectEnough(h, t, level)
 	}
 }
 
@@ -458,7 +458,7 @@ func hitEnemiesOnTop(selfRect *sdl.Rect, level *Level, ticks uint32) {
 	}
 }
 
-func hurtHeroIfIntersectEnough(hero *Hero, emy Enemy) {
+func hurtHeroIfIntersectEnough(hero *Hero, emy Enemy, level *Level) {
 	heroRect := hero.GetRect()
 	emyRect := emy.GetRect()
 	interRect, hasIntersection := heroRect.Intersect(&emyRect)
@@ -467,6 +467,6 @@ func hurtHeroIfIntersectEnough(hero *Hero, emy Enemy) {
 	}
 
 	if interRect.W > int32(float64(emyRect.W)*0.2) && interRect.H > int32(float64(emyRect.H)*0.2) {
-		hero.Hurt()
+		hero.Hurt(level)
 	}
 }

@@ -49,7 +49,7 @@ func NewStraightDeadDownEffect(res graphic.Resource, levelRect sdl.Rect, ticks u
 }
 
 func (dde *deadDownEffect) Update(ticks uint32) {
-	if ticks-dde.startTicks > 2000 {
+	if ticks-dde.startTicks > 1500 {
 		dde.finished = true
 		return
 	}

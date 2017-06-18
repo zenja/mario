@@ -5,8 +5,6 @@ import (
 
 	"container/list"
 
-	"fmt"
-
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
@@ -31,10 +29,6 @@ type Level struct {
 
 	// Private
 	effects *list.List
-	// ticks when hero died, used to wait for hero die effect to finish
-	lastHeroDieTicks uint32
-	// if should restart
-	shouldRestart bool
 }
 
 func (l *Level) Init() {
@@ -49,17 +43,6 @@ func (l *Level) HandleEvents(events *intsets.Sparse) {
 }
 
 func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
-	if l.shouldRestart {
-		l.shouldRestart = false
-		l.Restart()
-	}
-
-	// wait for a while after hero died
-	if l.lastHeroDieTicks > 0 && ticks-l.lastHeroDieTicks > 1500 {
-		l.shouldRestart = true
-		l.lastHeroDieTicks = 0
-	}
-
 	// update tile objects
 	for i := 0; i < int(l.NumTiles.X); i++ {
 		for j := 0; j < int(l.NumTiles.Y); j++ {
@@ -71,25 +54,14 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 		}
 	}
 
-	if l.TheHero.diedTicks > 0 {
-		// if hero just died, show hero die effects
-		dieRes, dieRect := l.TheHero.getDieEffectResAndRect()
-		fmt.Println(dieRect)
-		l.AddEffect(NewStraightDeadDownEffect(dieRes, dieRect, l.TheHero.diedTicks, nil))
-
-		// and reset hero's diedTicks so that the effect will only be added once
-		l.TheHero.diedTicks = 0
-
-		// set lastHeroDieTicks, so we can know we need to wait for a while
-		l.lastHeroDieTicks = ticks
-	} else if !l.TheHero.IsDead() {
+	if !l.TheHero.IsDead() {
 		// update hero with events
 		l.TheHero.HandleEvents(events, l)
 		l.TheHero.Update(ticks, l)
 
 		// if hero is out of level, kills it
 		if l.isOutOfLevel(l.TheHero.GetRect()) {
-			l.TheHero.Kill()
+			l.TheHero.Kill(l)
 		}
 	}
 
