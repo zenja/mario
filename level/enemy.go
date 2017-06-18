@@ -448,7 +448,7 @@ func (lj *levelJumper) hitByHero(h *Hero, direction hitDirection, level *Level, 
 		level.ShouldSwitchLevel(lj.nextLevelName)
 		h.Enable()
 	}
-	level.AddEffect(NewStraightDeadDownEffect(h.res0StandRight, h.levelRect, ticks, afterEffect))
+	level.AddEffect(NewHeroIntoPipeEffect(h, ticks, afterEffect))
 }
 
 func (lj *levelJumper) hitByBottomTile(level *Level, ticks uint32) {

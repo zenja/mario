@@ -154,13 +154,13 @@ func (l *Level) Draw(camPos vector.Pos, ticks uint32) {
 		}
 	}
 
-	// put non-tile objects into render queue
+	// put hero into render queue
 	if l.TheHero.GetZIndex() == ZINDEX_0 {
 		log.Fatal("hero's z-index cannot be lowest")
 	}
 	zIndexObjs[l.TheHero.GetZIndex()] = append(zIndexObjs[l.TheHero.GetZIndex()], l.TheHero)
 
-	// render live enemies
+	// put live enemies into render queue
 	for _, e := range l.Enemies {
 		if e.IsDead() {
 			continue
@@ -170,12 +170,10 @@ func (l *Level) Draw(camPos vector.Pos, ticks uint32) {
 		zIndexObjs[z] = append(zIndexObjs[z], e)
 	}
 
-	// render higher z-index one-by-one
+	// render z-index layers one-by-one
 	for _, objs := range zIndexObjs {
-		if len(objs) > 0 {
-			for _, o := range objs {
-				o.Draw(camPos)
-			}
+		for _, o := range objs {
+			o.Draw(camPos)
 		}
 	}
 

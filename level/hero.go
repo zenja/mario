@@ -328,7 +328,7 @@ func (h *Hero) GetRect() sdl.Rect {
 }
 
 func (h *Hero) GetZIndex() int {
-	return ZINDEX_4
+	return ZINDEX_3
 }
 
 func (h *Hero) Hurt(level *Level) {
@@ -364,6 +364,7 @@ func (h *Hero) GetLives() int {
 
 func (h *Hero) Reborn(initRect sdl.Rect) {
 	h.levelRect = initRect
+	h.reCalcLevelRectSize()
 	h.isDead = false
 	h.grade = 0
 	h.lastFireTicks = 0

@@ -122,19 +122,19 @@ func BuildLevel(spec *LevelSpec) *Level {
 			// left middle of pipe
 			case '[':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_MID)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
 				addAsFullObstTile(tid, o)
 
 			// right middle of pipe
 			case ']':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_MID)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
 				addAsFullObstTile(tid, o)
 
 			// left top of pipe that will jump level
 			case '{':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_TOP)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
 				addAsFullObstTile(tid, o)
 
 				// also needs to add level jumper
@@ -145,19 +145,19 @@ func BuildLevel(spec *LevelSpec) *Level {
 			// right top of pipe that will jump level
 			case '}':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
 				addAsFullObstTile(tid, o)
 
 			// left bottom of pipe
 			case '<':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_BOTTOM)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
 				addAsFullObstTile(tid, o)
 
 			// right bottom of pipe
 			case '>':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
 				addAsFullObstTile(tid, o)
 
 			// water surface
