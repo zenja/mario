@@ -195,6 +195,9 @@ func (game *Game) loadLevels() {
 			continue
 		}
 		spec := level.ParseLevelSpec(level_dir + "/" + info.Name())
+		if _, ok := game.levelSpecs[spec.Name]; ok {
+			log.Fatalf("level %s already exists, cannot load again (is there duplicated level names?)", spec.Name)
+		}
 		game.levelSpecs[spec.Name] = spec
 	}
 
