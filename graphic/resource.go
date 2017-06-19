@@ -108,6 +108,11 @@ const (
 	hero_1_height = 85
 	hero_2_width  = 55
 	hero_2_height = 85
+
+	tortoise_walking_width  = 50
+	tortoise_walking_height = 65
+	tortoise_inside_width   = 50
+	tortoise_inside_height  = 43
 )
 
 func Res(id ResourceID) Resource {
@@ -482,12 +487,12 @@ func loadAllResources() {
 	registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
 
 	// tortoise enemy
-	registerScaledNonTileResource("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_RIGHT_0, TILE_SIZE, TILE_SIZE)
-	registerScaledNonTileResource("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_RIGHT_1, TILE_SIZE, TILE_SIZE)
-	registerResourceEx("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_LEFT_0, TILE_SIZE, TILE_SIZE, false, true, false)
-	registerResourceEx("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_LEFT_1, TILE_SIZE, TILE_SIZE, false, true, false)
-	registerScaledNonTileResource("assets/tortoise-inside.png", RESOURCE_TYPE_TORTOISE_INSIDE, TILE_SIZE, TILE_SIZE)
-	registerScaledNonTileResource("assets/tortoise-semi-inside.png", RESOURCE_TYPE_TORTOISE_SEMI_INSIDE, TILE_SIZE, TILE_SIZE)
+	registerScaledNonTileResource("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_RIGHT_0, tortoise_walking_width, tortoise_walking_height)
+	registerScaledNonTileResource("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_RIGHT_1, tortoise_walking_width, tortoise_walking_height)
+	registerResourceEx("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_LEFT_0, tortoise_walking_width, tortoise_walking_height, false, true, false)
+	registerResourceEx("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_LEFT_1, tortoise_walking_width, tortoise_walking_height, false, true, false)
+	registerScaledNonTileResource("assets/tortoise-inside.png", RESOURCE_TYPE_TORTOISE_INSIDE, tortoise_inside_width, tortoise_inside_height)
+	registerScaledNonTileResource("assets/tortoise-semi-inside.png", RESOURCE_TYPE_TORTOISE_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
 
 	// fireball
 	registerScaledNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)

@@ -226,23 +226,33 @@ func (t *tortoiseEnemy) Draw(camPos vector.Pos) {
 
 func (t *tortoiseEnemy) updateResource(ticks uint32) {
 	if t.insideStartTicks > 0 || t.bumpStartTicks > 0 {
-		t.currRes = t.resInside
+		t.switchResourceAndAdjustRect(t.resInside)
 		return
 	}
 
 	if ticks%1000 < 500 {
 		if t.isFacingRight {
-			t.currRes = t.resRight0
+			t.switchResourceAndAdjustRect(t.resRight0)
 		} else {
-			t.currRes = t.resLeft0
+			t.switchResourceAndAdjustRect(t.resLeft0)
 		}
 	} else {
 		if t.isFacingRight {
-			t.currRes = t.resRight1
+			t.switchResourceAndAdjustRect(t.resRight1)
 		} else {
-			t.currRes = t.resLeft1
+			t.switchResourceAndAdjustRect(t.resLeft1)
 		}
 	}
+}
+
+func (t *tortoiseEnemy) switchResourceAndAdjustRect(newRes graphic.Resource) {
+	oldRes := t.currRes
+	t.currRes = newRes
+	// make sure new res stands on same bottom position
+	incH := newRes.GetH() - oldRes.GetH()
+	t.levelRect.Y -= incH
+	t.levelRect.W = t.currRes.GetW()
+	t.levelRect.H = t.currRes.GetH()
 }
 
 func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
@@ -310,7 +320,7 @@ func (t *tortoiseEnemy) hitByFireball(fb *fireball, level *Level, ticks uint32) 
 
 func (t *tortoiseEnemy) dieDown(toRight bool, level *Level, ticks uint32) {
 	t.isDead = true
-	level.AddEffect(NewDeadDownEffect(t.resInside, toRight, t.levelRect, ticks))
+	level.AddEffect(NewDeadDownEffect(t.currRes, toRight, t.levelRect, ticks))
 }
 
 func (t *tortoiseEnemy) toInsideState(ticks uint32) {
