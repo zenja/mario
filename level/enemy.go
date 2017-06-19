@@ -207,11 +207,15 @@ func (t *tortoiseEnemy) Update(ticks uint32, level *Level) {
 
 	onHitLeft := func() {
 		t.isFacingRight = true
-		level.AddEffect(t.newBangEffect(true))
+		if t.bumpStartTicks > 0 {
+			level.AddEffect(t.newBangEffect(true))
+		}
 	}
 	onHitRight := func() {
 		t.isFacingRight = false
-		level.AddEffect(t.newBangEffect(false))
+		if t.bumpStartTicks > 0 {
+			level.AddEffect(t.newBangEffect(false))
+		}
 	}
 	enemySimpleMoveEx(ticks, t.lastTicks, &t.velocity, &t.levelRect, level, onHitLeft, onHitRight)
 
