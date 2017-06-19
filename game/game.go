@@ -68,6 +68,7 @@ func (game *Game) StartGameLoop() {
 		nextLevel, shouldSwitchLevel := game.currentLevel.GetNextLevel()
 		if shouldSwitchLevel {
 			game.switchLevel(nextLevel)
+			continue
 		}
 
 		// update camera position
