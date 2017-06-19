@@ -153,7 +153,6 @@ func (m *mushroomEnemy) dieDown(toRight bool, level *Level, ticks uint32) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const (
-	tortoiseInitVelocityX         = 50
 	tortoiseBumpingVelocityXRight = 800
 )
 
@@ -206,8 +205,14 @@ func (t *tortoiseEnemy) Update(ticks uint32, level *Level) {
 		return
 	}
 
-	onHitLeft := func() { t.isFacingRight = true }
-	onHitRight := func() { t.isFacingRight = false }
+	onHitLeft := func() {
+		t.isFacingRight = true
+		level.AddEffect(t.newBangEffect(true))
+	}
+	onHitRight := func() {
+		t.isFacingRight = false
+		level.AddEffect(t.newBangEffect(false))
+	}
 	enemySimpleMoveEx(ticks, t.lastTicks, &t.velocity, &t.levelRect, level, onHitLeft, onHitRight)
 
 	t.updateResource(ticks)
@@ -328,6 +333,22 @@ func (t *tortoiseEnemy) toBumpingState(ticks uint32, toRight bool) {
 		// move left
 		t.velocity.X = -tortoiseBumpingVelocityXRight
 	}
+}
+
+func (t *tortoiseEnemy) newBangEffect(hitLeft bool) *showOnceEffect {
+	var xDelta int32
+	if hitLeft {
+		xDelta = -20
+	} else {
+		xDelta = 20
+	}
+	bangRect := sdl.Rect{
+		t.levelRect.X + xDelta,
+		t.levelRect.Y,
+		t.levelRect.W,
+		t.levelRect.H,
+	}
+	return NewShowOnceEffect(graphic.Res(graphic.RESOURCE_TYPE_BANG), bangRect, sdl.GetTicks(), 50)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

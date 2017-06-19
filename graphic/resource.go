@@ -71,6 +71,8 @@ const (
 	RESOURCE_TYPE_TORTOISE_INSIDE
 	RESOURCE_TYPE_TORTOISE_SEMI_INSIDE
 
+	RESOURCE_TYPE_BANG
+
 	RESOURCE_TYPE_FIREBALL_0
 	RESOURCE_TYPE_FIREBALL_1
 	RESOURCE_TYPE_FIREBALL_2
@@ -498,6 +500,9 @@ func loadAllResources() {
 	registerNonTileResource("assets/shine-0.png", RESOURCE_TYPE_SHINE_0)
 	registerNonTileResource("assets/shine-1.png", RESOURCE_TYPE_SHINE_1)
 	registerNonTileResource("assets/shine-2.png", RESOURCE_TYPE_SHINE_2)
+
+	// bang
+	registerScaledNonTileResource("assets/bang.png", RESOURCE_TYPE_BANG, 50, 50)
 
 	// black screen
 	registerScaledNonTileResource("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
