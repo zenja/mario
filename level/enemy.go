@@ -487,6 +487,7 @@ func (lj *levelJumper) hitByHero(h *Hero, direction hitDirection, level *Level, 
 		h.Enable()
 	}
 	level.AddEffect(NewHeroIntoPipeEffect(h, ticks, afterEffect))
+	audio.PlaySound(audio.SOUND_PIPE)
 }
 
 func (lj *levelJumper) hitByBottomTile(level *Level, ticks uint32) {
