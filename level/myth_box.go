@@ -50,6 +50,9 @@ func (ca *coinActor) onEffectiveBottomHit(mb *mythBox, level *Level, ticks uint3
 		// add a coin effect
 		mbTID := GetTileID(vector.Pos{mb.tileRect.X, mb.tileRect.Y}, false, false)
 		level.AddEffect(NewCoinEffect(vector.TileID{mbTID.X, mbTID.Y - 1}, ticks))
+
+		// increase #coins
+		level.Coins++
 	}
 }
 

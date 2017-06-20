@@ -16,6 +16,7 @@ type Level struct {
 	// Public
 	Spec          *LevelSpec
 	BGRes         graphic.Resource
+	BGColor       sdl.Color
 	Decorations   []Object
 	TileObjects   [][]Object
 	NumTiles      vector.Vec2D // NOTE: X, Y is TID
@@ -25,7 +26,7 @@ type Level struct {
 	EnemyObstMngr *ObstacleManager // obstacle manager for enemies
 	TheHero       *Hero
 	InitHeroRect  sdl.Rect
-	BGColor       sdl.Color
+	Coins         int
 
 	// Private
 

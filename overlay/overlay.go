@@ -12,7 +12,7 @@ import (
 )
 
 type Overlay interface {
-	Draw(h *level.Hero, ticks uint32)
+	Draw(level *level.Level, ticks uint32)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ type FPSOverlay struct {
 	currentTicks uint32
 }
 
-func (fo *FPSOverlay) Draw(h *level.Hero, ticks uint32) {
+func (fo *FPSOverlay) Draw(level *level.Level, ticks uint32) {
 	var fps uint32
 	pos := vector.Pos{50, 50}
 	color := sdl.Color{255, 255, 255, 0}
@@ -47,8 +47,20 @@ func (fo *FPSOverlay) Draw(h *level.Hero, ticks uint32) {
 
 type HeroLiveOverlay struct{}
 
-func (hlo *HeroLiveOverlay) Draw(h *level.Hero, ticks uint32) {
+func (hlo *HeroLiveOverlay) Draw(level *level.Level, ticks uint32) {
 	pos := vector.Pos{graphic.SCREEN_WIDTH - 150, 50}
 	color := sdl.Color{255, 255, 255, 0}
-	graphic.DrawText(fmt.Sprintf("Lives: %d", h.GetLives()), pos, color)
+	graphic.DrawText(fmt.Sprintf("Lives: %d", level.TheHero.GetLives()), pos, color)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// CoinsOverlay
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type CoinsOverlay struct{}
+
+func (co *CoinsOverlay) Draw(level *level.Level, ticks uint32) {
+	pos := vector.Pos{graphic.SCREEN_WIDTH/2 - 50, 50}
+	color := sdl.Color{255, 255, 255, 0}
+	graphic.DrawText(fmt.Sprintf("Coins: %d", level.Coins), pos, color)
 }

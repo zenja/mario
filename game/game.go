@@ -31,6 +31,7 @@ func NewGame() *Game {
 	// register overlays
 	var overlays []overlay.Overlay
 	overlays = append(overlays, &overlay.FPSOverlay{})
+	overlays = append(overlays, &overlay.CoinsOverlay{})
 	overlays = append(overlays, &overlay.HeroLiveOverlay{})
 
 	return &Game{
@@ -82,7 +83,7 @@ func (game *Game) StartGameLoop() {
 
 		// render overlays
 		for _, ol := range game.overlays {
-			ol.Draw(game.currentLevel.TheHero, sdl.GetTicks())
+			ol.Draw(game.currentLevel, sdl.GetTicks())
 		}
 
 		// show screen
@@ -224,6 +225,9 @@ func (game *Game) switchLevel(levelName string) {
 
 	// hero keeps unchanged
 	nextLevel.TheHero = game.currentLevel.TheHero
+
+	// coins keeps unchanged
+	nextLevel.Coins = game.currentLevel.Coins
 
 	game.currentLevel = nextLevel
 	game.currentLevel.Init()
