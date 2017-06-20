@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/zenja/mario/audio"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 )
@@ -293,6 +294,7 @@ func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 	case HIT_FROM_LEFT_W_INTENT:
 		if t.insideStartTicks > 0 {
 			t.toBumpingState(ticks, true)
+			audio.PlaySound(audio.SOUND_KICK)
 		} else {
 			hurtHeroIfIntersectEnough(h, t, level)
 		}
@@ -300,6 +302,7 @@ func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 	case HIT_FROM_RIGHT_W_INTENT:
 		if t.insideStartTicks > 0 {
 			t.toBumpingState(ticks, false)
+			audio.PlaySound(audio.SOUND_KICK)
 		} else {
 			hurtHeroIfIntersectEnough(h, t, level)
 		}

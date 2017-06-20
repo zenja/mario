@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/zenja/mario/audio"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
@@ -333,6 +334,7 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 	// fire if needed and capable and not too frequent
 	if h.fPressed && h.grade == 2 && ticks-h.lastFireTicks > 400 {
 		level.AddVolatileObject(NewFireball(h.levelRect, h.isFacingRight, h.upPressed, ticks))
+		audio.PlaySound(audio.SOUND_FIREBALL)
 		h.lastFireTicks = ticks
 	}
 
@@ -536,6 +538,9 @@ func (h *Hero) upgrade(level *Level) {
 
 	// show shine effects
 	level.AddEffect(NewShineEffect(h, sdl.GetTicks()))
+
+	// play sound
+	audio.PlaySound(audio.SOUND_POWERUP)
 }
 
 func (h *Hero) downgrade() {

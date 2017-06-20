@@ -2,6 +2,7 @@ package level
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/zenja/mario/audio"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 )
@@ -56,4 +57,7 @@ func (bto *breakableTileObject) hitByHero(h *Hero, direction hitDirection, level
 
 	// show breaking effect
 	level.AddEffect(NewBreakTileEffect(bto.pieceRes, tid, ticks))
+
+	// play sound
+	audio.PlaySound(audio.SOUND_BREAK_BRICK)
 }
