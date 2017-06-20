@@ -383,6 +383,7 @@ func (h *Hero) Kill(level *Level) {
 		h.Enable()
 	}
 	level.AddEffect(NewStraightDeadDownEffect(dieRes, dieRect, sdl.GetTicks(), afterEffectHook))
+	audio.PlaySound(audio.SOUND_HERO_DIE)
 }
 
 func (h *Hero) GetLives() int {

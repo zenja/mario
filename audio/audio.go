@@ -14,6 +14,7 @@ const (
 	SOUND_FIREBALL
 	SOUND_POWERUP
 	SOUND_BREAK_BRICK
+	SOUND_HERO_DIE
 )
 
 var sounds map[AudioID]*mix.Chunk = make(map[AudioID]*mix.Chunk)
@@ -29,6 +30,8 @@ func LoadAllAudios() {
 	sounds[SOUND_POWERUP], err = mix.LoadWAV("assets/audio/powerup.wav")
 	must(err)
 	sounds[SOUND_BREAK_BRICK], err = mix.LoadWAV("assets/audio/break_brick.wav")
+	must(err)
+	sounds[SOUND_HERO_DIE], err = mix.LoadWAV("assets/audio/hero_die.wav")
 	must(err)
 }
 
