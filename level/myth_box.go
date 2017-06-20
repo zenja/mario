@@ -2,6 +2,7 @@ package level
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/zenja/mario/audio"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 )
@@ -53,6 +54,9 @@ func (ca *coinActor) onEffectiveBottomHit(mb *mythBox, level *Level, ticks uint3
 
 		// increase #coins
 		level.Coins++
+
+		// play sound
+		audio.PlaySound(audio.SOUND_COIN)
 	}
 }
 

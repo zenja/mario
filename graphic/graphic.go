@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/sdl_image"
+	"github.com/veandco/go-sdl2/sdl_mixer"
 	"github.com/veandco/go-sdl2/sdl_ttf"
 )
 
@@ -67,6 +68,7 @@ func DestroyAndQuit() {
 	renderer.Destroy()
 	window.Destroy()
 
+	mix.Quit()
 	ttf.Quit()
 	img.Quit()
 	sdl.Quit()

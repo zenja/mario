@@ -4,7 +4,10 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/pkg/errors"
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/veandco/go-sdl2/sdl_mixer"
+	"github.com/zenja/mario/audio"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/level"
@@ -41,12 +44,20 @@ func NewGame() *Game {
 }
 
 func (game *Game) Init() {
+	// init audio system & load all audios
+	err := mix.OpenAudio(44100, mix.DEFAULT_FORMAT, 2, 2048)
+	if err != nil {
+		log.Fatal(errors.Wrap(err, "failed to init audio system"))
+	}
+	audio.LoadAllAudios()
+
 	game.loadLevels()
 	game.currentLevel.Init()
 }
 
 func (game *Game) Quit() {
 	graphic.DestroyAndQuit()
+	audio.Destroy()
 }
 
 func (game *Game) StartGameLoop() {
