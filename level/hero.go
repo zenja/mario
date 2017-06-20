@@ -19,26 +19,34 @@ type Hero struct {
 	// hero 0 res
 	res0StandRight   graphic.Resource
 	res0WalkingRight graphic.Resource
+	res0JumpRight    graphic.Resource
 	res0StandLeft    graphic.Resource
 	res0WalkingLeft  graphic.Resource
+	res0JumpLeft     graphic.Resource
 
 	// hero 1 res
 	res1StandRight   graphic.Resource
 	res1WalkingRight graphic.Resource
+	res1JumpRight    graphic.Resource
 	res1StandLeft    graphic.Resource
 	res1WalkingLeft  graphic.Resource
+	res1JumpLeft     graphic.Resource
 
 	// hero 2 res
 	res2StandRight   graphic.Resource
 	res2WalkingRight graphic.Resource
+	res2JumpRight    graphic.Resource
 	res2StandLeft    graphic.Resource
 	res2WalkingLeft  graphic.Resource
+	res2JumpLeft     graphic.Resource
 
 	// current set of resource
 	currResStandRight   graphic.Resource
 	currResWalkingRight graphic.Resource
+	currResJumpRight    graphic.Resource
 	currResStandLeft    graphic.Resource
 	currResWalkingLeft  graphic.Resource
+	currResJumpLeft     graphic.Resource
 
 	// current resource
 	currRes graphic.Resource
@@ -104,18 +112,24 @@ func NewHero(
 
 	res0StandRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_STAND_RIGHT)
 	res0WalkingRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_WALKING_RIGHT)
+	res0JumpRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_JUMP_RIGHT)
 	res0StandLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_STAND_LEFT)
 	res0WalkingLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_WALKING_LEFT)
+	res0JumpLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_0_JUMP_LEFT)
 
 	res1StandRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_STAND_RIGHT)
 	res1WalkingRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_WALKING_RIGHT)
+	res1JumpRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_JUMP_RIGHT)
 	res1StandLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_STAND_LEFT)
 	res1WalkingLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_WALKING_LEFT)
+	res1JumpLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_1_JUMP_LEFT)
 
 	res2StandRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_STAND_RIGHT)
 	res2WalkingRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_WALKING_RIGHT)
+	res2JumpRight := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_JUMP_RIGHT)
 	res2StandLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_STAND_LEFT)
 	res2WalkingLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_WALKING_LEFT)
+	res2JumpLeft := graphic.Res(graphic.RESOURCE_TYPE_HERO_2_JUMP_LEFT)
 
 	resX := renderBoxStartPos.X
 	resY := renderBoxStartPos.Y
@@ -132,22 +146,33 @@ func NewHero(
 	h := &Hero{
 		res0StandRight:   res0StandRight,
 		res0WalkingRight: res0WalkingRight,
+		res0JumpRight:    res0JumpRight,
 		res0StandLeft:    res0StandLeft,
 		res0WalkingLeft:  res0WalkingLeft,
+		res0JumpLeft:     res0JumpLeft,
+
 		res1StandRight:   res1StandRight,
 		res1WalkingRight: res1WalkingRight,
+		res1JumpRight:    res1JumpRight,
 		res1StandLeft:    res1StandLeft,
 		res1WalkingLeft:  res1WalkingLeft,
+		res1JumpLeft:     res1JumpLeft,
+
 		res2StandRight:   res2StandRight,
 		res2WalkingRight: res2WalkingRight,
+		res2JumpRight:    res2JumpRight,
 		res2StandLeft:    res2StandLeft,
 		res2WalkingLeft:  res2WalkingLeft,
+		res2JumpLeft:     res2JumpLeft,
 
 		currResStandRight:   res0StandRight,
 		currResWalkingRight: res0WalkingRight,
+		currResJumpRight:    res0JumpRight,
 		currResStandLeft:    res0StandLeft,
 		currResWalkingLeft:  res0WalkingLeft,
-		currRes:             res0StandRight,
+		currResJumpLeft:     res0JumpLeft,
+
+		currRes: res0StandRight,
 
 		grade:                 0,
 		levelRect:             hitBox,
@@ -388,13 +413,22 @@ func (h *Hero) Disable() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func (h *Hero) updateRes() {
-	if h.velocity.X == 0 || h.lastTicks%600 < 300 {
+	switch {
+	case h.velocity.Y < 0:
+		if h.isFacingRight {
+			h.currRes = h.currResJumpRight
+		} else {
+			h.currRes = h.currResJumpLeft
+		}
+
+	case h.velocity.X == 0 || h.lastTicks%600 < 300:
 		if h.isFacingRight {
 			h.currRes = h.currResStandRight
 		} else {
 			h.currRes = h.currResStandLeft
 		}
-	} else if h.velocity.X != 0 && h.lastTicks%600 >= 300 {
+
+	case h.velocity.X != 0 && h.lastTicks%600 >= 300:
 		if h.isFacingRight {
 			h.currRes = h.currResWalkingRight
 		} else {
@@ -531,18 +565,24 @@ func (h *Hero) switchResSet(grade int) {
 	case 0:
 		h.currResStandRight = h.res0StandRight
 		h.currResWalkingRight = h.res0WalkingRight
+		h.currResJumpRight = h.res0JumpRight
 		h.currResStandLeft = h.res0StandLeft
 		h.currResWalkingLeft = h.res0WalkingLeft
+		h.currResJumpLeft = h.res0JumpLeft
 	case 1:
 		h.currResStandRight = h.res1StandRight
 		h.currResWalkingRight = h.res1WalkingRight
+		h.currResJumpRight = h.res1JumpRight
 		h.currResStandLeft = h.res1StandLeft
 		h.currResWalkingLeft = h.res1WalkingLeft
+		h.currResJumpLeft = h.res1JumpLeft
 	case 2:
 		h.currResStandRight = h.res2StandRight
 		h.currResWalkingRight = h.res2WalkingRight
+		h.currResJumpRight = h.res2JumpRight
 		h.currResStandLeft = h.res2StandLeft
 		h.currResWalkingLeft = h.res2WalkingLeft
+		h.currResJumpLeft = h.res2JumpLeft
 	}
 }
 

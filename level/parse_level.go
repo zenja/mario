@@ -184,7 +184,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 				if hero != nil {
 					log.Fatal("more than one hero found")
 				}
-				hero = NewHero(currentPos, 0.2, 0.1)
+				hero = NewHero(currentPos, 0.2, 0.2)
 			}
 			currentPos.X += graphic.TILE_SIZE
 		}

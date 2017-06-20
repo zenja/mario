@@ -87,27 +87,38 @@ const (
 
 	RESOURCE_TYPE_HERO_0_STAND_LEFT
 	RESOURCE_TYPE_HERO_0_WALKING_LEFT
+	RESOURCE_TYPE_HERO_0_JUMP_LEFT
+
 	RESOURCE_TYPE_HERO_0_STAND_RIGHT
 	RESOURCE_TYPE_HERO_0_WALKING_RIGHT
+	RESOURCE_TYPE_HERO_0_JUMP_RIGHT
+
 	RESOURCE_TYPE_HERO_1_STAND_LEFT
 	RESOURCE_TYPE_HERO_1_WALKING_LEFT
+	RESOURCE_TYPE_HERO_1_JUMP_LEFT
+
 	RESOURCE_TYPE_HERO_1_STAND_RIGHT
 	RESOURCE_TYPE_HERO_1_WALKING_RIGHT
+	RESOURCE_TYPE_HERO_1_JUMP_RIGHT
+
 	RESOURCE_TYPE_HERO_2_STAND_LEFT
 	RESOURCE_TYPE_HERO_2_WALKING_LEFT
+	RESOURCE_TYPE_HERO_2_JUMP_LEFT
+
 	RESOURCE_TYPE_HERO_2_STAND_RIGHT
 	RESOURCE_TYPE_HERO_2_WALKING_RIGHT
+	RESOURCE_TYPE_HERO_2_JUMP_RIGHT
 )
 
 const TILE_SIZE = 50
 
 const (
 	hero_0_width  = 50
-	hero_0_height = 70
+	hero_0_height = 75
 	hero_1_width  = 55
-	hero_1_height = 85
+	hero_1_height = 93
 	hero_2_width  = 55
-	hero_2_height = 85
+	hero_2_height = 93
 
 	tortoise_walking_width  = 50
 	tortoise_walking_height = 65
@@ -458,20 +469,26 @@ func loadAllResources() {
 	// hero 0
 	registerScaledNonTileResource("assets/hero-0-stand.png", RESOURCE_TYPE_HERO_0_STAND_RIGHT, hero_0_width, hero_0_height)
 	registerScaledNonTileResource("assets/hero-0-walking.png", RESOURCE_TYPE_HERO_0_WALKING_RIGHT, hero_0_width, hero_0_height)
+	registerScaledNonTileResource("assets/hero-0-jump.png", RESOURCE_TYPE_HERO_0_JUMP_RIGHT, hero_0_width, hero_0_height)
 	registerResourceEx("assets/hero-0-stand.png", RESOURCE_TYPE_HERO_0_STAND_LEFT, hero_0_width, hero_0_height, false, true, false)
 	registerResourceEx("assets/hero-0-walking.png", RESOURCE_TYPE_HERO_0_WALKING_LEFT, hero_0_width, hero_0_height, false, true, false)
+	registerResourceEx("assets/hero-0-jump.png", RESOURCE_TYPE_HERO_0_JUMP_LEFT, hero_0_width, hero_0_height, false, true, false)
 
 	// hero 1
 	registerScaledNonTileResource("assets/hero-1-stand.png", RESOURCE_TYPE_HERO_1_STAND_RIGHT, hero_1_width, hero_1_height)
 	registerScaledNonTileResource("assets/hero-1-walking.png", RESOURCE_TYPE_HERO_1_WALKING_RIGHT, hero_1_width, hero_1_height)
+	registerScaledNonTileResource("assets/hero-1-jump.png", RESOURCE_TYPE_HERO_1_JUMP_RIGHT, hero_1_width, hero_1_height)
 	registerResourceEx("assets/hero-1-stand.png", RESOURCE_TYPE_HERO_1_STAND_LEFT, hero_1_width, hero_1_height, false, true, false)
 	registerResourceEx("assets/hero-1-walking.png", RESOURCE_TYPE_HERO_1_WALKING_LEFT, hero_1_width, hero_1_height, false, true, false)
+	registerResourceEx("assets/hero-1-jump.png", RESOURCE_TYPE_HERO_1_JUMP_LEFT, hero_1_width, hero_1_height, false, true, false)
 
 	// hero 2
 	registerScaledNonTileResource("assets/hero-2-stand.png", RESOURCE_TYPE_HERO_2_STAND_RIGHT, hero_2_width, hero_2_height)
 	registerScaledNonTileResource("assets/hero-2-walking.png", RESOURCE_TYPE_HERO_2_WALKING_RIGHT, hero_2_width, hero_2_height)
+	registerScaledNonTileResource("assets/hero-2-jump.png", RESOURCE_TYPE_HERO_2_JUMP_RIGHT, hero_2_width, hero_2_height)
 	registerResourceEx("assets/hero-2-stand.png", RESOURCE_TYPE_HERO_2_STAND_LEFT, hero_2_width, hero_2_height, false, true, false)
 	registerResourceEx("assets/hero-2-walking.png", RESOURCE_TYPE_HERO_2_WALKING_LEFT, hero_2_width, hero_2_height, false, true, false)
+	registerResourceEx("assets/hero-2-jump.png", RESOURCE_TYPE_HERO_2_JUMP_LEFT, hero_2_width, hero_2_height, false, true, false)
 
 	// decoration: grass
 	registerNonTileResource("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
