@@ -223,7 +223,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 		ObstMngr:      obstMngr,
 		EnemyObstMngr: enemyObstMngr,
 		TheHero:       hero,
-		InitHeroRect:  hero.levelRect,
+		InitHeroPos:   vector.Pos{hero.levelRect.X, hero.levelRect.Y},
 		BGColor:       spec.BgColor,
 		NumTiles:      numTiles,
 		effects:       list.New(),

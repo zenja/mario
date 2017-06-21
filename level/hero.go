@@ -394,11 +394,10 @@ func (h *Hero) GetLives() int {
 	return h.lives
 }
 
-func (h *Hero) Reborn(initRect sdl.Rect) {
-	h.levelRect = initRect
-	h.reCalcLevelRectSize()
+func (h *Hero) LiveAndResetPos(pos vector.Pos) {
+	h.levelRect.X = pos.X
+	h.levelRect.Y = pos.Y
 	h.isDead = false
-	h.grade = 0
 	h.lastFireTicks = 0
 	h.hurtStartTicks = 0
 }

@@ -6,11 +6,11 @@ import (
 	"container/list"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/zenja/mario/audio"
 	"github.com/zenja/mario/event"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
-	"github.com/zenja/mario/audio"
 )
 
 type Level struct {
@@ -26,7 +26,7 @@ type Level struct {
 	ObstMngr      *ObstacleManager
 	EnemyObstMngr *ObstacleManager // obstacle manager for enemies
 	TheHero       *Hero
-	InitHeroRect  sdl.Rect
+	InitHeroPos   vector.Pos
 	Coins         int
 
 	// Private
@@ -39,7 +39,7 @@ type Level struct {
 
 func (l *Level) Init() {
 	l.fadeIn()
-	l.TheHero.Reborn(l.InitHeroRect)
+	l.TheHero.LiveAndResetPos(l.InitHeroPos)
 	audio.PlayMusic()
 }
 
