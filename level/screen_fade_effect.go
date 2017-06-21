@@ -14,14 +14,20 @@ type screenFadeEffect struct {
 	durationMs uint32
 	startTicks uint32
 	finished   bool
+	onFinished func()
 }
 
 func NewScreenFadeEffect(fadeIn bool, durationMs uint32, ticks uint32) *screenFadeEffect {
+	return NewScreenFadeEffectEx(fadeIn, durationMs, ticks, nil)
+}
+
+func NewScreenFadeEffectEx(fadeIn bool, durationMs uint32, ticks uint32, onFinished func()) *screenFadeEffect {
 	return &screenFadeEffect{
 		res:        graphic.Res(graphic.RESOURCE_TYPE_BLACK_SCREEN),
 		fadeIn:     fadeIn,
 		durationMs: durationMs,
 		startTicks: ticks,
+		onFinished: onFinished,
 	}
 }
 
@@ -48,5 +54,7 @@ func (sfe *screenFadeEffect) Finished() bool {
 }
 
 func (sfe *screenFadeEffect) OnFinished() {
-	// Do nothing
+	if sfe.onFinished != nil {
+		sfe.onFinished()
+	}
 }

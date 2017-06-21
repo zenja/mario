@@ -378,11 +378,14 @@ func (h *Hero) Kill(level *Level) {
 	h.disabled = true
 
 	dieRes, dieRect := h.getDieEffectResAndRect()
-	afterEffectHook := func() {
-		level.Restart()
-		h.Enable()
+	afterDieDown := func() {
+		afterFadeOut := func() {
+			level.Restart()
+			h.Enable()
+		}
+		level.AddEffect(NewScreenFadeEffectEx(false, 1000, sdl.GetTicks(), afterFadeOut))
 	}
-	level.AddEffect(NewStraightDeadDownEffect(dieRes, dieRect, sdl.GetTicks(), afterEffectHook))
+	level.AddEffect(NewStraightDeadDownEffect(dieRes, dieRect, sdl.GetTicks(), afterDieDown))
 	audio.PlaySound(audio.SOUND_HERO_DIE)
 }
 
