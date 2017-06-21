@@ -126,6 +126,8 @@ func (m *mushroomEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 
 		// add dead effect
 		level.AddEffect(NewShowOnceEffect(m.resHit, m.levelRect, ticks, 500))
+
+		audio.PlaySound(audio.SOUND_STOMP)
 	} else {
 		// hero is hurt
 		hurtHeroIfIntersectEnough(h, m, level)
@@ -290,6 +292,8 @@ func (t *tortoiseEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 		default:
 			t.toInsideState(ticks)
 		}
+
+		audio.PlaySound(audio.SOUND_STOMP)
 
 	case HIT_FROM_LEFT_W_INTENT:
 		if t.insideStartTicks > 0 {
@@ -476,7 +480,6 @@ func (lj *levelJumper) Draw(camPos vector.Pos) {
 }
 
 func (lj *levelJumper) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
-	log.Println(direction)
 	if direction != HIT_FROM_TOP_W_INTENT {
 		return
 	}

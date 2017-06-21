@@ -214,6 +214,7 @@ func (mb *mythBox) hitByHero(h *Hero, direction hitDirection, level *Level, tick
 	if !mb.isBounding {
 		mb.StartBounding()
 		mb.actor.onEffectiveBottomHit(mb, level, ticks)
+		audio.PlaySound(audio.SOUND_BUMP)
 	}
 
 	// check if any enemy stand on this tile, hit them

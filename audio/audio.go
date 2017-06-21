@@ -16,6 +16,8 @@ const (
 	SOUND_BREAK_BRICK
 	SOUND_HERO_DIE
 	SOUND_PIPE
+	SOUND_STOMP
+	SOUND_BUMP
 )
 
 var sounds map[AudioID]*mix.Chunk = make(map[AudioID]*mix.Chunk)
@@ -35,6 +37,10 @@ func LoadAllAudios() {
 	sounds[SOUND_HERO_DIE], err = mix.LoadWAV("assets/audio/hero_die.wav")
 	must(err)
 	sounds[SOUND_PIPE], err = mix.LoadWAV("assets/audio/pipe.wav")
+	must(err)
+	sounds[SOUND_STOMP], err = mix.LoadWAV("assets/audio/stomp.wav")
+	must(err)
+	sounds[SOUND_BUMP], err = mix.LoadWAV("assets/audio/bump.wav")
 	must(err)
 }
 
