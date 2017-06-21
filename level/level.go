@@ -10,6 +10,7 @@ import (
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 	"golang.org/x/tools/container/intsets"
+	"github.com/zenja/mario/audio"
 )
 
 type Level struct {
@@ -39,6 +40,7 @@ type Level struct {
 func (l *Level) Init() {
 	l.fadeIn()
 	l.TheHero.Reborn(l.InitHeroRect)
+	audio.PlayMusic()
 }
 
 func (l *Level) HandleEvents(events *intsets.Sparse) {

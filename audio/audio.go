@@ -3,13 +3,15 @@ package audio
 import (
 	"log"
 
+	"github.com/pkg/errors"
 	"github.com/veandco/go-sdl2/sdl_mixer"
 )
 
-type AudioID int
+type SoundID int
+type MusicID int
 
 const (
-	SOUND_COIN = iota
+	SOUND_COIN SoundID = iota
 	SOUND_KICK
 	SOUND_FIREBALL
 	SOUND_POWERUP
@@ -20,9 +22,25 @@ const (
 	SOUND_BUMP
 )
 
-var sounds map[AudioID]*mix.Chunk = make(map[AudioID]*mix.Chunk)
+const (
+	MUSIC_0 MusicID = iota
+)
 
-func LoadAllAudios() {
+var sounds map[SoundID]*mix.Chunk = make(map[SoundID]*mix.Chunk)
+var musics map[MusicID]*mix.Music = make(map[MusicID]*mix.Music)
+
+var currentMusic MusicID = MUSIC_0
+
+func InitAudio() {
+	err := mix.OpenAudio(44100, mix.DEFAULT_FORMAT, 2, 2048)
+	if err != nil {
+		log.Fatal(errors.Wrap(err, "failed to init audio system"))
+	}
+
+	loadAllAudios()
+}
+
+func loadAllAudios() {
 	var err error
 	sounds[SOUND_COIN], err = mix.LoadWAV("assets/audio/coin.wav")
 	must(err)
@@ -42,11 +60,40 @@ func LoadAllAudios() {
 	must(err)
 	sounds[SOUND_BUMP], err = mix.LoadWAV("assets/audio/bump.wav")
 	must(err)
+
+	// music
+	musics[MUSIC_0], err = mix.LoadMUS("assets/audio/music/mario-bg-music-0.wav")
+	must(err)
+}
+
+func PlayMusic() {
+	musics[currentMusic].Play(-1)
+}
+
+func PauseMusic() {
+	mix.PauseMusic()
+}
+
+func StopMusic() {
+	mix.HaltMusic()
+}
+
+func ReloadMusic(mid MusicID) {
+	if mid == currentMusic {
+		return
+	}
+
+	// stop current music
+	mix.HaltMusic()
+	musics[mid].Play(-1)
 }
 
 func Destroy() {
-	for _, chunk := range sounds {
-		chunk.Free()
+	for _, s := range sounds {
+		s.Free()
+	}
+	for _, m := range musics {
+		m.Free()
 	}
 }
 
@@ -56,6 +103,6 @@ func must(err error) {
 	}
 }
 
-func PlaySound(id AudioID) {
+func PlaySound(id SoundID) {
 	sounds[id].Play(-1, 0)
 }

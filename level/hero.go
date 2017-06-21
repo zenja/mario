@@ -386,6 +386,7 @@ func (h *Hero) Kill(level *Level) {
 		level.AddEffect(NewScreenFadeEffectEx(false, 1000, sdl.GetTicks(), afterFadeOut))
 	}
 	level.AddEffect(NewStraightDeadDownEffect(dieRes, dieRect, sdl.GetTicks(), afterDieDown))
+	audio.StopMusic()
 	audio.PlaySound(audio.SOUND_HERO_DIE)
 }
 
