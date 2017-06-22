@@ -21,7 +21,7 @@ type coinEffect struct {
 
 func NewCoinEffect(tid vector.TileID, ticks uint32) *coinEffect {
 	coinRes := graphic.Res(graphic.RESOURCE_TYPE_COIN_0)
-	tileRect := *GetTileRect(tid)
+	tileRect := GetTileRect(tid)
 	return &coinEffect{
 		coinRes:    coinRes,
 		tileRect:   tileRect,

@@ -41,7 +41,7 @@ func TestGetTileRect(t *testing.T) {
 	var actual sdl.Rect
 
 	expected = sdl.Rect{TS, TS * 2, TS, TS}
-	actual = *level.GetTileRect(vector.TileID{1, 2})
+	actual = level.GetTileRect(vector.TileID{1, 2})
 	if expected != actual {
 		t.Errorf("expected tile rect %v but was %v", expected, actual)
 	}

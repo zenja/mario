@@ -69,7 +69,8 @@ func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect) (
 			continue
 		}
 
-		interRect, isIntersect := desiredRect.Intersect(GetTileRect(tid))
+		tileRect := GetTileRect(tid)
+		interRect, isIntersect := desiredRect.Intersect(&tileRect)
 		if !isIntersect {
 			continue
 		}
@@ -203,8 +204,8 @@ func GetTileID(levelPos vector.Pos, preferTop bool, preferLeft bool) vector.Tile
 }
 
 // TODO return value instead of pointer
-func GetTileRect(tileID vector.TileID) *sdl.Rect {
-	return &sdl.Rect{
+func GetTileRect(tileID vector.TileID) sdl.Rect {
+	return sdl.Rect{
 		X: tileID.X * graphic.TILE_SIZE,
 		Y: tileID.Y * graphic.TILE_SIZE,
 		W: graphic.TILE_SIZE,

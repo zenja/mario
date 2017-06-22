@@ -95,7 +95,7 @@ func (ito *invisibleTileObject) Update(ticks uint32, level *Level) {
 }
 
 func (ito *invisibleTileObject) GetRect() sdl.Rect {
-	return *GetTileRect(ito.tid)
+	return GetTileRect(ito.tid)
 }
 
 func (ito *invisibleTileObject) GetZIndex() int {
