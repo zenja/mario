@@ -65,6 +65,10 @@ func init() {
 }
 
 func DestroyAndQuit() {
+	for _, res := range resourceRegistry {
+		res.GetTexture().Destroy()
+	}
+
 	renderer.Destroy()
 	window.Destroy()
 
