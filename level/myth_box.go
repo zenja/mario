@@ -73,27 +73,36 @@ func NewCoinMythBox(startPos vector.Pos, numCoins int) *mythBox {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Mushroom actor
+// upgrade actor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var _ mythBoxActor = &mushroomActor{}
+var _ mythBoxActor = &upgradeActor{}
 
-type mushroomActor struct {
-	enemy *goodMushroom
+type upgradeActor struct {
+	mushroom *goodMushroom
+	flower   *upgradeFlower
 }
 
-func (ma *mushroomActor) onEffectiveBottomHit(mb *mythBox, level *Level, ticks uint32) {
-	level.AddEnemy(ma.enemy)
+func (ma *upgradeActor) onEffectiveBottomHit(mb *mythBox, level *Level, ticks uint32) {
+	if level.TheHero.grade == 0 {
+		level.AddEnemy(ma.mushroom)
+	} else {
+		level.AddEnemy(ma.flower)
+	}
 }
 
-func (ma *mushroomActor) onBoundingFinished(mb *mythBox, level *Level, ticks uint32) {
+func (ma *upgradeActor) onBoundingFinished(mb *mythBox, level *Level, ticks uint32) {
 	mb.Empty()
 }
 
 func NewMushroomMythBox(startPos vector.Pos) *mythBox {
-	enemyStartPos := vector.Pos{startPos.X, startPos.Y}
-	enemy := NewGoodMushroom(enemyStartPos)
-	actor := mushroomActor{enemy}
+	objStartPos := vector.Pos{startPos.X, startPos.Y}
+	mushroom := NewGoodMushroom(objStartPos)
+	flower := NewUpgradeFlower(objStartPos)
+	actor := upgradeActor{
+		mushroom: mushroom,
+		flower:   flower,
+	}
 	return newMythBox(startPos, &actor)
 }
 

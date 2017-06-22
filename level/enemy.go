@@ -54,7 +54,7 @@ func (be *basicEnemy) Kill() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// MushroomEnemy
+// mushroomEnemy
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type mushroomEnemy struct {
@@ -152,7 +152,7 @@ func (m *mushroomEnemy) dieDown(toRight bool, level *Level, ticks uint32) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// TortoiseEnemy
+// tortoiseEnemy
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const (
@@ -373,7 +373,7 @@ func (t *tortoiseEnemy) newBangEffect(hitLeft bool) *showOnceEffect {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// GoodMushroom
+// goodMushroom
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type goodMushroom struct {
@@ -433,7 +433,69 @@ func (gm *goodMushroom) hitByFireball(fb *fireball, level *Level, ticks uint32) 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// LevelJumper
+// upgradeFlower
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var _ Enemy = &upgradeFlower{}
+
+type upgradeFlower struct {
+	basicEnemy
+
+	res       graphic.Resource
+	levelRect sdl.Rect
+	lastTicks uint32
+	velocity  vector.Vec2D
+}
+
+func NewUpgradeFlower(startPos vector.Pos) *upgradeFlower {
+	res := graphic.Res(graphic.RESOURCE_TYPE_UPGRADE_FLOWER)
+	return &upgradeFlower{
+		res:       res,
+		levelRect: sdl.Rect{startPos.X, startPos.Y, res.GetW(), res.GetH()},
+		velocity:  vector.Vec2D{0, -500},
+	}
+}
+
+func (uf *upgradeFlower) GetRect() sdl.Rect {
+	return uf.levelRect
+}
+
+func (uf *upgradeFlower) GetZIndex() int {
+	return ZINDEX_1
+}
+
+func (uf *upgradeFlower) Update(ticks uint32, level *Level) {
+	if uf.lastTicks == 0 {
+		uf.lastTicks = ticks
+		return
+	}
+
+	enemySimpleMove(ticks, uf.lastTicks, &uf.velocity, &uf.levelRect, level)
+
+	uf.lastTicks = ticks
+}
+
+func (uf *upgradeFlower) Draw(camPos vector.Pos) {
+	graphic.DrawResource(uf.res, uf.levelRect, camPos)
+}
+
+func (uf *upgradeFlower) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	uf.isDead = true
+	// upgrade hero to highest
+	h.upgradeToHighest(level)
+}
+
+func (uf *upgradeFlower) hitByBottomTile(level *Level, ticks uint32) {
+	// bounce up
+	uf.velocity.Y -= 500
+}
+
+func (uf *upgradeFlower) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+	// No interaction with fireball; Do nothing
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// levelJumper
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var _ Enemy = &levelJumper{}

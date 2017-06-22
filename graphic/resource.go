@@ -83,6 +83,8 @@ const (
 	RESOURCE_TYPE_SHINE_1
 	RESOURCE_TYPE_SHINE_2
 
+	RESOURCE_TYPE_UPGRADE_FLOWER
+
 	RESOURCE_TYPE_BLACK_SCREEN
 
 	RESOURCE_TYPE_HERO_0_STAND_LEFT
@@ -451,6 +453,9 @@ func loadAllResources() {
 
 	// good mushroom
 	registerTileResource("assets/mushroom.png", RESOURCE_TYPE_GOOD_MUSHROOM)
+
+	// upgrade flower
+	registerTileResource("assets/upgrade-flower.png", RESOURCE_TYPE_UPGRADE_FLOWER)
 
 	// water
 	registerTileResource("assets/water-0.png", RESOURCE_TYPE_WATER_0)

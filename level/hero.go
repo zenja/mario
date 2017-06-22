@@ -372,7 +372,7 @@ func (h *Hero) Hurt(level *Level) {
 
 func (h *Hero) Kill(level *Level) {
 	h.gradeWhenDie = h.grade
-	h.downgradeToLowest()
+	h.downgradeToLowestSilent()
 	h.lives--
 	h.isDead = true
 	h.disabled = true
@@ -528,15 +528,12 @@ func (h *Hero) getRenderRect() sdl.Rect {
 	}
 }
 
-func (h *Hero) upgrade(level *Level) {
-	switch h.grade {
-	case 0:
-		h.grade = 1
-		h.switchResSet(1)
-	case 1:
-		h.grade = 2
-		h.switchResSet(2)
+func (h *Hero) upgradeTo(grade int, level *Level) {
+	if grade < 0 || grade > 2 {
+		log.Fatalf("grade cannot be %d", grade)
 	}
+	h.grade = grade
+	h.switchResSet(grade)
 
 	h.reCalcLevelRectSize()
 
@@ -545,6 +542,19 @@ func (h *Hero) upgrade(level *Level) {
 
 	// play sound
 	audio.PlaySound(audio.SOUND_POWERUP)
+}
+
+func (h *Hero) upgrade(level *Level) {
+	switch h.grade {
+	case 0:
+		h.upgradeTo(1, level)
+	default:
+		h.upgradeTo(2, level)
+	}
+}
+
+func (h *Hero) upgradeToHighest(level *Level) {
+	h.upgradeTo(2, level)
 }
 
 func (h *Hero) downgrade() {
@@ -560,7 +570,8 @@ func (h *Hero) downgrade() {
 	h.reCalcLevelRectSize()
 }
 
-func (h *Hero) downgradeToLowest() {
+// downgrade to lowest level, no effect, no sound
+func (h *Hero) downgradeToLowestSilent() {
 	h.grade = 0
 	h.switchResSet(0)
 	h.reCalcLevelRectSize()
