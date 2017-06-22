@@ -380,6 +380,9 @@ type eaterFlower struct {
 	basicEnemy
 	*animationTileObj
 
+	maxY      int32
+	minY      int32
+	goingUp   bool
 	lastTicks uint32
 }
 
@@ -391,9 +394,12 @@ func NewEaterFlower(tid vector.TileID) *eaterFlower {
 	}
 	tidRect := GetTileRect(tid)
 	startX := tidRect.X + (graphic.TILE_SIZE*2-res.GetW())/2
-	startY := tidRect.Y + res.GetH() - graphic.TILE_SIZE
+	startY := tidRect.Y - graphic.TILE_SIZE
 	return &eaterFlower{
 		animationTileObj: NewAnimationObject(vector.Vec2D{startX, startY}, reses, 200, ZINDEX_3),
+		maxY:             startY,
+		minY:             startY - graphic.TILE_SIZE - res.GetH(),
+		goingUp:          true,
 	}
 }
 
@@ -402,18 +408,34 @@ func (ef *eaterFlower) GetRect() sdl.Rect {
 }
 
 func (ef *eaterFlower) GetZIndex() int {
-	return ZINDEX_4
+	return ZINDEX_1
 }
 
 func (ef *eaterFlower) Update(ticks uint32, level *Level) {
 	ef.animationTileObj.Update(ticks, level)
+
+	if ef.levelRect.Y >= ef.maxY {
+		ef.levelRect.Y = ef.maxY
+		ef.goingUp = true
+	} else if ef.levelRect.Y < ef.minY {
+		ef.levelRect.Y = ef.minY
+		ef.goingUp = false
+	}
+
+	var velocity vector.Vec2D
+	if ef.goingUp {
+		velocity.Y = -100
+	} else {
+		velocity.Y = 100
+	}
+	step := CalcVelocityStep(velocity, ticks, ef.lastTicks, nil)
+	ef.levelRect.Y += step.Y
+
+	ef.lastTicks = ticks
 }
 
 func (ef *eaterFlower) Draw(camPos vector.Pos) {
 	ef.animationTileObj.Draw(camPos)
-
-	// FIXME just for debug
-	graphic.DrawRect(ef.levelRect, camPos)
 }
 
 func (ef *eaterFlower) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
