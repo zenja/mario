@@ -53,7 +53,10 @@ const (
 	RESOURCE_TYPE_PIPE_LEFT_BOTTOM
 	RESOURCE_TYPE_PIPE_RIGHT_BOTTOM
 
-	RESOURCE_TYPE_COIN
+	RESOURCE_TYPE_COIN_0
+	RESOURCE_TYPE_COIN_1
+	RESOURCE_TYPE_COIN_2
+	RESOURCE_TYPE_COIN_3
 
 	RESOURCE_TYPE_GOOD_MUSHROOM
 
@@ -449,7 +452,10 @@ func loadAllResources() {
 	registerTileResource("assets/pipe-right-bottom.png", RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
 
 	// coin
-	registerTileResource("assets/coin.png", RESOURCE_TYPE_COIN)
+	registerTileResource("assets/coin-0.png", RESOURCE_TYPE_COIN_0)
+	registerTileResource("assets/coin-1.png", RESOURCE_TYPE_COIN_1)
+	registerTileResource("assets/coin-2.png", RESOURCE_TYPE_COIN_2)
+	registerTileResource("assets/coin-3.png", RESOURCE_TYPE_COIN_3)
 
 	// good mushroom
 	registerTileResource("assets/mushroom.png", RESOURCE_TYPE_GOOD_MUSHROOM)

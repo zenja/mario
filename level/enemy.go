@@ -564,6 +564,59 @@ func (lj *levelJumper) hitByFireball(fb *fireball, level *Level, ticks uint32) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// coinEnemy
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var _ Enemy = &coinEnemy{}
+
+type coinEnemy struct {
+	*animationTileObj
+	basicEnemy
+}
+
+func NewCoinEnemy(tid vector.TileID) *coinEnemy {
+	reses := []graphic.ResourceID{
+		graphic.RESOURCE_TYPE_COIN_0,
+		graphic.RESOURCE_TYPE_COIN_1,
+		graphic.RESOURCE_TYPE_COIN_2,
+		graphic.RESOURCE_TYPE_COIN_3,
+	}
+	return &coinEnemy{
+		animationTileObj: NewAnimationTileObject(tid, reses, 200, ZINDEX_3),
+	}
+}
+
+func (ce *coinEnemy) GetRect() sdl.Rect {
+	return ce.levelRect
+}
+
+func (ce *coinEnemy) GetZIndex() int {
+	return ZINDEX_1
+}
+
+func (ce *coinEnemy) Update(ticks uint32, level *Level) {
+	ce.animationTileObj.Update(ticks, level)
+}
+
+func (ce *coinEnemy) Draw(camPos vector.Pos) {
+	ce.animationTileObj.Draw(camPos)
+}
+
+func (ce *coinEnemy) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	ce.isDead = true
+	level.Coins++
+	audio.PlaySound(audio.SOUND_COIN)
+}
+
+func (ce *coinEnemy) hitByBottomTile(level *Level, ticks uint32) {
+	// Do Nothing
+}
+
+func (ce *coinEnemy) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+	// Do nothing
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

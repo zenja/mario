@@ -171,6 +171,10 @@ func BuildLevel(spec *LevelSpec) *Level {
 				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
 				addAsNoObstTile(tid, o)
 
+			// coin
+			case 'c':
+				enemies = append(enemies, NewCoinEnemy(tid))
+
 			// Enemy 1: mushroom enemy
 			case '1':
 				enemies = append(enemies, NewMushroomEnemy(currentPos))
