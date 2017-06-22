@@ -373,6 +373,72 @@ func (t *tortoiseEnemy) newBangEffect(hitLeft bool) *showOnceEffect {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// eaterFlower
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var _ Enemy = &eaterFlower{}
+
+type eaterFlower struct {
+	basicEnemy
+	*animationTileObj
+
+	lastTicks uint32
+}
+
+func NewEaterFlower(tid vector.TileID) *eaterFlower {
+	res := graphic.Res(graphic.RESOURCE_TYPE_EATER_FLOWER_0)
+	reses := []graphic.ResourceID{
+		graphic.RESOURCE_TYPE_EATER_FLOWER_0,
+		graphic.RESOURCE_TYPE_EATER_FLOWER_1,
+	}
+	tidRect := GetTileRect(tid)
+	startX := tidRect.X + (graphic.TILE_SIZE*2-res.GetW())/2
+	startY := tidRect.Y + res.GetH() - graphic.TILE_SIZE
+	return &eaterFlower{
+		animationTileObj: NewAnimationObject(vector.Vec2D{startX, startY}, reses, 200, ZINDEX_3),
+	}
+}
+
+func (ef *eaterFlower) GetRect() sdl.Rect {
+	return ef.levelRect
+}
+
+func (ef *eaterFlower) GetZIndex() int {
+	return ZINDEX_4
+}
+
+func (ef *eaterFlower) Update(ticks uint32, level *Level) {
+	ef.animationTileObj.Update(ticks, level)
+}
+
+func (ef *eaterFlower) Draw(camPos vector.Pos) {
+	ef.animationTileObj.Draw(camPos)
+
+	// FIXME just for debug
+	graphic.DrawRect(ef.levelRect, camPos)
+}
+
+func (ef *eaterFlower) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	hurtHeroIfIntersectEnough(h, ef, level)
+}
+
+func (ef *eaterFlower) hitByBottomTile(level *Level, ticks uint32) {
+	// Do Nothing
+}
+
+func (ef *eaterFlower) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+	ef.isDead = true
+	bangRes := graphic.Res(graphic.RESOURCE_TYPE_BANG)
+	bangRect := sdl.Rect{
+		ef.levelRect.X,
+		ef.levelRect.Y,
+		bangRes.GetW(),
+		bangRes.GetH(),
+	}
+	level.AddEffect(NewShowOnceEffect(bangRes, bangRect, sdl.GetTicks(), 50))
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // goodMushroom
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -582,7 +648,7 @@ func NewCoinEnemy(tid vector.TileID) *coinEnemy {
 		graphic.RESOURCE_TYPE_COIN_3,
 	}
 	return &coinEnemy{
-		animationTileObj: NewAnimationTileObject(tid, reses, 200, ZINDEX_3),
+		animationTileObj: NewAnimationObjectTID(tid, reses, 200, ZINDEX_3),
 	}
 }
 

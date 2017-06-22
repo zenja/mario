@@ -16,20 +16,22 @@ type animationTileObj struct {
 	zIndex     int
 }
 
-func NewAnimationTileObject(tid vector.TileID, resIDs []graphic.ResourceID, frameMs uint32, zIndex int) *animationTileObj {
+func NewAnimationObject(startPos vector.Vec2D, resIDs []graphic.ResourceID, frameMs uint32, zIndex int) *animationTileObj {
 	var reses []graphic.Resource
 	for _, id := range resIDs {
 		reses = append(reses, graphic.Res(id))
 	}
 
-	tidRect := GetTileRect(tid)
-
 	return &animationTileObj{
 		reses:     reses,
-		levelRect: sdl.Rect{tidRect.X, tidRect.Y, graphic.TILE_SIZE, graphic.TILE_SIZE},
+		levelRect: sdl.Rect{startPos.X, startPos.Y, reses[0].GetW(), reses[0].GetH()},
 		frameMs:   frameMs,
 		zIndex:    zIndex,
 	}
+}
+
+func NewAnimationObjectTID(tid vector.TileID, resIDs []graphic.ResourceID, frameMs uint32, zIndex int) *animationTileObj {
+	return NewAnimationObject(GetTileStartPos(tid), resIDs, frameMs, zIndex)
 }
 
 func NewWaterSurfaceAnimationObject(tid vector.TileID) *animationTileObj {
@@ -42,7 +44,7 @@ func NewWaterSurfaceAnimationObject(tid vector.TileID) *animationTileObj {
 		graphic.RESOURCE_TYPE_WATER_5,
 		graphic.RESOURCE_TYPE_WATER_6,
 	}
-	return NewAnimationTileObject(tid, resIDs, 250, ZINDEX_1)
+	return NewAnimationObject(GetTileStartPos(tid), resIDs, 250, ZINDEX_1)
 }
 
 func (ato *animationTileObj) Draw(camPos vector.Pos) {

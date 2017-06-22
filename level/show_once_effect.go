@@ -12,7 +12,7 @@ var _ Effect = &showOnceEffect{}
 // showOnceEffect shows a resource for a while and then disappear
 type showOnceEffect struct {
 	res        graphic.Resource
-	levelRect  sdl.Rect
+	levelRect  sdl.Rect // TODO only need to keep start position, width and height should use res's
 	startTicks uint32
 	durationMs uint32
 	finished   bool

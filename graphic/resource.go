@@ -88,6 +88,9 @@ const (
 
 	RESOURCE_TYPE_UPGRADE_FLOWER
 
+	RESOURCE_TYPE_EATER_FLOWER_0
+	RESOURCE_TYPE_EATER_FLOWER_1
+
 	RESOURCE_TYPE_BLACK_SCREEN
 
 	RESOURCE_TYPE_HERO_0_STAND_LEFT
@@ -528,6 +531,10 @@ func loadAllResources() {
 	registerScaledNonTileResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
 	registerScaledNonTileResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
 	registerScaledNonTileResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 40, 40)
+
+	// eater flower
+	registerScaledNonTileResource("assets/eater-flower-0.png", RESOURCE_TYPE_EATER_FLOWER_0, 52, 75)
+	registerScaledNonTileResource("assets/eater-flower-1.png", RESOURCE_TYPE_EATER_FLOWER_1, 52, 75)
 
 	// shine effect
 	registerNonTileResource("assets/shine-0.png", RESOURCE_TYPE_SHINE_0)

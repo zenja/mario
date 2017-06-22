@@ -131,6 +131,15 @@ func BuildLevel(spec *LevelSpec) *Level {
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
 				addAsFullObstTile(tid, o)
 
+			// right middle of pipe, with eater flower
+			case 'E':
+				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_MID)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				addAsFullObstTile(tid, o)
+
+				// add eater
+				enemies = append(enemies, NewEaterFlower(tid))
+
 			// left top of pipe that will jump level
 			case '{':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_TOP)
@@ -144,6 +153,18 @@ func BuildLevel(spec *LevelSpec) *Level {
 
 			// right top of pipe that will jump level
 			case '}':
+				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				addAsFullObstTile(tid, o)
+
+			// left top of normal pipe
+			case '(':
+				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_TOP)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				addAsFullObstTile(tid, o)
+
+			// right top of normal pipe
+			case ')':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
 				addAsFullObstTile(tid, o)

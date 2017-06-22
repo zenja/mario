@@ -202,6 +202,7 @@ func GetTileID(levelPos vector.Pos, preferTop bool, preferLeft bool) vector.Tile
 	}
 }
 
+// TODO return value instead of pointer
 func GetTileRect(tileID vector.TileID) *sdl.Rect {
 	return &sdl.Rect{
 		X: tileID.X * graphic.TILE_SIZE,
@@ -209,4 +210,9 @@ func GetTileRect(tileID vector.TileID) *sdl.Rect {
 		W: graphic.TILE_SIZE,
 		H: graphic.TILE_SIZE,
 	}
+}
+
+func GetTileStartPos(tileID vector.TileID) vector.Vec2D {
+	rect := GetTileRect(tileID)
+	return vector.Vec2D{rect.X, rect.Y}
 }
