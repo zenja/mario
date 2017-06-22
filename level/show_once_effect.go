@@ -12,16 +12,16 @@ var _ Effect = &showOnceEffect{}
 // showOnceEffect shows a resource for a while and then disappear
 type showOnceEffect struct {
 	res        graphic.Resource
-	levelRect  sdl.Rect // TODO only need to keep start position, width and height should use res's
+	levelRect  sdl.Rect
 	startTicks uint32
 	durationMs uint32
 	finished   bool
 }
 
-func NewShowOnceEffect(res graphic.Resource, levelRect sdl.Rect, ticks uint32, durationMs uint32) *showOnceEffect {
+func NewShowOnceEffect(res graphic.Resource, startPos vector.Vec2D, ticks uint32, durationMs uint32) *showOnceEffect {
 	return &showOnceEffect{
 		res:        res,
-		levelRect:  levelRect,
+		levelRect:  sdl.Rect{startPos.X, startPos.Y, res.GetW(), res.GetH()},
 		startTicks: ticks,
 		durationMs: durationMs,
 		finished:   false,

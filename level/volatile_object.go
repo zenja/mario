@@ -159,11 +159,9 @@ func (f *fireball) IsDead() bool {
 
 func (f *fireball) boom(level *Level, ticks uint32) {
 	f.isDead = true
-	boomRect := sdl.Rect{
+	boomStartPos := vector.Vec2D{
 		X: f.levelRect.X,
 		Y: f.levelRect.Y,
-		W: f.resBoom.GetW(),
-		H: f.resBoom.GetH(),
 	}
-	level.AddEffect(NewShowOnceEffect(f.resBoom, boomRect, ticks, fireballBoomDurationMS))
+	level.AddEffect(NewShowOnceEffect(f.resBoom, boomStartPos, ticks, fireballBoomDurationMS))
 }

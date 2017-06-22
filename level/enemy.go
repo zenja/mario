@@ -125,7 +125,7 @@ func (m *mushroomEnemy) hitByHero(h *Hero, direction hitDirection, level *Level,
 		h.velocity.Y = -1200
 
 		// add dead effect
-		level.AddEffect(NewShowOnceEffect(m.resHit, m.levelRect, ticks, 500))
+		level.AddEffect(NewShowOnceEffect(m.resHit, GetRectStartPos(m.levelRect), ticks, 500))
 
 		audio.PlaySound(audio.SOUND_STOMP)
 	} else {
@@ -363,13 +363,11 @@ func (t *tortoiseEnemy) newBangEffect(hitLeft bool) *showOnceEffect {
 	} else {
 		xDelta = 20
 	}
-	bangRect := sdl.Rect{
+	bangStartPos := vector.Vec2D{
 		t.levelRect.X + xDelta,
 		t.levelRect.Y,
-		t.levelRect.W,
-		t.levelRect.H,
 	}
-	return NewShowOnceEffect(graphic.Res(graphic.RESOURCE_TYPE_BANG), bangRect, sdl.GetTicks(), 50)
+	return NewShowOnceEffect(graphic.Res(graphic.RESOURCE_TYPE_BANG), bangStartPos, sdl.GetTicks(), 50)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -429,13 +427,11 @@ func (ef *eaterFlower) hitByBottomTile(level *Level, ticks uint32) {
 func (ef *eaterFlower) hitByFireball(fb *fireball, level *Level, ticks uint32) {
 	ef.isDead = true
 	bangRes := graphic.Res(graphic.RESOURCE_TYPE_BANG)
-	bangRect := sdl.Rect{
+	bangStartPos := vector.Vec2D{
 		ef.levelRect.X,
 		ef.levelRect.Y,
-		bangRes.GetW(),
-		bangRes.GetH(),
 	}
-	level.AddEffect(NewShowOnceEffect(bangRes, bangRect, sdl.GetTicks(), 50))
+	level.AddEffect(NewShowOnceEffect(bangRes, bangStartPos, sdl.GetTicks(), 50))
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
