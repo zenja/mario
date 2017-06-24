@@ -25,8 +25,8 @@ type LevelSpec struct {
 }
 
 func BuildLevel(spec *LevelSpec) *Level {
-	graphic.RegisterBackgroundResource(spec.BgFilename, graphic.RESOURCE_TYPE_BG_0, len(spec.LevelArr))
-	bgRes := graphic.Res(graphic.RESOURCE_TYPE_BG_0)
+	graphic.RegisterBackgroundResource(spec.BgFilename, graphic.RESOURCE_TYPE_CURR_BG, len(spec.LevelArr))
+	bgRes := graphic.Res(graphic.RESOURCE_TYPE_CURR_BG)
 
 	// NOTE: index is tid.X, tid.Y
 	var tileObjs [][]Object
