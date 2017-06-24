@@ -59,6 +59,11 @@ func (om *ObstacleManager) AddEnemyOnlyTileObst(tileID vector.TileID) {
 	om.obsts[tileID.X][tileID.Y] = enemy_only_obst
 }
 
+func (om *ObstacleManager) AddUpThruTileObst(tileID vector.TileID) {
+	om.assertLegalTilePos(tileID)
+	om.obsts[tileID.X][tileID.Y] = up_thru_obst
+}
+
 func (om *ObstacleManager) RemoveTileObst(tileID vector.TileID) {
 	om.assertLegalTilePos(tileID)
 	om.obsts[tileID.X][tileID.Y] = not_obst
@@ -77,7 +82,7 @@ func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect, sctype SolveCol
 			continue
 		}
 
-		if !om.isObstTile(tid, *desiredRect, sctype) {
+		if !om.isObstTile(tid, i, *desiredRect, sctype) {
 			continue
 		}
 
@@ -238,28 +243,29 @@ func (om *ObstacleManager) assertLegalTilePos(tileID vector.TileID) {
 	}
 }
 
-func (om *ObstacleManager) isObstTile(tileID vector.TileID, desiredRect sdl.Rect, sctype SolveCollisionType) bool {
+func (om *ObstacleManager) isObstTile(tileID vector.TileID, seq int, desiredRect sdl.Rect, sctype SolveCollisionType) bool {
 	if !om.isLegalTilePos(tileID) {
 		// all tiles out of scope are considered not obstacles
 		// so objects can actually update itself to go out of scope, and it is easy to detect this
 		return false
 	}
 
-	if om._isNormalObstTile(tileID) {
+	obstType := om.obsts[tileID.X][tileID.Y]
+
+	if obstType == normal_obst {
 		return true
 	}
 
-	if om._isEnemyOnlyObstTile(tileID) && sctype == SOLVE_COLLISION_ENEMY {
+	if obstType == enemy_only_obst && sctype == SOLVE_COLLISION_ENEMY {
+		return true
+	}
+
+	//if obstType == up_thru_obst && GetTileRect(tileID).Y+25 >= desiredRect.Y+desiredRect.H {
+	//	return true
+	//}
+	if obstType == up_thru_obst && (seq == 0 || seq == 6 || seq == 7) {
 		return true
 	}
 
 	return false
-}
-
-func (om *ObstacleManager) _isNormalObstTile(tileID vector.TileID) bool {
-	return om.obsts[tileID.X][tileID.Y] == normal_obst
-}
-
-func (om *ObstacleManager) _isEnemyOnlyObstTile(tileID vector.TileID) bool {
-	return om.obsts[tileID.X][tileID.Y] == enemy_only_obst
 }

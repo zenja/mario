@@ -52,6 +52,11 @@ func BuildLevel(spec *LevelSpec) *Level {
 		obstMngr.AddEnemyOnlyTileObst(tid)
 	}
 
+	addAsUpThruObstTile := func(tid vector.TileID, o Object) {
+		tileObjs[tid.X][tid.Y] = o
+		obstMngr.AddUpThruTileObst(tid)
+	}
+
 	addAsNoObstTile := func(tid vector.TileID, o Object) {
 		tileObjs[tid.X][tid.Y] = o
 	}
@@ -89,7 +94,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 			case 'L':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
-				addAsNormalObstTile(tid, o)
+				addAsUpThruObstTile(tid, o)
 
 			// Ground with mid grass
 			case 'G':
@@ -101,7 +106,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 			case 'R':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
-				addAsNormalObstTile(tid, o)
+				addAsUpThruObstTile(tid, o)
 
 			// Inner ground in middle
 			case 'I':
