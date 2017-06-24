@@ -69,4 +69,4 @@ dec-def = """
 """
 
 [transfer]
-next-levels = ["level-0.secret-0", "level-1"]
+next-levels = ["level-1", "level-0.secret-0"]
