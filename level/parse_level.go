@@ -92,27 +92,39 @@ func BuildLevel(spec *LevelSpec) *Level {
 
 			// Ground with left grass
 			case 'L':
-				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
+				res := graphic.Res(graphic.RESOURCE_TYPE_GRASS_GROUD_LEFT)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
 				addAsUpThruObstTile(tid, o)
 
 			// Ground with mid grass
 			case 'G':
-				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_MID)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
-				addAsNormalObstTile(tid, o)
-
-			// Ground with right grass
-			case 'R':
-				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT)
+				res := graphic.Res(graphic.RESOURCE_TYPE_GRASS_GROUD_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
 				addAsUpThruObstTile(tid, o)
 
+			// Ground with right grass
+			case 'R':
+				res := graphic.Res(graphic.RESOURCE_TYPE_GRASS_GROUD_RIGHT)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
+				addAsUpThruObstTile(tid, o)
+
+			// Inner ground in left
+			case 'l':
+				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_LEFT)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
+				addAsNoObstTile(tid, o)
+
 			// Inner ground in middle
-			case 'I':
-				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_INNER_MID)
+			case 'g':
+				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
-				addAsNormalObstTile(tid, o)
+				addAsNoObstTile(tid, o)
+
+			// Inner ground in right
+			case 'r':
+				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_RIGHT)
+				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
+				addAsNoObstTile(tid, o)
 
 			// Myth box for coins
 			case 'C':

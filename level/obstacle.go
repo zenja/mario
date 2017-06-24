@@ -82,7 +82,7 @@ func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect, sctype SolveCol
 			continue
 		}
 
-		if !om.isObstTile(tid, i, *desiredRect, sctype) {
+		if !om.isObstTile(tid, *desiredRect, sctype) {
 			continue
 		}
 
@@ -243,7 +243,7 @@ func (om *ObstacleManager) assertLegalTilePos(tileID vector.TileID) {
 	}
 }
 
-func (om *ObstacleManager) isObstTile(tileID vector.TileID, seq int, desiredRect sdl.Rect, sctype SolveCollisionType) bool {
+func (om *ObstacleManager) isObstTile(tileID vector.TileID, desiredRect sdl.Rect, sctype SolveCollisionType) bool {
 	if !om.isLegalTilePos(tileID) {
 		// all tiles out of scope are considered not obstacles
 		// so objects can actually update itself to go out of scope, and it is easy to detect this
@@ -260,10 +260,7 @@ func (om *ObstacleManager) isObstTile(tileID vector.TileID, seq int, desiredRect
 		return true
 	}
 
-	//if obstType == up_thru_obst && GetTileRect(tileID).Y+25 >= desiredRect.Y+desiredRect.H {
-	//	return true
-	//}
-	if obstType == up_thru_obst && (seq == 0 || seq == 6 || seq == 7) {
+	if obstType == up_thru_obst && GetTileRect(tileID).Y+graphic.TILE_SIZE/2 >= desiredRect.Y+desiredRect.H {
 		return true
 	}
 

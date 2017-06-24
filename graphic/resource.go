@@ -24,9 +24,13 @@ const (
 
 	RESOURCE_TYPE_BG_0
 
-	RESOURCE_TYPE_GROUD_GRASS_LEFT
-	RESOURCE_TYPE_GROUD_GRASS_MID
-	RESOURCE_TYPE_GROUD_GRASS_RIGHT
+	RESOURCE_TYPE_GRASS_GROUD_LEFT
+	RESOURCE_TYPE_GRASS_GROUD_MID
+	RESOURCE_TYPE_GRASS_GROUD_RIGHT
+
+	RESOURCE_TYPE_GROUD_LEFT
+	RESOURCE_TYPE_GROUD_MID
+	RESOURCE_TYPE_GROUD_RIGHT
 
 	RESOURCE_TYPE_WATER_0
 	RESOURCE_TYPE_WATER_1
@@ -39,8 +43,6 @@ const (
 
 	RESOURCE_TYPE_DEC_GRASS_0
 	RESOURCE_TYPE_DEC_GRASS_1
-
-	RESOURCE_TYPE_GROUD_INNER_MID
 
 	RESOURCE_TYPE_MYTH_BOX_NORMAL
 	RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT
@@ -434,12 +436,14 @@ func loadAllResources() {
 	registerTileResource("assets/brick.png", RESOURCE_TYPE_BRICK)
 
 	// grass
-	registerTileResource("assets/ground-grass-left.png", RESOURCE_TYPE_GROUD_GRASS_LEFT)
-	registerTileResource("assets/ground-grass-mid.png", RESOURCE_TYPE_GROUD_GRASS_MID)
-	registerTileResource("assets/ground-grass-right.png", RESOURCE_TYPE_GROUD_GRASS_RIGHT)
+	registerTileResource("assets/grass-ground-left.png", RESOURCE_TYPE_GRASS_GROUD_LEFT)
+	registerTileResource("assets/grass-ground-mid.png", RESOURCE_TYPE_GRASS_GROUD_MID)
+	registerTileResource("assets/grass-ground-right.png", RESOURCE_TYPE_GRASS_GROUD_RIGHT)
 
 	// ground
-	registerTileResource("assets/ground-inner-mid.png", RESOURCE_TYPE_GROUD_INNER_MID)
+	registerTileResource("assets/ground-left.png", RESOURCE_TYPE_GROUD_LEFT)
+	registerTileResource("assets/ground-mid.png", RESOURCE_TYPE_GROUD_MID)
+	registerTileResource("assets/ground-right.png", RESOURCE_TYPE_GROUD_RIGHT)
 
 	// myth box
 	registerTileResource("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
