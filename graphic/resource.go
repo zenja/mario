@@ -20,7 +20,7 @@ type Resource interface {
 
 // Resource IDs
 const (
-	RESOURCE_TYPE_BRICK = iota
+	RESOURCE_TYPE_BRICK ResourceID = iota
 
 	RESOURCE_TYPE_BG_0
 

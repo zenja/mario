@@ -16,7 +16,7 @@ type animationTileObj struct {
 	zIndex     int
 }
 
-func NewAnimationObject(startPos vector.Vec2D, resIDs []graphic.ResourceID, frameMs uint32, zIndex int) *animationTileObj {
+func NewAnimationObject(startPos vector.Pos, resIDs []graphic.ResourceID, frameMs uint32, zIndex int) *animationTileObj {
 	var reses []graphic.Resource
 	for _, id := range resIDs {
 		reses = append(reses, graphic.Res(id))

@@ -396,7 +396,7 @@ func NewEaterFlower(tid vector.TileID) *eaterFlower {
 	startX := tidRect.X + (graphic.TILE_SIZE*2-res.GetW())/2
 	startY := tidRect.Y - graphic.TILE_SIZE
 	return &eaterFlower{
-		animationTileObj: NewAnimationObject(vector.Vec2D{startX, startY}, reses, 200, ZINDEX_3),
+		animationTileObj: NewAnimationObject(vector.Pos{startX, startY}, reses, 200, ZINDEX_3),
 		maxY:             startY,
 		minY:             startY - graphic.TILE_SIZE - res.GetH(),
 		goingUp:          true,

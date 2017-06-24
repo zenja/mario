@@ -61,6 +61,22 @@ func BuildLevel(spec *LevelSpec) *Level {
 		tileObjs[tid.X][tid.Y] = o
 	}
 
+	needAddGroundLeft := func(tid vector.TileID) bool {
+		leftSpec := spec.LevelArr[tid.Y][tid.X-1]
+		if tid.X-1 > 0 && (leftSpec == 'l' || leftSpec == 'L' || leftSpec == 'g') {
+			return true
+		}
+		return false
+	}
+
+	needAddGroundRight := func(tid vector.TileID) bool {
+		rightSpec := spec.LevelArr[tid.Y][tid.X+1]
+		if tid.X+1 < numTiles.X && (rightSpec == 'r' || rightSpec == 'R' || rightSpec == 'g') {
+			return true
+		}
+		return false
+	}
+
 	var decorations []Object
 	addDecoration := func(d *decoration) {
 		decorations = append(decorations, d)
@@ -92,8 +108,15 @@ func BuildLevel(spec *LevelSpec) *Level {
 
 			// Ground with left grass
 			case 'L':
-				res := graphic.Res(graphic.RESOURCE_TYPE_GRASS_GROUD_LEFT)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
+				resID := graphic.RESOURCE_TYPE_GRASS_GROUD_LEFT
+				res := graphic.Res(resID)
+				var o Object
+				if needAddGroundLeft(tid) {
+					o = NewOverlapTilesObject(
+						[]graphic.ResourceID{graphic.RESOURCE_TYPE_GROUD_MID, resID}, tid, ZINDEX_1)
+				} else {
+					o = NewSingleTileObject(res, currentPos, ZINDEX_1)
+				}
 				addAsUpThruObstTile(tid, o)
 
 			// Ground with mid grass
@@ -104,14 +127,28 @@ func BuildLevel(spec *LevelSpec) *Level {
 
 			// Ground with right grass
 			case 'R':
-				res := graphic.Res(graphic.RESOURCE_TYPE_GRASS_GROUD_RIGHT)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
+				resID := graphic.RESOURCE_TYPE_GRASS_GROUD_RIGHT
+				res := graphic.Res(resID)
+				var o Object
+				if needAddGroundRight(tid) {
+					o = NewOverlapTilesObject(
+						[]graphic.ResourceID{graphic.RESOURCE_TYPE_GROUD_MID, resID}, tid, ZINDEX_1)
+				} else {
+					o = NewSingleTileObject(res, currentPos, ZINDEX_1)
+				}
 				addAsUpThruObstTile(tid, o)
 
 			// Inner ground in left
 			case 'l':
-				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_LEFT)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
+				resID := graphic.RESOURCE_TYPE_GROUD_LEFT
+				res := graphic.Res(resID)
+				var o Object
+				if needAddGroundLeft(tid) {
+					o = NewOverlapTilesObject(
+						[]graphic.ResourceID{graphic.RESOURCE_TYPE_GROUD_MID, resID}, tid, ZINDEX_1)
+				} else {
+					o = NewSingleTileObject(res, currentPos, ZINDEX_1)
+				}
 				addAsNoObstTile(tid, o)
 
 			// Inner ground in middle
@@ -122,8 +159,15 @@ func BuildLevel(spec *LevelSpec) *Level {
 
 			// Inner ground in right
 			case 'r':
-				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_RIGHT)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
+				resID := graphic.RESOURCE_TYPE_GROUD_RIGHT
+				res := graphic.Res(resID)
+				var o Object
+				if needAddGroundRight(tid) {
+					o = NewOverlapTilesObject(
+						[]graphic.ResourceID{graphic.RESOURCE_TYPE_GROUD_MID, resID}, tid, ZINDEX_1)
+				} else {
+					o = NewSingleTileObject(res, currentPos, ZINDEX_1)
+				}
 				addAsNoObstTile(tid, o)
 
 			// Myth box for coins

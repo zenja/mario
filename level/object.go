@@ -75,6 +75,47 @@ func (sto *singleTileObject) GetZIndex() int {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Overlap tiles object
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type overlapTilesObject struct {
+	reses     []graphic.Resource
+	levelRect sdl.Rect
+	zIndex    int
+}
+
+func NewOverlapTilesObject(resIDs []graphic.ResourceID, tid vector.TileID, zIndex int) Object {
+	var reses []graphic.Resource
+	for _, id := range resIDs {
+		reses = append(reses, graphic.Res(id))
+	}
+	return &overlapTilesObject{
+		reses:     reses,
+		levelRect: GetTileRect(tid),
+		zIndex:    zIndex,
+	}
+}
+
+func (oto *overlapTilesObject) Draw(camPos vector.Pos) {
+	for _, res := range oto.reses {
+		graphic.DrawResource(res, oto.levelRect, camPos)
+	}
+}
+
+func (oto *overlapTilesObject) Update(ticks uint32, level *Level) {
+	// Do nothing
+}
+
+// object hit box (not render box)
+func (oto *overlapTilesObject) GetRect() sdl.Rect {
+	return oto.levelRect
+}
+
+func (oto *overlapTilesObject) GetZIndex() int {
+	return oto.zIndex
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Invisible tile object
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

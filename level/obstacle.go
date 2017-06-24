@@ -205,9 +205,9 @@ func GetTileRect(tileID vector.TileID) sdl.Rect {
 	}
 }
 
-func GetTileStartPos(tileID vector.TileID) vector.Vec2D {
+func GetTileStartPos(tileID vector.TileID) vector.Pos {
 	rect := GetTileRect(tileID)
-	return vector.Vec2D{rect.X, rect.Y}
+	return vector.Pos{rect.X, rect.Y}
 }
 
 func GetRectStartPos(rect sdl.Rect) vector.Vec2D {
