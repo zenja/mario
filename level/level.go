@@ -129,7 +129,7 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 func (l *Level) Draw(camPos vector.Pos, ticks uint32) {
 	// render background
 	bgLevelRect := sdl.Rect{
-		camPos.X * 80 / 100,
+		camPos.X * 95 / 100,
 		0,
 		l.BGRes.GetW(),
 		l.BGRes.GetH(),
