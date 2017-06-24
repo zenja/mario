@@ -15,19 +15,18 @@ import (
 
 type Level struct {
 	// Public
-	Spec          *LevelSpec
-	BGRes         graphic.Resource
-	BGColor       sdl.Color
-	Decorations   []Object
-	TileObjects   [][]Object
-	NumTiles      vector.Vec2D // NOTE: X, Y is TID
-	Enemies       []Enemy
-	VolatileObjs  *list.List // a list of volatileObject objects
-	ObstMngr      *ObstacleManager
-	EnemyObstMngr *ObstacleManager // obstacle manager for enemies
-	TheHero       *Hero
-	InitHeroPos   vector.Pos
-	Coins         int
+	Spec         *LevelSpec
+	BGRes        graphic.Resource
+	BGColor      sdl.Color
+	Decorations  []Object
+	TileObjects  [][]Object
+	NumTiles     vector.Vec2D // NOTE: X, Y is TID
+	Enemies      []Enemy
+	VolatileObjs *list.List // a list of volatileObject objects
+	ObstMngr     *ObstacleManager
+	TheHero      *Hero
+	InitHeroPos  vector.Pos
+	Coins        int
 
 	// Private
 
@@ -214,7 +213,6 @@ func (l *Level) AddEffect(e Effect) {
 func (l *Level) RemoveObstacleTileObject(tid vector.TileID) {
 	l.TileObjects[tid.X][tid.Y] = nil
 	l.ObstMngr.RemoveTileObst(tid)
-	l.EnemyObstMngr.RemoveTileObst(tid)
 }
 
 func (l *Level) AddVolatileObject(vo volatileObject) {
@@ -231,7 +229,6 @@ func (l *Level) Restart() {
 	l.TileObjects = newLevel.TileObjects
 	l.Enemies = newLevel.Enemies
 	l.ObstMngr = newLevel.ObstMngr
-	l.EnemyObstMngr = newLevel.EnemyObstMngr
 
 	l.Init()
 }

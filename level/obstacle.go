@@ -8,51 +8,63 @@ import (
 	"github.com/zenja/mario/vector"
 )
 
+type obstType uint8
+
+const (
+	not_obst obstType = iota // default: no obst
+	normal_obst
+	enemy_only_obst
+	up_thru_obst // obst that can pass through from its bottom
+)
+
+type SolveCollisionType uint8
+
+const (
+	SOLVE_COLLISION_NORMAL SolveCollisionType = iota
+	// also consider enemy-only obst as obst
+	SOLVE_COLLISION_ENEMY
+)
+
 // ObstacleManager know where is obstacle
 // "Obst" means obstacle
 type ObstacleManager struct {
 	tilesInRow    int
 	tilesInColumn int
 
-	// bool[tilesInRow][tilesInColumn], so that we can use isObstTile[TID.X][TID.Y]
+	// obstType[tilesInRow][tilesInColumn], so that we can use obsts[TID.X][TID.Y]
 	// so its shape is a rotation of level's
-	isObstTile [][]bool
+	obsts [][]obstType
 }
 
 func NewObstacleManager(tilesInRow, tilesInColumn int) *ObstacleManager {
-	var isObstTile [][]bool
+	var obsts [][]obstType
 	for i := 0; i < tilesInRow; i++ {
-		row := make([]bool, tilesInColumn)
-		isObstTile = append(isObstTile, row)
+		row := make([]obstType, tilesInColumn)
+		obsts = append(obsts, row)
 	}
 	return &ObstacleManager{
 		tilesInRow:    tilesInRow,
 		tilesInColumn: tilesInColumn,
-		isObstTile:    isObstTile,
+		obsts:         obsts,
 	}
 }
 
-func (om *ObstacleManager) AddTileObst(tileID vector.TileID) {
+func (om *ObstacleManager) AddNormalTileObst(tileID vector.TileID) {
 	om.assertLegalTilePos(tileID)
-	om.isObstTile[tileID.X][tileID.Y] = true
+	om.obsts[tileID.X][tileID.Y] = normal_obst
+}
+
+func (om *ObstacleManager) AddEnemyOnlyTileObst(tileID vector.TileID) {
+	om.assertLegalTilePos(tileID)
+	om.obsts[tileID.X][tileID.Y] = enemy_only_obst
 }
 
 func (om *ObstacleManager) RemoveTileObst(tileID vector.TileID) {
 	om.assertLegalTilePos(tileID)
-	om.isObstTile[tileID.X][tileID.Y] = false
+	om.obsts[tileID.X][tileID.Y] = not_obst
 }
 
-func (om *ObstacleManager) IsObstTile(tileID vector.TileID) bool {
-	if !om.isLegalTilePos(tileID) {
-		// all tiles out of scope are considered not obstacles
-		// so objects can actually update itself to go out of scope, and it is easy to detect this
-		return false
-	}
-
-	return om.isObstTile[tileID.X][tileID.Y]
-}
-
-func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect) (
+func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect, sctype SolveCollisionType) (
 	hitTop bool,
 	hitRight bool,
 	hitBottom bool,
@@ -65,7 +77,7 @@ func (om *ObstacleManager) SolveCollision(desiredRect *sdl.Rect) (
 			continue
 		}
 
-		if !om.IsObstTile(tid) {
+		if !om.isObstTile(tid, *desiredRect, sctype) {
 			continue
 		}
 
@@ -161,31 +173,6 @@ func GetSurroundingTileIDs(rect sdl.Rect) (tids [8]vector.TileID) {
 	return
 }
 
-func (om *ObstacleManager) isLegalTilePos(tileID vector.TileID) bool {
-	if tileID.X < 0 || tileID.Y < 0 {
-		return false
-	}
-	if int(tileID.X) >= om.tilesInRow {
-		return false
-	}
-	if int(tileID.Y) >= om.tilesInColumn {
-		return false
-	}
-	return true
-}
-
-func (om *ObstacleManager) assertLegalTilePos(tileID vector.TileID) {
-	if tileID.X < 0 || tileID.Y < 0 {
-		log.Fatalf("Tile position cannot be negative: (%d, %d)", tileID.X, tileID.Y)
-	}
-	if int(tileID.X) >= om.tilesInRow {
-		log.Fatalf("Tile X (%d) exceeds max width (%d)", tileID.X, om.tilesInRow)
-	}
-	if int(tileID.Y) >= om.tilesInColumn {
-		log.Fatalf("Tile Y (%d) exceeds max height (%d)", tileID.Y, om.tilesInColumn)
-	}
-}
-
 // GetTileID returns tile ID for a given position
 // Note that GetTileID won't check tile id nor given position
 func GetTileID(levelPos vector.Pos, preferTop bool, preferLeft bool) vector.TileID {
@@ -220,4 +207,59 @@ func GetTileStartPos(tileID vector.TileID) vector.Vec2D {
 
 func GetRectStartPos(rect sdl.Rect) vector.Vec2D {
 	return vector.Vec2D{rect.X, rect.Y}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helper methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (om *ObstacleManager) isLegalTilePos(tileID vector.TileID) bool {
+	if tileID.X < 0 || tileID.Y < 0 {
+		return false
+	}
+	if int(tileID.X) >= om.tilesInRow {
+		return false
+	}
+	if int(tileID.Y) >= om.tilesInColumn {
+		return false
+	}
+	return true
+}
+
+func (om *ObstacleManager) assertLegalTilePos(tileID vector.TileID) {
+	if tileID.X < 0 || tileID.Y < 0 {
+		log.Fatalf("Tile position cannot be negative: (%d, %d)", tileID.X, tileID.Y)
+	}
+	if int(tileID.X) >= om.tilesInRow {
+		log.Fatalf("Tile X (%d) exceeds max width (%d)", tileID.X, om.tilesInRow)
+	}
+	if int(tileID.Y) >= om.tilesInColumn {
+		log.Fatalf("Tile Y (%d) exceeds max height (%d)", tileID.Y, om.tilesInColumn)
+	}
+}
+
+func (om *ObstacleManager) isObstTile(tileID vector.TileID, desiredRect sdl.Rect, sctype SolveCollisionType) bool {
+	if !om.isLegalTilePos(tileID) {
+		// all tiles out of scope are considered not obstacles
+		// so objects can actually update itself to go out of scope, and it is easy to detect this
+		return false
+	}
+
+	if om._isNormalObstTile(tileID) {
+		return true
+	}
+
+	if om._isEnemyOnlyObstTile(tileID) && sctype == SOLVE_COLLISION_ENEMY {
+		return true
+	}
+
+	return false
+}
+
+func (om *ObstacleManager) _isNormalObstTile(tileID vector.TileID) bool {
+	return om.obsts[tileID.X][tileID.Y] == normal_obst
+}
+
+func (om *ObstacleManager) _isEnemyOnlyObstTile(tileID vector.TileID) bool {
+	return om.obsts[tileID.X][tileID.Y] == enemy_only_obst
 }

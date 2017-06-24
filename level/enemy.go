@@ -731,7 +731,7 @@ func enemySimpleMoveEx(
 	levelRect.X += velocityStep.X
 	levelRect.Y += velocityStep.Y
 
-	_, hitRight, hitBottom, hitLeft, _ := level.EnemyObstMngr.SolveCollision(levelRect)
+	_, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(levelRect, SOLVE_COLLISION_ENEMY)
 
 	if hitRight {
 		vel.X = -vel.X

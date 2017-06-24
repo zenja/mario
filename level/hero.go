@@ -285,7 +285,7 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 	h.levelRect.Y += velocityStep.Y
 
 	// solve collision
-	hitTop, hitRight, hitBottom, hitLeft, tilesHit := level.ObstMngr.SolveCollision(&h.levelRect)
+	hitTop, hitRight, hitBottom, hitLeft, tilesHit := level.ObstMngr.SolveCollision(&h.levelRect, SOLVE_COLLISION_NORMAL)
 
 	// update tiles hit
 	h.notifyTilesHit(tilesHit, h.levelRect, velocityStep, level, ticks)

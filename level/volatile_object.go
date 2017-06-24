@@ -102,7 +102,7 @@ func (f *fireball) Update(ticks uint32, level *Level) {
 	f.levelRect.X += velStep.X
 	f.levelRect.Y += velStep.Y
 
-	hitTop, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&f.levelRect)
+	hitTop, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&f.levelRect, SOLVE_COLLISION_NORMAL)
 
 	// if hit top/right/left, dieDown, show boom effect
 	if hitTop || hitRight || hitLeft {

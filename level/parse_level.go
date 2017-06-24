@@ -35,7 +35,6 @@ func BuildLevel(spec *LevelSpec) *Level {
 
 	numTiles := vector.Vec2D{int32(len(spec.LevelArr[0])), int32(len(spec.LevelArr))}
 	obstMngr := NewObstacleManager(len(spec.LevelArr[0]), len(spec.LevelArr))
-	enemyObstMngr := NewObstacleManager(len(spec.LevelArr[0]), len(spec.LevelArr))
 	var hero *Hero
 
 	// init tileObjs array
@@ -43,15 +42,14 @@ func BuildLevel(spec *LevelSpec) *Level {
 		tileObjs = append(tileObjs, make([]Object, numTiles.Y))
 	}
 
-	addAsFullObstTile := func(tid vector.TileID, o Object) {
+	addAsNormalObstTile := func(tid vector.TileID, o Object) {
 		tileObjs[tid.X][tid.Y] = o
-		obstMngr.AddTileObst(tid)
-		enemyObstMngr.AddTileObst(tid)
+		obstMngr.AddNormalTileObst(tid)
 	}
 
 	addAsEnemyOnlyObstTile := func(tid vector.TileID, o Object) {
 		tileObjs[tid.X][tid.Y] = o
-		enemyObstMngr.AddTileObst(tid)
+		obstMngr.AddEnemyOnlyTileObst(tid)
 	}
 
 	addAsNoObstTile := func(tid vector.TileID, o Object) {
@@ -74,7 +72,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 			switch spec.LevelArr[tidY][tidX] {
 			// Invisible block
 			case '#':
-				addAsFullObstTile(tid, NewInvisibleTileObject(tid))
+				addAsNormalObstTile(tid, NewInvisibleTileObject(tid))
 
 			// Invisible block only to enemies
 			case '"':
@@ -85,57 +83,57 @@ func BuildLevel(spec *LevelSpec) *Level {
 				mainRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK)
 				pieceRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK_PIECE)
 				o := NewBreakableTileObject(mainRes, pieceRes, currentPos, ZINDEX_0)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// Ground with left grass
 			case 'L':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_LEFT)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// Ground with mid grass
 			case 'G':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// Ground with right grass
 			case 'R':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_GRASS_RIGHT)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// Inner ground in middle
 			case 'I':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_INNER_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// Myth box for coins
 			case 'C':
-				addAsFullObstTile(tid, NewCoinMythBox(currentPos, 3))
+				addAsNormalObstTile(tid, NewCoinMythBox(currentPos, 3))
 
 			// Myth box for mushrooms
 			case 'M':
-				addAsFullObstTile(tid, NewMushroomMythBox(currentPos))
+				addAsNormalObstTile(tid, NewMushroomMythBox(currentPos))
 
 			// left middle of pipe
 			case '[':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// right middle of pipe
 			case ']':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// right middle of pipe, with eater flower
 			case 'E':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_MID)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 				// add eater
 				enemies = append(enemies, NewEaterFlower(tid))
@@ -144,7 +142,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 			case '{':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_TOP)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 				// also needs to add level jumper
 				nextLevelName := spec.NextLevelNames[nextLevelJumperIdx]
@@ -155,31 +153,31 @@ func BuildLevel(spec *LevelSpec) *Level {
 			case '}':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// left top of normal pipe
 			case '(':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_TOP)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// right top of normal pipe
 			case ')':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// left bottom of pipe
 			case '<':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_BOTTOM)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// right bottom of pipe
 			case '>':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
 				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
-				addAsFullObstTile(tid, o)
+				addAsNormalObstTile(tid, o)
 
 			// water surface
 			case 'W':
@@ -239,19 +237,18 @@ func BuildLevel(spec *LevelSpec) *Level {
 	}
 
 	return &Level{
-		Spec:          spec,
-		BGRes:         bgRes,
-		Decorations:   decorations,
-		TileObjects:   tileObjs,
-		Enemies:       enemies,
-		VolatileObjs:  list.New(),
-		ObstMngr:      obstMngr,
-		EnemyObstMngr: enemyObstMngr,
-		TheHero:       hero,
-		InitHeroPos:   vector.Pos{hero.levelRect.X, hero.levelRect.Y},
-		BGColor:       spec.BgColor,
-		NumTiles:      numTiles,
-		effects:       list.New(),
+		Spec:         spec,
+		BGRes:        bgRes,
+		Decorations:  decorations,
+		TileObjects:  tileObjs,
+		Enemies:      enemies,
+		VolatileObjs: list.New(),
+		ObstMngr:     obstMngr,
+		TheHero:      hero,
+		InitHeroPos:  vector.Pos{hero.levelRect.X, hero.levelRect.Y},
+		BGColor:      spec.BgColor,
+		NumTiles:     numTiles,
+		effects:      list.New(),
 	}
 }
 
