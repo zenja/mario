@@ -21,7 +21,6 @@ type shineEffect struct {
 	currRes2   graphic.Resource
 	hero       *Hero
 	startTicks uint32
-	lastTicks  uint32
 	finished   bool
 }
 
@@ -32,7 +31,6 @@ func NewShineEffect(h *Hero, ticks uint32) *shineEffect {
 		res2:       graphic.Res(graphic.RESOURCE_TYPE_SHINE_2),
 		hero:       h,
 		startTicks: ticks,
-		lastTicks:  ticks,
 	}
 }
 
@@ -45,8 +43,6 @@ func (se *shineEffect) Update(ticks uint32) {
 	se.currRes0 = se.getRes(ticks, se.res0, se.res1, se.res2)
 	se.currRes1 = se.getRes(ticks, se.res1, se.res2, se.res0)
 	se.currRes2 = se.getRes(ticks, se.res2, se.res0, se.res1)
-
-	se.lastTicks = ticks
 }
 
 func (se *shineEffect) Draw(camPos vector.Pos, ticks uint32) {

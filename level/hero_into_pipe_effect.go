@@ -22,12 +22,16 @@ func NewHeroIntoPipeEffect(h *Hero, ticks uint32, onFinished func()) *heroIntoPi
 		res:            h.currRes,
 		levelRect:      h.getRenderRect(),
 		startTicks:     ticks,
-		lastTicks:      ticks,
 		onFinishedHook: onFinished,
 	}
 }
 
 func (hipe *heroIntoPipeEffect) Update(ticks uint32) {
+	if hipe.lastTicks == 0 {
+		hipe.lastTicks = ticks
+		return
+	}
+
 	if ticks-hipe.startTicks > 1500 {
 		hipe.finished = true
 		return

@@ -42,13 +42,17 @@ func NewStraightDeadDownEffect(res graphic.Resource, levelRect sdl.Rect, ticks u
 		levelRect:      levelRect,
 		velocity:       vector.Vec2D{0, -1000},
 		startTicks:     ticks,
-		lastTicks:      ticks,
 		finished:       false,
 		onFinishedHook: onFinishedHook,
 	}
 }
 
 func (dde *deadDownEffect) Update(ticks uint32) {
+	if dde.lastTicks == 0 {
+		dde.lastTicks = ticks
+		return
+	}
+
 	if ticks-dde.startTicks > 1500 {
 		dde.finished = true
 		return

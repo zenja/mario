@@ -42,12 +42,16 @@ func NewBreakTileEffect(pieceRes graphic.Resource, tid vector.TileID, ticks uint
 		velLB:      vector.Vec2D{-250, -1000},
 		velRB:      vector.Vec2D{250, -1000},
 		startTicks: ticks,
-		lastTicks:  ticks,
 		finished:   false,
 	}
 }
 
 func (bte *breakTileEffect) Update(ticks uint32) {
+	if bte.lastTicks == 0 {
+		bte.lastTicks = ticks
+		return
+	}
+
 	vels := []*vector.Vec2D{
 		&bte.velLT,
 		&bte.velRT,

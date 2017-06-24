@@ -28,12 +28,16 @@ func NewCoinEffect(tid vector.TileID, ticks uint32) *coinEffect {
 		levelRect:  tileRect,
 		velocity:   vector.Vec2D{0, -450},
 		startTicks: ticks,
-		lastTicks:  ticks,
 		finished:   false,
 	}
 }
 
 func (ci *coinEffect) Update(ticks uint32) {
+	if ci.lastTicks == 0 {
+		ci.lastTicks = ticks
+		return
+	}
+
 	// speed up
 	ci.velocity.Y -= 50
 

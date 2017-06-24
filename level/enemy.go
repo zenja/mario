@@ -412,6 +412,11 @@ func (ef *eaterFlower) GetZIndex() int {
 }
 
 func (ef *eaterFlower) Update(ticks uint32, level *Level) {
+	if ef.lastTicks == 0 {
+		ef.lastTicks = ticks
+		return
+	}
+
 	ef.animationTileObj.Update(ticks, level)
 
 	if ef.levelRect.Y >= ef.maxY {
