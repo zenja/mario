@@ -781,7 +781,7 @@ func hurtHeroIfIntersectEnough(hero *Hero, emy Enemy, level *Level) {
 		return
 	}
 
-	if interRect.W > int32(float64(emyRect.W)*0.2) && interRect.H > int32(float64(emyRect.H)*0.2) {
+	if interRect.W > int32(float64(emyRect.W)*0.3) && interRect.H > int32(float64(emyRect.H)*0.3) {
 		hero.Hurt(level)
 	}
 }
