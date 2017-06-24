@@ -49,10 +49,10 @@ type singleTileObject struct {
 	zIndex    int
 }
 
-func NewSingleTileObject(resource graphic.Resource, startPos vector.Pos, zIndex int) Object {
+func NewSingleTileObject(resource graphic.Resource, tid vector.TileID, zIndex int) Object {
 	return &singleTileObject{
 		resource:  resource,
-		levelRect: sdl.Rect{startPos.X, startPos.Y, resource.GetW(), resource.GetH()},
+		levelRect: GetTileRect(tid),
 		zIndex:    zIndex,
 	}
 }

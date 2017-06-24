@@ -115,14 +115,14 @@ func BuildLevel(spec *LevelSpec) *Level {
 					o = NewOverlapTilesObject(
 						[]graphic.ResourceID{graphic.RESOURCE_TYPE_GROUD_MID, resID}, tid, ZINDEX_1)
 				} else {
-					o = NewSingleTileObject(res, currentPos, ZINDEX_1)
+					o = NewSingleTileObject(res, tid, ZINDEX_1)
 				}
 				addAsUpThruObstTile(tid, o)
 
 			// Ground with mid grass
 			case 'G':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GRASS_GROUD_MID)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
+				o := NewSingleTileObject(res, tid, ZINDEX_0)
 				addAsUpThruObstTile(tid, o)
 
 			// Ground with right grass
@@ -134,7 +134,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 					o = NewOverlapTilesObject(
 						[]graphic.ResourceID{graphic.RESOURCE_TYPE_GROUD_MID, resID}, tid, ZINDEX_1)
 				} else {
-					o = NewSingleTileObject(res, currentPos, ZINDEX_1)
+					o = NewSingleTileObject(res, tid, ZINDEX_1)
 				}
 				addAsUpThruObstTile(tid, o)
 
@@ -147,14 +147,14 @@ func BuildLevel(spec *LevelSpec) *Level {
 					o = NewOverlapTilesObject(
 						[]graphic.ResourceID{graphic.RESOURCE_TYPE_GROUD_MID, resID}, tid, ZINDEX_1)
 				} else {
-					o = NewSingleTileObject(res, currentPos, ZINDEX_1)
+					o = NewSingleTileObject(res, tid, ZINDEX_1)
 				}
 				addAsNoObstTile(tid, o)
 
 			// Inner ground in middle
 			case 'g':
 				res := graphic.Res(graphic.RESOURCE_TYPE_GROUD_MID)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_0)
+				o := NewSingleTileObject(res, tid, ZINDEX_0)
 				addAsNoObstTile(tid, o)
 
 			// Inner ground in right
@@ -166,7 +166,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 					o = NewOverlapTilesObject(
 						[]graphic.ResourceID{graphic.RESOURCE_TYPE_GROUD_MID, resID}, tid, ZINDEX_1)
 				} else {
-					o = NewSingleTileObject(res, currentPos, ZINDEX_1)
+					o = NewSingleTileObject(res, tid, ZINDEX_1)
 				}
 				addAsNoObstTile(tid, o)
 
@@ -181,19 +181,19 @@ func BuildLevel(spec *LevelSpec) *Level {
 			// left middle of pipe
 			case '[':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_MID)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				o := NewSingleTileObject(res, tid, ZINDEX_4)
 				addAsNormalObstTile(tid, o)
 
 			// right middle of pipe
 			case ']':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_MID)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				o := NewSingleTileObject(res, tid, ZINDEX_4)
 				addAsNormalObstTile(tid, o)
 
 			// right middle of pipe, with eater flower
 			case 'E':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_MID)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				o := NewSingleTileObject(res, tid, ZINDEX_4)
 				addAsNormalObstTile(tid, o)
 
 				// add eater
@@ -202,7 +202,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 			// left top of pipe that will jump level
 			case '{':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_TOP)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				o := NewSingleTileObject(res, tid, ZINDEX_4)
 				addAsNormalObstTile(tid, o)
 
 				// also needs to add level jumper
@@ -213,31 +213,31 @@ func BuildLevel(spec *LevelSpec) *Level {
 			// right top of pipe that will jump level
 			case '}':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				o := NewSingleTileObject(res, tid, ZINDEX_4)
 				addAsNormalObstTile(tid, o)
 
 			// left top of normal pipe
 			case '(':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_TOP)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				o := NewSingleTileObject(res, tid, ZINDEX_4)
 				addAsNormalObstTile(tid, o)
 
 			// right top of normal pipe
 			case ')':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_TOP)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				o := NewSingleTileObject(res, tid, ZINDEX_4)
 				addAsNormalObstTile(tid, o)
 
 			// left bottom of pipe
 			case '<':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_LEFT_BOTTOM)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				o := NewSingleTileObject(res, tid, ZINDEX_4)
 				addAsNormalObstTile(tid, o)
 
 			// right bottom of pipe
 			case '>':
 				res := graphic.Res(graphic.RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_4)
+				o := NewSingleTileObject(res, tid, ZINDEX_4)
 				addAsNormalObstTile(tid, o)
 
 			// water surface
@@ -248,7 +248,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 			// water inside
 			case 'w':
 				res := graphic.Res(graphic.RESOURCE_TYPE_WATER_FULL)
-				o := NewSingleTileObject(res, currentPos, ZINDEX_1)
+				o := NewSingleTileObject(res, tid, ZINDEX_1)
 				addAsNoObstTile(tid, o)
 
 			// coin
