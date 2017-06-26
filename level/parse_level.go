@@ -99,10 +99,17 @@ func BuildLevel(spec *LevelSpec) *Level {
 			case '"':
 				addAsEnemyOnlyObstTile(tid, NewInvisibleTileObject(tid))
 
-			// Brick
+			// Brick: yellow
 			case 'B':
-				mainRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK)
-				pieceRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK_PIECE)
+				mainRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK_YELLOW)
+				pieceRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK_PIECE_YELLOW)
+				o := NewBreakableTileObject(mainRes, pieceRes, currentPos, ZINDEX_0)
+				addAsNormalObstTile(tid, o)
+
+			// Brick: red
+			case 'D':
+				mainRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK_RED)
+				pieceRes := graphic.Res(graphic.RESOURCE_TYPE_BRICK_PIECE_RED)
 				o := NewBreakableTileObject(mainRes, pieceRes, currentPos, ZINDEX_0)
 				addAsNormalObstTile(tid, o)
 

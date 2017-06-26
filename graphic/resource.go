@@ -20,9 +20,12 @@ type Resource interface {
 
 // Resource IDs
 const (
-	RESOURCE_TYPE_BRICK ResourceID = iota
+	RESOURCE_TYPE_CURR_BG ResourceID = iota
 
-	RESOURCE_TYPE_CURR_BG
+	RESOURCE_TYPE_BRICK_RED
+	RESOURCE_TYPE_BRICK_PIECE_RED
+	RESOURCE_TYPE_BRICK_YELLOW
+	RESOURCE_TYPE_BRICK_PIECE_YELLOW
 
 	RESOURCE_TYPE_GRASS_GROUD_LEFT
 	RESOURCE_TYPE_GRASS_GROUD_MID
@@ -61,8 +64,6 @@ const (
 	RESOURCE_TYPE_COIN_3
 
 	RESOURCE_TYPE_GOOD_MUSHROOM
-
-	RESOURCE_TYPE_BRICK_PIECE
 
 	RESOURCE_TYPE_MUSHROOM_ENEMY_0
 	RESOURCE_TYPE_MUSHROOM_ENEMY_1
@@ -433,7 +434,8 @@ func loadAllResources() {
 	// -------------------------------
 
 	// brick
-	registerTileResource("assets/brick.png", RESOURCE_TYPE_BRICK)
+	registerTileResource("assets/brick-red.png", RESOURCE_TYPE_BRICK_RED)
+	registerTileResource("assets/brick-yellow.png", RESOURCE_TYPE_BRICK_YELLOW)
 
 	// grass
 	registerTileResource("assets/grass-ground-left.png", RESOURCE_TYPE_GRASS_GROUD_LEFT)
@@ -513,7 +515,8 @@ func loadAllResources() {
 	registerNonTileResource("assets/dec-grass-1.png", RESOURCE_TYPE_DEC_GRASS_1)
 
 	// broken pieces
-	registerScaledNonTileResource("assets/brick-piece.png", RESOURCE_TYPE_BRICK_PIECE, TILE_SIZE/2, TILE_SIZE/2)
+	registerScaledNonTileResource("assets/brick-piece-red.png", RESOURCE_TYPE_BRICK_PIECE_RED, TILE_SIZE/2, TILE_SIZE/2)
+	registerScaledNonTileResource("assets/brick-piece-yellow.png", RESOURCE_TYPE_BRICK_PIECE_YELLOW, TILE_SIZE/2, TILE_SIZE/2)
 
 	// mushroom enemy
 	registerScaledNonTileResource("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_0, TILE_SIZE, TILE_SIZE)

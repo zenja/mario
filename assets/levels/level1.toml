@@ -32,9 +32,9 @@ def = """
 #.................................()..........BB........c.....()M.........CB.CB........B....B....BBBBBBB.......()..........().....().....BBB..........c.c.c.c...()...............B....1....B.....................{}........#
 #.......H.............()........1.[]...1..1............1c...()[]..............1..1.....BBBBBB..................[]..1..1....[]..2..[]............................[]...............BBBBBBBBBBB.....................[]........#
 #.....................[]..........[]................."......[][]...............................................E]..........[].....E].......B....................E]...............................................[]........#
-GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG.....GGGGGGGGGGGGGGGGGGGGGGGGGGGGG.GGGGG..............GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG...GGGGGGGGGGGGGGGGGGGGGGGGGGG.....GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-gggggggggggggggggggggggggggggggggggggggggggggggggWWWWWgggggggggggggggggggggggggggggWgggggWWWWWWWWWWWWWWgggggggggggggggggggggggggggggggggggggWWWgggggggggggggggggggggggggggWWWWWggggggggggggggggggggggggggggggggggggggggggggg
-gggggggggggggggggggggggggggggggggggggggggggggggggwwwwwgggggggggggggggggggggggggggggwgggggwwwwwwwwwwwwwwgggggggggggggggggggggggggggggggggggggwwwgggggggggggggggggggggggggggwwwwwggggggggggggggggggggggggggggggggggggggggggggg
+GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGR.....LGGGGGGGGGGGGGGGGGGGGGGGGGGGR.LGGGR..............LGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG...GGGGGGGGGGGGGGGGGGGGGGGGGGG.....GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+ggggggggggggggggggggggggggggggggggggggggggggggggrWWWWWlgggggggggggggggggggggggggggrWlgggrWWWWWWWWWWWWWWlggggggggggggggggggggggggggggggggggggWWWgggggggggggggggggggggggggggWWWWWggggggggggggggggggggggggggggggggggggggggggggg
+ggggggggggggggggggggggggggggggggggggggggggggggggrwwwwwlgggggggggggggggggggggggggggrwlgggrwwwwwwwwwwwwwwlggggggggggggggggggggggggggggggggggggwwwgggggggggggggggggggggggggggwwwwwggggggggggggggggggggggggggggggggggggggggggggg
 """
 
 dec-def = """
