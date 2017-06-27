@@ -72,12 +72,12 @@ const (
 	RESOURCE_TYPE_MUSHROOM_ENEMY_HIT
 	RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN
 
-	RESOURCE_TYPE_TORTOISE_LEFT_0
-	RESOURCE_TYPE_TORTOISE_LEFT_1
-	RESOURCE_TYPE_TORTOISE_RIGHT_0
-	RESOURCE_TYPE_TORTOISE_RIGHT_1
-	RESOURCE_TYPE_TORTOISE_INSIDE
-	RESOURCE_TYPE_TORTOISE_SEMI_INSIDE
+	RESOURCE_TYPE_TORTOISE_RED_LEFT_0
+	RESOURCE_TYPE_TORTOISE_RED_LEFT_1
+	RESOURCE_TYPE_TORTOISE_RED_RIGHT_0
+	RESOURCE_TYPE_TORTOISE_RED_RIGHT_1
+	RESOURCE_TYPE_TORTOISE_RED_INSIDE
+	RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE
 
 	RESOURCE_TYPE_BANG
 
@@ -530,12 +530,12 @@ func loadAllResources() {
 	registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
 
 	// tortoise enemy
-	registerScaledNonTileResource("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_RIGHT_0, tortoise_walking_width, tortoise_walking_height)
-	registerScaledNonTileResource("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_RIGHT_1, tortoise_walking_width, tortoise_walking_height)
-	registerResourceEx("assets/tortoise-right-0.png", RESOURCE_TYPE_TORTOISE_LEFT_0, tortoise_walking_width, tortoise_walking_height, false, true, false)
-	registerResourceEx("assets/tortoise-right-1.png", RESOURCE_TYPE_TORTOISE_LEFT_1, tortoise_walking_width, tortoise_walking_height, false, true, false)
-	registerScaledNonTileResource("assets/tortoise-inside.png", RESOURCE_TYPE_TORTOISE_INSIDE, tortoise_inside_width, tortoise_inside_height)
-	registerScaledNonTileResource("assets/tortoise-semi-inside.png", RESOURCE_TYPE_TORTOISE_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
+	registerScaledNonTileResource("assets/tortoise-red-right-0.png", RESOURCE_TYPE_TORTOISE_RED_RIGHT_0, tortoise_walking_width, tortoise_walking_height)
+	registerScaledNonTileResource("assets/tortoise-red-right-1.png", RESOURCE_TYPE_TORTOISE_RED_RIGHT_1, tortoise_walking_width, tortoise_walking_height)
+	registerResourceEx("assets/tortoise-red-right-0.png", RESOURCE_TYPE_TORTOISE_RED_LEFT_0, tortoise_walking_width, tortoise_walking_height, false, true, false)
+	registerResourceEx("assets/tortoise-red-right-1.png", RESOURCE_TYPE_TORTOISE_RED_LEFT_1, tortoise_walking_width, tortoise_walking_height, false, true, false)
+	registerScaledNonTileResource("assets/tortoise-red-inside.png", RESOURCE_TYPE_TORTOISE_RED_INSIDE, tortoise_inside_width, tortoise_inside_height)
+	registerScaledNonTileResource("assets/tortoise-red-semi-inside.png", RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
 
 	// fireball
 	registerScaledNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)

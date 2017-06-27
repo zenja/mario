@@ -180,14 +180,14 @@ type tortoiseEnemy struct {
 }
 
 func NewTortoiseEnemy(startPos vector.Pos) Enemy {
-	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_LEFT_0)
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_LEFT_0)
 	return &tortoiseEnemy{
 		resLeft0:      resLeft0,
-		resLeft1:      graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_LEFT_1),
-		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RIGHT_0),
-		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RIGHT_1),
-		resSemiInside: graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_SEMI_INSIDE),
-		resInside:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_INSIDE),
+		resLeft1:      graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_LEFT_1),
+		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_RIGHT_0),
+		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_RIGHT_1),
+		resSemiInside: graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE),
+		resInside:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_INSIDE),
 		currRes:       resLeft0,
 		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
 		velocity:      vector.Vec2D{-100, 0},
