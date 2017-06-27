@@ -296,6 +296,11 @@ func BuildLevel(spec *LevelSpec) *Level {
 					graphic.RESOURCE_TYPE_DEC_GRASS_1,
 				}
 				addDecoration(NewDecoration(tid, resIds, 800))
+			case '2':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_TREE_0,
+				}
+				addDecoration(NewDecoration(tid, resIds, 1000))
 			}
 		}
 	}

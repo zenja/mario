@@ -47,6 +47,8 @@ const (
 	RESOURCE_TYPE_DEC_GRASS_0
 	RESOURCE_TYPE_DEC_GRASS_1
 
+	RESOURCE_TYPE_DEC_TREE_0
+
 	RESOURCE_TYPE_MYTH_BOX_NORMAL
 	RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT
 	RESOURCE_TYPE_MYTH_BOX_EMPTY
@@ -513,6 +515,9 @@ func loadAllResources() {
 	// decoration: grass
 	registerNonTileResource("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
 	registerNonTileResource("assets/dec-grass-1.png", RESOURCE_TYPE_DEC_GRASS_1)
+
+	// decoration: trees
+	registerNonTileResource("assets/dec-tree-0.png", RESOURCE_TYPE_DEC_TREE_0)
 
 	// broken pieces
 	registerScaledNonTileResource("assets/brick-piece-red.png", RESOURCE_TYPE_BRICK_PIECE_RED, TILE_SIZE/2, TILE_SIZE/2)
