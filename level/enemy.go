@@ -718,6 +718,99 @@ func (ce *coinEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Boss A
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var _ Enemy = &coinEnemy{}
+
+type bossA struct {
+	basicEnemy
+
+	resLeft0      graphic.Resource
+	resLeft1      graphic.Resource
+	resRight0     graphic.Resource
+	resRight1     graphic.Resource
+	currRes       graphic.Resource
+	isFacingRight bool
+	levelRect     sdl.Rect
+	lastTicks     uint32
+	velocity      vector.Vec2D
+}
+
+func NewBossA(startPos vector.Pos) *bossA {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_0)
+	return &bossA{
+		resLeft0:      resLeft0,
+		resLeft1:      graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_1),
+		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_0),
+		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_1),
+		currRes:       resLeft0,
+		isFacingRight: true,
+		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
+		velocity:      vector.Vec2D{80, 0},
+	}
+}
+
+func (b *bossA) GetRect() sdl.Rect {
+	return b.levelRect
+}
+
+func (b *bossA) GetZIndex() int {
+	return ZINDEX_1
+}
+
+func (b *bossA) Update(ticks uint32, level *Level) {
+	if b.lastTicks == 0 {
+		b.lastTicks = ticks
+		return
+	}
+
+	onHitLeft := func() {
+		b.isFacingRight = true
+	}
+	onHitRight := func() {
+		b.isFacingRight = false
+	}
+	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
+
+	b.updateResource(ticks)
+
+	b.lastTicks = ticks
+}
+
+func (b *bossA) Draw(camPos vector.Pos) {
+	graphic.DrawResource(b.currRes, b.levelRect, camPos)
+}
+
+func (b *bossA) updateResource(ticks uint32) {
+	if ticks%1000 < 500 {
+		if b.isFacingRight {
+			b.currRes = b.resRight0
+		} else {
+			b.currRes = b.resLeft0
+		}
+	} else {
+		if b.isFacingRight {
+			b.currRes = b.resRight1
+		} else {
+			b.currRes = b.resLeft1
+		}
+	}
+}
+
+func (b *bossA) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	// DO Nothing
+}
+
+func (b *bossA) hitByBottomTile(level *Level, ticks uint32) {
+	// Do Nothing
+}
+
+func (boss *bossA) hitByBullet(b bullet, level *Level, ticks uint32) {
+	// Do nothing
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

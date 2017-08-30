@@ -81,6 +81,11 @@ const (
 	RESOURCE_TYPE_TORTOISE_RED_INSIDE
 	RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE
 
+	RESOURCE_TYPE_BOSS_A_LEFT_0
+	RESOURCE_TYPE_BOSS_A_LEFT_1
+	RESOURCE_TYPE_BOSS_A_RIGHT_0
+	RESOURCE_TYPE_BOSS_A_RIGHT_1
+
 	RESOURCE_TYPE_BANG
 
 	RESOURCE_TYPE_FIREBALL_0
@@ -581,6 +586,16 @@ func loadAllResources() {
 		tortoise_walking_width, tortoise_walking_height, 30, 45, 0, 0, true, false)
 	registerScaledNonTileResource("assets/tortoise-red-inside.png", RESOURCE_TYPE_TORTOISE_RED_INSIDE, tortoise_inside_width, tortoise_inside_height)
 	registerScaledNonTileResource("assets/tortoise-red-semi-inside.png", RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
+
+	// boss A
+	registerFacedResource("assets/boss-a-right-0.png", "chran", RESOURCE_TYPE_BOSS_A_RIGHT_0,
+		140, 140, 65, 90, 75, 0, false, false)
+	registerFacedResource("assets/boss-a-right-1.png", "chran", RESOURCE_TYPE_BOSS_A_RIGHT_1,
+		140, 140, 65, 90, 75, 0, false, false)
+	registerFacedResource("assets/boss-a-right-0.png", "chran", RESOURCE_TYPE_BOSS_A_LEFT_0,
+		140, 140, 65, 90, 0, 0, true, false)
+	registerFacedResource("assets/boss-a-right-1.png", "chran", RESOURCE_TYPE_BOSS_A_LEFT_1,
+		140, 140, 65, 90, 0, 0, true, false)
 
 	// fireball
 	registerScaledNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)

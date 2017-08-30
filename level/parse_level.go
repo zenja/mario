@@ -270,6 +270,10 @@ func BuildLevel(spec *LevelSpec) *Level {
 			case '2':
 				enemies = append(enemies, NewTortoiseEnemy(currentPos))
 
+			// Boss A
+			case 'X':
+				enemies = append(enemies, NewBossA(currentPos))
+
 			// Hero
 			case 'H':
 				if hero != nil {
