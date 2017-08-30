@@ -6,7 +6,7 @@ import (
 	"github.com/zenja/mario/vector"
 )
 
-type volatileObject interface {
+type bullet interface {
 	Object
 
 	IsDead() bool
@@ -16,8 +16,8 @@ type volatileObject interface {
 // Fireball
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// fireball is a volatileObject
-var _ volatileObject = &fireball{}
+// fireball is a bullet
+var _ bullet = &fireball{}
 
 const (
 	fireballMaxDurationMS  = 2000
@@ -136,7 +136,7 @@ func (f *fireball) Update(ticks uint32, level *Level) {
 
 		emyRect := emy.GetRect()
 		if f.levelRect.HasIntersection(&emyRect) {
-			emy.hitByFireball(f, level, ticks)
+			emy.hitByBullet(f, level, ticks)
 			f.boom(level, ticks)
 		}
 	}

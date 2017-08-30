@@ -310,18 +310,18 @@ func BuildLevel(spec *LevelSpec) *Level {
 	}
 
 	return &Level{
-		Spec:         spec,
-		BGRes:        bgRes,
-		Decorations:  decorations,
-		TileObjects:  tileObjs,
-		Enemies:      enemies,
-		VolatileObjs: list.New(),
-		ObstMngr:     obstMngr,
-		TheHero:      hero,
-		InitHeroPos:  vector.Pos{hero.levelRect.X, hero.levelRect.Y},
-		BGColor:      spec.BgColor,
-		NumTiles:     numTiles,
-		effects:      list.New(),
+		Spec:        spec,
+		BGRes:       bgRes,
+		Decorations: decorations,
+		TileObjects: tileObjs,
+		Enemies:     enemies,
+		Bullets:     list.New(),
+		ObstMngr:    obstMngr,
+		TheHero:     hero,
+		InitHeroPos: vector.Pos{hero.levelRect.X, hero.levelRect.Y},
+		BGColor:     spec.BgColor,
+		NumTiles:    numTiles,
+		effects:     list.New(),
 	}
 }
 

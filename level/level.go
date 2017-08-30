@@ -15,18 +15,18 @@ import (
 
 type Level struct {
 	// Public
-	Spec         *LevelSpec
-	BGRes        graphic.Resource
-	BGColor      sdl.Color
-	Decorations  []Object
-	TileObjects  [][]Object
-	NumTiles     vector.Vec2D // NOTE: X, Y is TID
-	Enemies      []Enemy
-	VolatileObjs *list.List // a list of volatileObject objects
-	ObstMngr     *ObstacleManager
-	TheHero      *Hero
-	InitHeroPos  vector.Pos
-	Coins        int
+	Spec        *LevelSpec
+	BGRes       graphic.Resource
+	BGColor     sdl.Color
+	Decorations []Object
+	TileObjects [][]Object
+	NumTiles    vector.Vec2D // NOTE: X, Y is TID
+	Enemies     []Enemy
+	Bullets     *list.List // a list of bullet objects
+	ObstMngr    *ObstacleManager
+	TheHero     *Hero
+	InitHeroPos vector.Pos
+	Coins       int
 
 	// Private
 
@@ -90,21 +90,21 @@ func (l *Level) Update(events *intsets.Sparse, ticks uint32) {
 		e.Update(ticks, l)
 	}
 
-	// update volatile objects
-	var deadVolatileObjs []*list.Element
-	for e := l.VolatileObjs.Front(); e != nil; e = e.Next() {
-		vo, ok := e.Value.(volatileObject)
+	// update bullet objects
+	var deadBullets []*list.Element
+	for e := l.Bullets.Front(); e != nil; e = e.Next() {
+		vo, ok := e.Value.(bullet)
 		if !ok {
-			log.Fatalf("eff is not an volatile object: %T", e.Value)
+			log.Fatalf("eff is not an bullet object: %T", e.Value)
 		}
 		vo.Update(ticks, l)
 
 		if vo.IsDead() {
-			deadVolatileObjs = append(deadVolatileObjs, e)
+			deadBullets = append(deadBullets, e)
 		}
 	}
-	for _, e := range deadVolatileObjs {
-		l.VolatileObjs.Remove(e)
+	for _, e := range deadBullets {
+		l.Bullets.Remove(e)
 	}
 
 	// update effects, run on-finished hook and remove finished effects
@@ -179,9 +179,9 @@ func (l *Level) Draw(camPos vector.Pos, ticks uint32) {
 		}
 	}
 
-	// render volatile objects (don't care z-index)
-	for e := l.VolatileObjs.Front(); e != nil; e = e.Next() {
-		vo, _ := e.Value.(volatileObject)
+	// render bullet objects (don't care z-index)
+	for e := l.Bullets.Front(); e != nil; e = e.Next() {
+		vo, _ := e.Value.(bullet)
 
 		if !vo.IsDead() {
 			vo.Draw(camPos)
@@ -215,8 +215,8 @@ func (l *Level) RemoveObstacleTileObject(tid vector.TileID) {
 	l.ObstMngr.RemoveTileObst(tid)
 }
 
-func (l *Level) AddVolatileObject(vo volatileObject) {
-	l.VolatileObjs.PushBack(vo)
+func (l *Level) AddBullet(b bullet) {
+	l.Bullets.PushBack(b)
 }
 
 func (l *Level) AddEnemy(e Enemy) {

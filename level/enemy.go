@@ -17,8 +17,8 @@ type hittableByBottomTile interface {
 	hitByBottomTile(level *Level, ticks uint32)
 }
 
-type hittableByFireball interface {
-	hitByFireball(fb *fireball, level *Level, ticks uint32)
+type hittableByBullet interface {
+	hitByBullet(b bullet, level *Level, ticks uint32)
 }
 
 type Enemy interface {
@@ -31,8 +31,8 @@ type Enemy interface {
 	// Enemy is hittable by breaking tile (from enemy's bottom tile)
 	hittableByBottomTile
 
-	// Enemy is hittable by fireball
-	hittableByFireball
+	// Enemy is hittable by bullet
+	hittableByBullet
 
 	// if the enemy is dead, if so, don't need to update/draw
 	IsDead() bool
@@ -138,9 +138,9 @@ func (m *mushroomEnemy) hitByBottomTile(level *Level, ticks uint32) {
 	m.dieDown(true, level, ticks)
 }
 
-func (m *mushroomEnemy) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+func (m *mushroomEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
 	var dieToRight bool
-	if fb.levelRect.X < m.levelRect.X {
+	if b.GetRect().X < m.levelRect.X {
 		dieToRight = true
 	}
 	m.dieDown(dieToRight, level, ticks)
@@ -321,9 +321,9 @@ func (t *tortoiseEnemy) hitByBottomTile(level *Level, ticks uint32) {
 	t.dieDown(true, level, ticks)
 }
 
-func (t *tortoiseEnemy) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+func (t *tortoiseEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
 	var dieToRight bool
-	if fb.levelRect.X < t.levelRect.X {
+	if b.GetRect().X < t.levelRect.X {
 		dieToRight = true
 	}
 	t.dieDown(dieToRight, level, ticks)
@@ -451,7 +451,7 @@ func (ef *eaterFlower) hitByBottomTile(level *Level, ticks uint32) {
 	// Do Nothing
 }
 
-func (ef *eaterFlower) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+func (ef *eaterFlower) hitByBullet(b bullet, level *Level, ticks uint32) {
 	ef.isDead = true
 	bangRes := graphic.Res(graphic.RESOURCE_TYPE_BANG)
 	bangStartPos := vector.Vec2D{
@@ -517,8 +517,8 @@ func (gm *goodMushroom) hitByBottomTile(level *Level, ticks uint32) {
 	gm.velocity.Y -= 500
 }
 
-func (gm *goodMushroom) hitByFireball(fb *fireball, level *Level, ticks uint32) {
-	// No interaction with fireball; Do nothing
+func (gm *goodMushroom) hitByBullet(b bullet, level *Level, ticks uint32) {
+	// No interaction with bullet; Do nothing
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -579,8 +579,8 @@ func (uf *upgradeFlower) hitByBottomTile(level *Level, ticks uint32) {
 	uf.velocity.Y -= 500
 }
 
-func (uf *upgradeFlower) hitByFireball(fb *fireball, level *Level, ticks uint32) {
-	// No interaction with fireball; Do nothing
+func (uf *upgradeFlower) hitByBullet(b bullet, level *Level, ticks uint32) {
+	// No interaction with bullet; Do nothing
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -648,7 +648,7 @@ func (lj *levelJumper) hitByBottomTile(level *Level, ticks uint32) {
 	// Do nothing
 }
 
-func (lj *levelJumper) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+func (lj *levelJumper) hitByBullet(b bullet, level *Level, ticks uint32) {
 	// Do nothing
 }
 
@@ -701,7 +701,7 @@ func (ce *coinEnemy) hitByBottomTile(level *Level, ticks uint32) {
 	// Do Nothing
 }
 
-func (ce *coinEnemy) hitByFireball(fb *fireball, level *Level, ticks uint32) {
+func (ce *coinEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
 	// Do nothing
 }
 
