@@ -136,6 +136,9 @@ func (game *Game) gatherEvents() *intsets.Sparse {
 	if kbState[int(sdl.SCANCODE_F)] == 1 {
 		events.Insert(int(event.EVENT_KEYDOWN_F))
 	}
+	if kbState[int(sdl.SCANCODE_O)] == 1 {
+		events.Insert(int(event.EVENT_KEYDOWN_O))
+	}
 	if kbState[int(sdl.SCANCODE_F1)] == 1 {
 		events.Insert(int(event.EVENT_KEYDOWN_F1))
 	}

@@ -235,6 +235,26 @@ func NewShit(
 		shitInitVelX, shitInitVelY, shitInitVelYUpper, shitGravityY, shitDamage, ticks)
 }
 
+func NewShitEx(
+	heroRect sdl.Rect,
+	toRight bool,
+	upper bool,
+	initVelX, initVelY, gravityY int32,
+	ticks uint32) *bounceAndBoomBullet {
+
+	res0 := graphic.Res(graphic.RESOURCE_TYPE_SHIT_0)
+	res1 := graphic.Res(graphic.RESOURCE_TYPE_SHIT_1)
+	res2 := graphic.Res(graphic.RESOURCE_TYPE_SHIT_2)
+	res3 := graphic.Res(graphic.RESOURCE_TYPE_SHIT_3)
+	resBoom := graphic.Res(graphic.RESOURCE_TYPE_SHIT_BOOM)
+
+	return NewBounceAndBoomBullet(
+		res0, res1, res2, res3, resBoom,
+		heroRect, toRight, upper,
+		shitMaxDurationMS, shitBoomDurationMS,
+		initVelX, initVelY, shitInitVelYUpper, gravityY, shitDamage, ticks)
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Bug
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,4 +285,23 @@ func NewBug(
 		res0, res1, res2, res3, resBoom,
 		heroRect, toRight, upper,
 		bugMaxDurationMS, bugBoomDurationMS, bugInitVelX, bugInitVelY, bugInitVelYUpper, bugGravityY, bugDamage, ticks)
+}
+
+func NewBugEx(
+	heroRect sdl.Rect,
+	toRight bool,
+	upper bool,
+	initVelX, initVelY, gravityY int32,
+	ticks uint32) *bounceAndBoomBullet {
+
+	res0 := graphic.Res(graphic.RESOURCE_TYPE_BUG_0)
+	res1 := graphic.Res(graphic.RESOURCE_TYPE_BUG_1)
+	res2 := graphic.Res(graphic.RESOURCE_TYPE_BUG_2)
+	res3 := graphic.Res(graphic.RESOURCE_TYPE_BUG_3)
+	resBoom := graphic.Res(graphic.RESOURCE_TYPE_BUG_BOOM)
+
+	return NewBounceAndBoomBullet(
+		res0, res1, res2, res3, resBoom,
+		heroRect, toRight, upper,
+		bugMaxDurationMS, bugBoomDurationMS, initVelX, initVelY, bugInitVelYUpper, gravityY, bugDamage, ticks)
 }
