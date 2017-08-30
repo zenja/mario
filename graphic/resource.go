@@ -49,6 +49,8 @@ const (
 
 	RESOURCE_TYPE_DEC_TREE_0
 
+	RESOURCE_TYPE_PAYPAL_IS_NEW_MONEY
+
 	RESOURCE_TYPE_MYTH_BOX_NORMAL
 	RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT
 	RESOURCE_TYPE_MYTH_BOX_EMPTY
@@ -554,6 +556,9 @@ func loadAllResources() {
 
 	// decoration: trees
 	registerNonTileResource("assets/dec-tree-0.png", RESOURCE_TYPE_DEC_TREE_0)
+
+	// decoration: paypal is new money
+	registerNonTileResource("assets/paypal-is-new-money.png", RESOURCE_TYPE_PAYPAL_IS_NEW_MONEY)
 
 	// broken pieces
 	registerScaledNonTileResource("assets/brick-piece-red.png", RESOURCE_TYPE_BRICK_PIECE_RED, TILE_SIZE/2, TILE_SIZE/2)
