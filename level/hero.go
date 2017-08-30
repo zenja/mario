@@ -259,6 +259,23 @@ func (h *Hero) Draw(camPos vector.Pos) {
 
 	graphic.DrawResource(h.currRes, h.getRenderRect(), camPos)
 
+	// Draw title
+	var title string
+	switch h.grade {
+	case 0:
+		title = "Senior Engineer "
+	case 1:
+		title = " MTS 1 Engineer "
+	case 2:
+		title = "MTS 100 Engineer"
+	}
+	_, rectInCamera := graphic.VisibleRectInCamera(h.levelRect, camPos.X, camPos.Y)
+	if rectInCamera != nil {
+		pos := vector.Pos{rectInCamera.X - 50, rectInCamera.Y - 50}
+		color := sdl.Color{255, 255, 255, 0}
+		graphic.DrawText(title, pos, color)
+	}
+
 	// FIXME for debug only
 	//g.DrawRect(h.getRenderRect(), camPos)
 	//g.DrawRect(h.levelRect, camPos)
