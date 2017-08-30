@@ -139,6 +139,10 @@ func (m *mushroomEnemy) hitByBottomTile(level *Level, ticks uint32) {
 }
 
 func (m *mushroomEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
+	if b.GetDamage() == 1 {
+		return
+	}
+
 	var dieToRight bool
 	if b.GetRect().X < m.levelRect.X {
 		dieToRight = true
@@ -322,6 +326,10 @@ func (t *tortoiseEnemy) hitByBottomTile(level *Level, ticks uint32) {
 }
 
 func (t *tortoiseEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
+	if b.GetDamage() == 1 {
+		return
+	}
+
 	var dieToRight bool
 	if b.GetRect().X < t.levelRect.X {
 		dieToRight = true
@@ -452,6 +460,10 @@ func (ef *eaterFlower) hitByBottomTile(level *Level, ticks uint32) {
 }
 
 func (ef *eaterFlower) hitByBullet(b bullet, level *Level, ticks uint32) {
+	if b.GetDamage() == 1 {
+		return
+	}
+
 	ef.isDead = true
 	bangRes := graphic.Res(graphic.RESOURCE_TYPE_BANG)
 	bangStartPos := vector.Vec2D{

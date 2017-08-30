@@ -9,6 +9,7 @@ import (
 type bullet interface {
 	Object
 
+	GetDamage() int
 	IsDead() bool
 }
 
@@ -35,13 +36,14 @@ type bounceAndBoomBullet struct {
 	lastTicks  uint32
 	levelRect  sdl.Rect
 	velocity   vector.Vec2D
+	damage     int
 	isDead     bool
 }
 
 func NewBounceAndBoomBullet(
 	res0, res1, res2, res3, resBoom graphic.Resource,
 	heroRect sdl.Rect, toRight bool, upper bool,
-	maxDurationMS uint32, boomDurationMS uint32, initVelX, initVelY, initVelYUpper int32, gravityY int32,
+	maxDurationMS uint32, boomDurationMS uint32, initVelX, initVelY, initVelYUpper int32, gravityY int32, damage int,
 	ticks uint32) *bounceAndBoomBullet {
 
 	var levelRect sdl.Rect
@@ -76,6 +78,7 @@ func NewBounceAndBoomBullet(
 		lastTicks:      ticks,
 		levelRect:      levelRect,
 		velocity:       initVelocity,
+		damage:         damage,
 	}
 }
 
@@ -149,6 +152,10 @@ func (b *bounceAndBoomBullet) GetZIndex() int {
 	return ZINDEX_4
 }
 
+func (b *bounceAndBoomBullet) GetDamage() int {
+	return b.damage
+}
+
 func (b *bounceAndBoomBullet) IsDead() bool {
 	return b.isDead
 }
@@ -173,6 +180,7 @@ const (
 	fireballInitVelY       = 200
 	fireballInitVelYUpper  = 50
 	fireballGravityY       = 15
+	fireballDamage         = 1
 )
 
 func NewFireball(
@@ -190,7 +198,8 @@ func NewFireball(
 	return NewBounceAndBoomBullet(
 		res0, res1, res2, res3, resBoom,
 		heroRect, toRight, upper,
-		fireballMaxDurationMS, fireballBoomDurationMS, fireballInitVelX, fireballInitVelY, fireballInitVelYUpper, fireballGravityY, ticks)
+		fireballMaxDurationMS, fireballBoomDurationMS,
+		fireballInitVelX, fireballInitVelY, fireballInitVelYUpper, fireballGravityY, fireballDamage, ticks)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,6 +213,7 @@ const (
 	shitInitVelY       = 200
 	shitInitVelYUpper  = 50
 	shitGravityY       = 15
+	shitDamage         = 5
 )
 
 func NewShit(
@@ -221,7 +231,8 @@ func NewShit(
 	return NewBounceAndBoomBullet(
 		res0, res1, res2, res3, resBoom,
 		heroRect, toRight, upper,
-		shitMaxDurationMS, shitBoomDurationMS, shitInitVelX, shitInitVelY, shitInitVelYUpper, shitGravityY, ticks)
+		shitMaxDurationMS, shitBoomDurationMS,
+		shitInitVelX, shitInitVelY, shitInitVelYUpper, shitGravityY, shitDamage, ticks)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -235,6 +246,7 @@ const (
 	bugInitVelY       = 200
 	bugInitVelYUpper  = 50
 	bugGravityY       = 15
+	bugDamage         = 10
 )
 
 func NewBug(
@@ -252,5 +264,5 @@ func NewBug(
 	return NewBounceAndBoomBullet(
 		res0, res1, res2, res3, resBoom,
 		heroRect, toRight, upper,
-		bugMaxDurationMS, bugBoomDurationMS, bugInitVelX, bugInitVelY, bugInitVelYUpper, bugGravityY, ticks)
+		bugMaxDurationMS, bugBoomDurationMS, bugInitVelX, bugInitVelY, bugInitVelYUpper, bugGravityY, bugDamage, ticks)
 }
