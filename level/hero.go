@@ -333,12 +333,17 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 
 	// fire if needed and capable and not too frequent
 	if h.fPressed && ticks-h.lastFireTicks > 400 {
-		if h.grade == 1 {
+		switch h.grade {
+		case 0:
 			level.AddBullet(NewFireball(h.levelRect, h.isFacingRight, h.upPressed, ticks))
 			audio.PlaySound(audio.SOUND_FIREBALL)
 			h.lastFireTicks = ticks
-		} else if h.grade == 2 {
+		case 1:
 			level.AddBullet(NewShit(h.levelRect, h.isFacingRight, h.upPressed, ticks))
+			audio.PlaySound(audio.SOUND_FIREBALL)
+			h.lastFireTicks = ticks
+		case 2:
+			level.AddBullet(NewBug(h.levelRect, h.isFacingRight, h.upPressed, ticks))
 			audio.PlaySound(audio.SOUND_FIREBALL)
 			h.lastFireTicks = ticks
 		}

@@ -223,3 +223,34 @@ func NewShit(
 		heroRect, toRight, upper,
 		shitMaxDurationMS, shitBoomDurationMS, shitInitVelX, shitInitVelY, shitInitVelYUpper, shitGravityY, ticks)
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Bug
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const (
+	bugMaxDurationMS  = 2000
+	bugBoomDurationMS = 100
+	bugInitVelX       = 450
+	bugInitVelY       = 200
+	bugInitVelYUpper  = 50
+	bugGravityY       = 15
+)
+
+func NewBug(
+	heroRect sdl.Rect,
+	toRight bool,
+	upper bool,
+	ticks uint32) *bounceAndBoomBullet {
+
+	res0 := graphic.Res(graphic.RESOURCE_TYPE_BUG_0)
+	res1 := graphic.Res(graphic.RESOURCE_TYPE_BUG_1)
+	res2 := graphic.Res(graphic.RESOURCE_TYPE_BUG_2)
+	res3 := graphic.Res(graphic.RESOURCE_TYPE_BUG_3)
+	resBoom := graphic.Res(graphic.RESOURCE_TYPE_BUG_BOOM)
+
+	return NewBounceAndBoomBullet(
+		res0, res1, res2, res3, resBoom,
+		heroRect, toRight, upper,
+		bugMaxDurationMS, bugBoomDurationMS, bugInitVelX, bugInitVelY, bugInitVelYUpper, bugGravityY, ticks)
+}
