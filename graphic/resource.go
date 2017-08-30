@@ -554,13 +554,13 @@ func loadAllResources() {
 	registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
 
 	// tortoise enemy
-	registerFacedResource("assets/tortoise-red-right-0.png", "xwang16", RESOURCE_TYPE_TORTOISE_RED_RIGHT_0,
+	registerFacedResource("assets/tortoise-red-right-0.png", "chran", RESOURCE_TYPE_TORTOISE_RED_RIGHT_0,
 		tortoise_walking_width, tortoise_walking_height, 30, 45, 15, 0, false, false)
-	registerFacedResource("assets/tortoise-red-right-1.png", "xwang16", RESOURCE_TYPE_TORTOISE_RED_RIGHT_1,
+	registerFacedResource("assets/tortoise-red-right-1.png", "chran", RESOURCE_TYPE_TORTOISE_RED_RIGHT_1,
 		tortoise_walking_width, tortoise_walking_height, 30, 45, 15, 0, false, false)
-	registerFacedResource("assets/tortoise-red-right-0.png", "xwang16", RESOURCE_TYPE_TORTOISE_RED_LEFT_0,
+	registerFacedResource("assets/tortoise-red-right-0.png", "chran", RESOURCE_TYPE_TORTOISE_RED_LEFT_0,
 		tortoise_walking_width, tortoise_walking_height, 30, 45, 0, 0, true, false)
-	registerFacedResource("assets/tortoise-red-right-1.png", "xwang16", RESOURCE_TYPE_TORTOISE_RED_LEFT_1,
+	registerFacedResource("assets/tortoise-red-right-1.png", "chran", RESOURCE_TYPE_TORTOISE_RED_LEFT_1,
 		tortoise_walking_width, tortoise_walking_height, 30, 45, 0, 0, true, false)
 	registerScaledNonTileResource("assets/tortoise-red-inside.png", RESOURCE_TYPE_TORTOISE_RED_INSIDE, tortoise_inside_width, tortoise_inside_height)
 	registerScaledNonTileResource("assets/tortoise-red-semi-inside.png", RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
