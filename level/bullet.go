@@ -115,13 +115,13 @@ func (b *bounceAndBoomBullet) Update(ticks uint32, level *Level) {
 	}
 
 	// switch resources for animation
-	r := ticks % 200
+	r := ticks % 400
 	switch {
-	case r < 50:
-		b.currRes = b.res0
 	case r < 100:
+		b.currRes = b.res0
+	case r < 200:
 		b.currRes = b.res1
-	case r < 150:
+	case r < 300:
 		b.currRes = b.res2
 	default:
 		b.currRes = b.res3
