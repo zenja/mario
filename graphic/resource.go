@@ -87,6 +87,12 @@ const (
 	RESOURCE_TYPE_FIREBALL_3
 	RESOURCE_TYPE_FIREBALL_BOOM
 
+	RESOURCE_TYPE_SHIT_0
+	RESOURCE_TYPE_SHIT_1
+	RESOURCE_TYPE_SHIT_2
+	RESOURCE_TYPE_SHIT_3
+	RESOURCE_TYPE_SHIT_BOOM
+
 	RESOURCE_TYPE_SHINE_0
 	RESOURCE_TYPE_SHINE_1
 	RESOURCE_TYPE_SHINE_2
@@ -571,6 +577,13 @@ func loadAllResources() {
 	registerScaledNonTileResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
 	registerScaledNonTileResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
 	registerScaledNonTileResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 40, 40)
+
+	// shit
+	registerScaledNonTileResource("assets/shit-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)
+	registerScaledNonTileResource("assets/shit-1.png", RESOURCE_TYPE_FIREBALL_1, 30, 30)
+	registerScaledNonTileResource("assets/shit-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
+	registerScaledNonTileResource("assets/shit-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
+	registerScaledNonTileResource("assets/shit-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 50, 50)
 
 	// eater flower
 	registerScaledNonTileResource("assets/eater-flower-0.png", RESOURCE_TYPE_EATER_FLOWER_0, 52, 75)

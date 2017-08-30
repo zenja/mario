@@ -13,28 +13,23 @@ type bullet interface {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Fireball
+// bounceAndBoomBullet
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // fireball is a bullet
-var _ bullet = &fireball{}
+var _ bullet = &bounceAndBoomBullet{}
 
-const (
-	fireballMaxDurationMS  = 2000
-	fireballBoomDurationMS = 100
-	fireballInitVelX       = 450
-	fireballInitVelY       = 200
-	fireballInitVelYUpper  = 50
-	fireballGravityY       = 15
-)
-
-type fireball struct {
+type bounceAndBoomBullet struct {
 	res0    graphic.Resource
 	res1    graphic.Resource
 	res2    graphic.Resource
 	res3    graphic.Resource
 	resBoom graphic.Resource
 	currRes graphic.Resource
+
+	maxDurationMS  uint32
+	boomDurationMS uint32
+	gravityY       int32
 
 	startTicks uint32
 	lastTicks  uint32
@@ -43,13 +38,11 @@ type fireball struct {
 	isDead     bool
 }
 
-func NewFireball(
-	heroRect sdl.Rect,
-	toRight bool,
-	upper bool,
-	ticks uint32) *fireball {
-
-	res0 := graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_0)
+func NewBounceAndBoomBullet(
+	res0, res1, res2, res3, resBoom graphic.Resource,
+	heroRect sdl.Rect, toRight bool, upper bool,
+	maxDurationMS uint32, boomDurationMS uint32, initVelX, initVelY, initVelYUpper int32, gravityY int32,
+	ticks uint32) *bounceAndBoomBullet {
 
 	var levelRect sdl.Rect
 	if toRight {
@@ -61,71 +54,74 @@ func NewFireball(
 	levelRect.W = res0.GetW()
 	levelRect.H = res0.GetH()
 
-	initVelocity := vector.Vec2D{fireballInitVelX, fireballInitVelY}
+	initVelocity := vector.Vec2D{initVelX, initVelY}
 	if !toRight {
 		initVelocity.X = -initVelocity.X
 	}
 	if upper {
-		initVelocity.Y = fireballInitVelYUpper
+		initVelocity.Y = initVelYUpper
 	}
 
-	return &fireball{
-		res0:       res0,
-		res1:       graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_1),
-		res2:       graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_2),
-		res3:       graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_3),
-		resBoom:    graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_BOOM),
-		currRes:    res0,
-		startTicks: ticks,
-		lastTicks:  ticks,
-		levelRect:  levelRect,
-		velocity:   initVelocity,
+	return &bounceAndBoomBullet{
+		res0:           res0,
+		res1:           res1,
+		res2:           res2,
+		res3:           res3,
+		resBoom:        resBoom,
+		currRes:        res0,
+		maxDurationMS:  maxDurationMS,
+		boomDurationMS: boomDurationMS,
+		gravityY:       gravityY,
+		startTicks:     ticks,
+		lastTicks:      ticks,
+		levelRect:      levelRect,
+		velocity:       initVelocity,
 	}
 }
 
-func (f *fireball) Draw(camPos vector.Pos) {
-	graphic.DrawResource(f.currRes, f.levelRect, camPos)
+func (b *bounceAndBoomBullet) Draw(camPos vector.Pos) {
+	graphic.DrawResource(b.currRes, b.levelRect, camPos)
 }
 
-func (f *fireball) Update(ticks uint32, level *Level) {
-	// a fireball should not last long
-	if ticks-f.startTicks > fireballMaxDurationMS {
-		f.isDead = true
+func (b *bounceAndBoomBullet) Update(ticks uint32, level *Level) {
+	// should not last long
+	if ticks-b.startTicks > b.maxDurationMS {
+		b.isDead = true
 	}
 
 	// apply gravity
-	gravity := vector.Vec2D{0, fireballGravityY}
-	f.velocity.Add(gravity)
+	gravity := vector.Vec2D{0, b.gravityY}
+	b.velocity.Add(gravity)
 
 	maxVel := vector.Vec2D{400, 200}
-	velStep := CalcVelocityStep(f.velocity, ticks, f.lastTicks, &maxVel)
-	f.levelRect.X += velStep.X
-	f.levelRect.Y += velStep.Y
+	velStep := CalcVelocityStep(b.velocity, ticks, b.lastTicks, &maxVel)
+	b.levelRect.X += velStep.X
+	b.levelRect.Y += velStep.Y
 
-	hitTop, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&f.levelRect, SOLVE_COLLISION_NORMAL)
+	hitTop, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&b.levelRect, SOLVE_COLLISION_NORMAL)
 
 	// if hit top/right/left, dieDown, show boom effect
 	if hitTop || hitRight || hitLeft {
-		f.boom(level, ticks)
+		b.boom(level, ticks)
 		return
 	}
 
 	// bounce if hit bottom
 	if hitBottom {
-		f.velocity.Y = -f.velocity.Y
+		b.velocity.Y = -b.velocity.Y
 	}
 
 	// switch resources for animation
 	r := ticks % 200
 	switch {
 	case r < 50:
-		f.currRes = f.res0
+		b.currRes = b.res0
 	case r < 100:
-		f.currRes = f.res1
+		b.currRes = b.res1
 	case r < 150:
-		f.currRes = f.res2
+		b.currRes = b.res2
 	default:
-		f.currRes = f.res3
+		b.currRes = b.res3
 	}
 
 	// check if hit any enemies
@@ -135,33 +131,95 @@ func (f *fireball) Update(ticks uint32, level *Level) {
 		}
 
 		emyRect := emy.GetRect()
-		if f.levelRect.HasIntersection(&emyRect) {
-			emy.hitByBullet(f, level, ticks)
-			f.boom(level, ticks)
+		if b.levelRect.HasIntersection(&emyRect) {
+			emy.hitByBullet(b, level, ticks)
+			b.boom(level, ticks)
 		}
 	}
 
 	// update last ticks
-	f.lastTicks = ticks
+	b.lastTicks = ticks
 }
 
-func (f *fireball) GetRect() sdl.Rect {
-	return f.levelRect
+func (b *bounceAndBoomBullet) GetRect() sdl.Rect {
+	return b.levelRect
 }
 
-func (f *fireball) GetZIndex() int {
+func (b *bounceAndBoomBullet) GetZIndex() int {
 	return ZINDEX_4
 }
 
-func (f *fireball) IsDead() bool {
-	return f.isDead
+func (b *bounceAndBoomBullet) IsDead() bool {
+	return b.isDead
 }
 
-func (f *fireball) boom(level *Level, ticks uint32) {
-	f.isDead = true
+func (b *bounceAndBoomBullet) boom(level *Level, ticks uint32) {
+	b.isDead = true
 	boomStartPos := vector.Vec2D{
-		X: f.levelRect.X,
-		Y: f.levelRect.Y,
+		X: b.levelRect.X,
+		Y: b.levelRect.Y,
 	}
-	level.AddEffect(NewShowOnceEffect(f.resBoom, boomStartPos, ticks, fireballBoomDurationMS))
+	level.AddEffect(NewShowOnceEffect(b.resBoom, boomStartPos, ticks, b.boomDurationMS))
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Fireball
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const (
+	fireballMaxDurationMS  = 2000
+	fireballBoomDurationMS = 100
+	fireballInitVelX       = 450
+	fireballInitVelY       = 200
+	fireballInitVelYUpper  = 50
+	fireballGravityY       = 15
+)
+
+func NewFireball(
+	heroRect sdl.Rect,
+	toRight bool,
+	upper bool,
+	ticks uint32) *bounceAndBoomBullet {
+
+	res0 := graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_0)
+	res1 := graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_1)
+	res2 := graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_2)
+	res3 := graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_3)
+	resBoom := graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_BOOM)
+
+	return NewBounceAndBoomBullet(
+		res0, res1, res2, res3, resBoom,
+		heroRect, toRight, upper,
+		fireballMaxDurationMS, fireballBoomDurationMS, fireballInitVelX, fireballInitVelY, fireballInitVelYUpper, fireballGravityY, ticks)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Shit
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const (
+	shitMaxDurationMS  = 2000
+	shitBoomDurationMS = 100
+	shitInitVelX       = 450
+	shitInitVelY       = 200
+	shitInitVelYUpper  = 50
+	shitGravityY       = 15
+)
+
+func NewShit(
+	heroRect sdl.Rect,
+	toRight bool,
+	upper bool,
+	ticks uint32) *bounceAndBoomBullet {
+
+	res0 := graphic.Res(graphic.RESOURCE_TYPE_SHIT_0)
+	res1 := graphic.Res(graphic.RESOURCE_TYPE_SHIT_1)
+	res2 := graphic.Res(graphic.RESOURCE_TYPE_SHIT_2)
+	res3 := graphic.Res(graphic.RESOURCE_TYPE_SHIT_3)
+	resBoom := graphic.Res(graphic.RESOURCE_TYPE_SHIT_BOOM)
+
+	return NewBounceAndBoomBullet(
+		res0, res1, res2, res3, resBoom,
+		heroRect, toRight, upper,
+		shitMaxDurationMS, shitBoomDurationMS, shitInitVelX, shitInitVelY, shitInitVelYUpper, shitGravityY, ticks)
 }

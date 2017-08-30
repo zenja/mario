@@ -332,10 +332,16 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 	}
 
 	// fire if needed and capable and not too frequent
-	if h.fPressed && h.grade == 2 && ticks-h.lastFireTicks > 400 {
-		level.AddBullet(NewFireball(h.levelRect, h.isFacingRight, h.upPressed, ticks))
-		audio.PlaySound(audio.SOUND_FIREBALL)
-		h.lastFireTicks = ticks
+	if h.fPressed && ticks-h.lastFireTicks > 400 {
+		if h.grade == 1 {
+			level.AddBullet(NewFireball(h.levelRect, h.isFacingRight, h.upPressed, ticks))
+			audio.PlaySound(audio.SOUND_FIREBALL)
+			h.lastFireTicks = ticks
+		} else if h.grade == 2 {
+			level.AddBullet(NewShit(h.levelRect, h.isFacingRight, h.upPressed, ticks))
+			audio.PlaySound(audio.SOUND_FIREBALL)
+			h.lastFireTicks = ticks
+		}
 	}
 
 	// check if need to reset hurt status
