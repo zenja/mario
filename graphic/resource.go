@@ -410,11 +410,17 @@ func registerResourceFromSurfaceEx(
 	if flipHorizontal {
 		oldTexture := texture
 		texture, err = flipTexture(texture, width, height, true)
+		if err != nil {
+			log.Fatal(err)
+		}
 		oldTexture.Destroy()
 	}
 	if flipVertical {
 		oldTexture := texture
 		texture, err = flipTexture(texture, width, height, false)
+		if err != nil {
+			log.Fatal(err)
+		}
 		oldTexture.Destroy()
 	}
 
