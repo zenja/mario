@@ -362,11 +362,11 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 			audio.PlaySound(audio.SOUND_FIREBALL)
 			h.lastFireTicks = ticks
 		case 1:
-			level.AddBullet(NewShit(h.levelRect, h.isFacingRight, h.upPressed, ticks))
+			level.AddBullet(NewBug(h.levelRect, h.isFacingRight, h.upPressed, ticks))
 			audio.PlaySound(audio.SOUND_FIREBALL)
 			h.lastFireTicks = ticks
 		case 2:
-			level.AddBullet(NewBug(h.levelRect, h.isFacingRight, h.upPressed, ticks))
+			level.AddBullet(NewShit(h.levelRect, h.isFacingRight, h.upPressed, ticks))
 			audio.PlaySound(audio.SOUND_FIREBALL)
 			h.lastFireTicks = ticks
 		}
@@ -376,19 +376,6 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 	if h.oPressed && ticks-h.lastFireTicks > 100 {
 		switch h.grade {
 		case 1:
-			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 50, 650, 15, ticks))
-			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 150, 550, 15, ticks))
-			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 250, 450, 15, ticks))
-			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 350, 350, 15, ticks))
-			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 450, 250, 15, ticks))
-			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 50, 650, 15, ticks))
-			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 150, 550, 15, ticks))
-			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 250, 450, 15, ticks))
-			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 350, 350, 15, ticks))
-			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 450, 250, 15, ticks))
-			audio.PlaySound(audio.SOUND_FIREBALL)
-			h.lastFireTicks = ticks
-		case 2:
 			level.AddBullet(NewBugEx(h.levelRect, true, h.upPressed, 50, 650, 15, ticks))
 			level.AddBullet(NewBugEx(h.levelRect, true, h.upPressed, 150, 550, 15, ticks))
 			level.AddBullet(NewBugEx(h.levelRect, true, h.upPressed, 250, 450, 15, ticks))
@@ -399,6 +386,19 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 			level.AddBullet(NewBugEx(h.levelRect, false, h.upPressed, 250, 450, 15, ticks))
 			level.AddBullet(NewBugEx(h.levelRect, false, h.upPressed, 350, 350, 15, ticks))
 			level.AddBullet(NewBugEx(h.levelRect, false, h.upPressed, 450, 250, 15, ticks))
+			audio.PlaySound(audio.SOUND_FIREBALL)
+			h.lastFireTicks = ticks
+		case 2:
+			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 50, 650, 15, ticks))
+			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 150, 550, 15, ticks))
+			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 250, 450, 15, ticks))
+			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 350, 350, 15, ticks))
+			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 450, 250, 15, ticks))
+			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 50, 650, 15, ticks))
+			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 150, 550, 15, ticks))
+			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 250, 450, 15, ticks))
+			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 350, 350, 15, ticks))
+			level.AddBullet(NewShitEx(h.levelRect, false, h.upPressed, 450, 250, 15, ticks))
 			audio.PlaySound(audio.SOUND_FIREBALL)
 			h.lastFireTicks = ticks
 		}
