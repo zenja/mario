@@ -13,15 +13,17 @@ var _ Effect = &showTextEffect{}
 type showTextEffect struct {
 	text       string
 	color      sdl.Color
+	posGetter  func() vector.Pos
 	startTicks uint32
 	durationMs uint32
 	finished   bool
 }
 
-func NewShowTextEffect(text string, color sdl.Color, ticks uint32, durationMs uint32) *showTextEffect {
+func NewShowTextEffect(text string, color sdl.Color, posGetter func() vector.Pos, ticks uint32, durationMs uint32) *showTextEffect {
 	return &showTextEffect{
 		text:       text,
 		color:      color,
+		posGetter:  posGetter,
 		startTicks: ticks,
 		durationMs: durationMs,
 		finished:   false,
@@ -36,7 +38,7 @@ func (ste *showTextEffect) Update(ticks uint32) {
 
 func (ste *showTextEffect) Draw(camPos vector.Pos, ticks uint32) {
 	if !ste.Finished() {
-		graphic.DrawText(ste.text, camPos, ste.color)
+		graphic.DrawTextRelative(ste.text, ste.posGetter(), camPos, ste.color)
 	}
 }
 

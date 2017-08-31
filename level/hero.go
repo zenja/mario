@@ -273,7 +273,7 @@ func (h *Hero) Draw(camPos vector.Pos) {
 	if rectInCamera != nil {
 		pos := vector.Pos{rectInCamera.X - 70, rectInCamera.Y - 50}
 		color := sdl.Color{34, 138, 230, 0}
-		graphic.DrawText(title, pos, color)
+		graphic.DrawTextAbsolute(title, pos, color)
 	}
 
 	// FIXME for debug only

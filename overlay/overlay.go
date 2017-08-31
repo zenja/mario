@@ -33,11 +33,11 @@ func (fo *FPSOverlay) Draw(level *level.Level, ticks uint32) {
 	}
 	if ticks-fo.currentTicks <= 0 {
 		log.Printf("FPSOverlay: strange, ticks (%d) <= fo.currentTicks (%d)", ticks, fo.currentTicks)
-		graphic.DrawText(fmt.Sprint("FPS: NaN"), pos, color)
+		graphic.DrawTextAbsolute(fmt.Sprint("FPS: NaN"), pos, color)
 		return
 	}
 	fps = 1000 / (ticks - fo.currentTicks)
-	graphic.DrawText(fmt.Sprintf("FPS: %d", fps), pos, color)
+	graphic.DrawTextAbsolute(fmt.Sprintf("FPS: %d", fps), pos, color)
 	fo.currentTicks = ticks
 }
 
@@ -50,7 +50,7 @@ type HeroLiveOverlay struct{}
 func (hlo *HeroLiveOverlay) Draw(level *level.Level, ticks uint32) {
 	pos := vector.Pos{graphic.SCREEN_WIDTH - 150, 50}
 	color := sdl.Color{255, 255, 255, 0}
-	graphic.DrawText(fmt.Sprintf("Lives: %d", level.TheHero.GetLives()), pos, color)
+	graphic.DrawTextAbsolute(fmt.Sprintf("Lives: %d", level.TheHero.GetLives()), pos, color)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,5 +62,5 @@ type CoinsOverlay struct{}
 func (co *CoinsOverlay) Draw(level *level.Level, ticks uint32) {
 	pos := vector.Pos{graphic.SCREEN_WIDTH/2 - 50, 50}
 	color := sdl.Color{255, 255, 255, 0}
-	graphic.DrawText(fmt.Sprintf("Coins: %d", level.Coins), pos, color)
+	graphic.DrawTextAbsolute(fmt.Sprintf("Coins: %d", level.Coins), pos, color)
 }

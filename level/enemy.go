@@ -808,6 +808,7 @@ type bossA struct {
 	isFacingRight bool
 	levelRect     sdl.Rect
 	lastTicks     uint32
+	lastSayTicks  uint32
 	velocity      vector.Vec2D
 	hp            int
 }
@@ -835,6 +836,13 @@ func (b *bossA) GetZIndex() int {
 	return ZINDEX_1
 }
 
+func (b *bossA) getSentencePos() vector.Pos {
+	return vector.Pos{
+		X: b.levelRect.X - 30,
+		Y: b.levelRect.Y - 70,
+	}
+}
+
 func (b *bossA) Update(ticks uint32, level *Level) {
 	if b.lastTicks == 0 {
 		b.lastTicks = ticks
@@ -850,12 +858,12 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
 
 	// Generate enemies randomly
-	if rand.Intn(100) == 7 {
+	if rand.Intn(300) == 7 {
 		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
 	}
 
-	// Show random sentences occasionally
+	// Keep showing random sentences
 	randColor := sdl.Color{
 		uint8(rand.Intn(256)),
 		uint8(rand.Intn(256)),
@@ -863,8 +871,9 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 		255,
 	}
 	randSentence := bossSentences[rand.Intn(len(bossSentences))]
-	if rand.Intn(100) == 7 {
-		level.AddEffect(NewShowTextEffect(randSentence, randColor, ticks, 1000))
+	if ticks-b.lastSayTicks > 3000 {
+		level.AddEffect(NewShowTextEffect(randSentence, randColor, b.getSentencePos, ticks, 2000))
+		b.lastSayTicks = ticks
 	}
 
 	b.updateResource(ticks)
