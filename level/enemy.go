@@ -239,6 +239,7 @@ func NewTortoiseEnemy(startPos vector.Pos, userID string) Enemy {
 
 func NewTortoiseEnemyRandomSpeedUp(startPos vector.Pos, userID string, faceRight bool, maxSpeedUp int) Enemy {
 	velX := 100 + rand.Intn(maxSpeedUp)
+	velX += 20 // extra speed up
 	if !faceRight {
 		velX = -velX
 	}
@@ -1044,7 +1045,7 @@ func (b *bossB) Update(ticks uint32, level *Level) {
 	// Generate enemies randomly
 	if rand.Intn(150) == 7 {
 		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
-			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
+			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 150))
 	}
 
 	// Keep showing random sentences
