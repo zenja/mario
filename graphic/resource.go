@@ -55,6 +55,8 @@ const (
 
 	RESOURCE_TYPE_PAYPAL_IS_NEW_MONEY
 
+	RESOURCE_TYPE_DEC_HIGH_ENERGY_AHEAD
+
 	RESOURCE_TYPE_MYTH_BOX_NORMAL
 	RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT
 	RESOURCE_TYPE_MYTH_BOX_EMPTY
@@ -599,6 +601,9 @@ func LoadAllResources(heroUserID string) {
 
 	// decoration: paypal is new money
 	registerNonTileResource("assets/paypal-is-new-money.png", RESOURCE_TYPE_PAYPAL_IS_NEW_MONEY)
+
+	// decoration: high energy ahead
+	registerScaledNonTileResource("assets/high-energy-ahead.png", RESOURCE_TYPE_DEC_HIGH_ENERGY_AHEAD, 150, 200)
 
 	// broken pieces
 	registerScaledNonTileResource("assets/brick-piece-red.png", RESOURCE_TYPE_BRICK_PIECE_RED, TILE_SIZE/2, TILE_SIZE/2)

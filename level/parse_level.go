@@ -310,6 +310,11 @@ func BuildLevel(spec *LevelSpec) *Level {
 					graphic.RESOURCE_TYPE_PAYPAL_IS_NEW_MONEY,
 				}
 				addDecoration(NewDecoration(tid, resIds, 1000))
+			case '4':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_HIGH_ENERGY_AHEAD,
+				}
+				addDecoration(NewDecoration(tid, resIds, 1000))
 			}
 		}
 	}
