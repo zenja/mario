@@ -808,9 +808,9 @@ func NewBossA(startPos vector.Pos) *bossA {
 		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_0),
 		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_1),
 		currRes:       resLeft0,
-		isFacingRight: true,
+		isFacingRight: false,
 		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
-		velocity:      vector.Vec2D{80, 0},
+		velocity:      vector.Vec2D{-80, 0},
 		hp:            bossAInitHP,
 	}
 }
