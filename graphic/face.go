@@ -10,16 +10,15 @@ import (
 	"github.com/veandco/go-sdl2/sdl_image"
 )
 
-func registerFacedResource(
+func getFacedResource(
 	filename string,
 	faceID string,
-	id ResourceID,
 	mainWidth, mainHeight int32,
 	faceWidth, faceHeight int32,
 	faceX, faceY int32,
 	faceAngle float64,
 	flipHorizontal bool,
-	flipVertical bool) {
+	flipVertical bool) Resource {
 
 	mainSurface, err := img.Load(filename)
 	if err != nil {
@@ -45,7 +44,24 @@ func registerFacedResource(
 		log.Fatal(err)
 	}
 
-	resourceRegistry[id] = &NonTileResource{texture: combined, w: mainWidth, h: mainHeight}
+	return &NonTileResource{texture: combined, w: mainWidth, h: mainHeight}
+}
+
+func registerFacedResource(
+	filename string,
+	faceID string,
+	id ResourceID,
+	mainWidth, mainHeight int32,
+	faceWidth, faceHeight int32,
+	faceX, faceY int32,
+	faceAngle float64,
+	flipHorizontal bool,
+	flipVertical bool) {
+
+	res := getFacedResource(
+		filename, faceID, mainWidth, mainHeight,
+		faceWidth, faceHeight, faceX, faceY, faceAngle, flipHorizontal, flipVertical)
+	resourceRegistry[id] = res
 }
 
 func resizeAndFlip(surface *sdl.Surface, width, height int32, flipHorizontal bool, flipVertical bool) *sdl.Texture {

@@ -41,9 +41,13 @@ func NewGame() *Game {
 	}
 }
 
-func (game *Game) Init() {
+func (game *Game) Init(heroUserID string) {
 	// init audio system
 	audio.InitAudio()
+
+	// init graphics and load resources
+	graphic.Init()
+	graphic.LoadAllResources(heroUserID)
 
 	game.loadLevels()
 	game.currentLevel.Init()

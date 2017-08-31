@@ -28,7 +28,16 @@ var (
 	resourceRegistry map[ResourceID]Resource = make(map[ResourceID]Resource)
 )
 
-func init() {
+var tortoiseResPackRegistry map[string]*TortoiseResPack = make(map[string]*TortoiseResPack)
+
+type TortoiseResPack struct {
+	ResLeft0  Resource
+	ResLeft1  Resource
+	ResRight0 Resource
+	ResRight1 Resource
+}
+
+func Init() {
 	var err error
 
 	if err = sdl.Init(sdl.INIT_EVERYTHING); err != nil {
@@ -59,9 +68,10 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
 
-	// Load resources
-	loadAllResources()
+func GetTortoiseResPack(userID string) *TortoiseResPack {
+	return tortoiseResPackRegistry[userID]
 }
 
 func DestroyAndQuit() {

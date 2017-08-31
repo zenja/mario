@@ -185,35 +185,73 @@ type tortoiseEnemy struct {
 	bumpStartTicks   uint32 // when tortoise start bumping
 }
 
-func NewTortoiseEnemy(startPos vector.Pos) Enemy {
-	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_LEFT_0)
+var jupiterUserIDs = []string{
+	"xwang16",
+	"yundai",
+	"xchen",
+	"chufang",
+	"kunfu",
+	//"shxia",
+}
+
+var richardLeadershipUserIDs = []string{
+	"chran",
+	"fchen5",
+	"xhao",
+	"qingyli",
+}
+
+func NewRandomJupiterTortoiseEnemy(startPos vector.Pos) Enemy {
+	uid := jupiterUserIDs[rand.Intn(len(jupiterUserIDs))]
+	return NewTortoiseEnemy(startPos, uid)
+}
+
+func NewRandomJupiterTortoiseEnemyEx(startPos vector.Pos, faceRight bool, maxSpeedUp int) Enemy {
+	uid := jupiterUserIDs[rand.Intn(len(jupiterUserIDs))]
+	return NewTortoiseEnemyRandomSpeedUp(startPos, uid, faceRight, maxSpeedUp)
+}
+
+func NewRandomRichardLeadershipTortoiseEnemy(startPos vector.Pos) Enemy {
+	uid := richardLeadershipUserIDs[rand.Intn(len(richardLeadershipUserIDs))]
+	return NewTortoiseEnemy(startPos, uid)
+}
+
+func NewRandomRichardLeadershipTortoiseEnemyEx(startPos vector.Pos, faceRight bool, maxSpeedUp int) Enemy {
+	uid := richardLeadershipUserIDs[rand.Intn(len(richardLeadershipUserIDs))]
+	return NewTortoiseEnemyRandomSpeedUp(startPos, uid, faceRight, maxSpeedUp)
+}
+
+func NewTortoiseEnemy(startPos vector.Pos, userID string) Enemy {
+	resPack := graphic.GetTortoiseResPack(userID)
+	resLeft0 := resPack.ResLeft0
 	return &tortoiseEnemy{
 		resLeft0:      resLeft0,
-		resLeft1:      graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_LEFT_1),
-		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_RIGHT_0),
-		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_RIGHT_1),
+		resLeft1:      resPack.ResLeft1,
+		resRight0:     resPack.ResRight0,
+		resRight1:     resPack.ResRight1,
 		resSemiInside: graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE),
 		resInside:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_INSIDE),
-		currRes:       resLeft0,
+		currRes:       resPack.ResLeft0,
 		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
 		velocity:      vector.Vec2D{-100, 0},
 	}
 }
 
-func NewTortoiseEnemyRandomSpeed(startPos vector.Pos, faceRight bool, maxSpeedUp int) Enemy {
-	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_LEFT_0)
+func NewTortoiseEnemyRandomSpeedUp(startPos vector.Pos, userID string, faceRight bool, maxSpeedUp int) Enemy {
 	velX := 100 + rand.Intn(maxSpeedUp)
 	if !faceRight {
 		velX = -velX
 	}
+	resPack := graphic.GetTortoiseResPack(userID)
+	resLeft0 := resPack.ResLeft0
 	return &tortoiseEnemy{
 		resLeft0:      resLeft0,
-		resLeft1:      graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_LEFT_1),
-		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_RIGHT_0),
-		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_RIGHT_1),
+		resLeft1:      resPack.ResLeft1,
+		resRight0:     resPack.ResRight0,
+		resRight1:     resPack.ResRight1,
 		resSemiInside: graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE),
 		resInside:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_INSIDE),
-		currRes:       resLeft0,
+		currRes:       resPack.ResLeft0,
 		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
 		velocity:      vector.Vec2D{int32(velX), 0},
 		isFacingRight: faceRight,
@@ -800,8 +838,8 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
 
 	// Generate enemies randomly
-	if rand.Intn(500) == 7 {
-		level.AddEnemy(NewTortoiseEnemyRandomSpeed(
+	if rand.Intn(100) == 7 {
+		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
 	}
 

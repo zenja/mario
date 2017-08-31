@@ -3,6 +3,10 @@ package graphic
 import (
 	"log"
 
+	"io/ioutil"
+
+	"strings"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/sdl_image"
 	"github.com/zenja/mario/math_utils"
@@ -74,10 +78,6 @@ const (
 	RESOURCE_TYPE_MUSHROOM_ENEMY_HIT
 	RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN
 
-	RESOURCE_TYPE_TORTOISE_RED_LEFT_0
-	RESOURCE_TYPE_TORTOISE_RED_LEFT_1
-	RESOURCE_TYPE_TORTOISE_RED_RIGHT_0
-	RESOURCE_TYPE_TORTOISE_RED_RIGHT_1
 	RESOURCE_TYPE_TORTOISE_RED_INSIDE
 	RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE
 
@@ -468,7 +468,25 @@ func RenderResource(resource Resource, srcRect *sdl.Rect, dstRect *sdl.Rect) {
 	renderer.Copy(resource.GetTexture(), srcRect, dstRect)
 }
 
-func loadAllResources() {
+func registerTortoiseResPace(userID string) {
+	resRight0 := getFacedResource("assets/tortoise-red-right-0.png", userID,
+		tortoise_walking_width, tortoise_walking_height, 35, 45, 15, 0, 5, false, false)
+	resRight1 := getFacedResource("assets/tortoise-red-right-1.png", userID,
+		tortoise_walking_width, tortoise_walking_height, 35, 45, 15, 0, -5, false, false)
+	resLeft0 := getFacedResource("assets/tortoise-red-right-0.png", userID,
+		tortoise_walking_width, tortoise_walking_height, 35, 45, 0, 0, 5, true, false)
+	resLeft1 := getFacedResource("assets/tortoise-red-right-1.png", userID,
+		tortoise_walking_width, tortoise_walking_height, 35, 45, 0, 0, -5, true, false)
+	resPack := &TortoiseResPack{
+		ResLeft0:  resLeft0,
+		ResLeft1:  resLeft1,
+		ResRight0: resRight0,
+		ResRight1: resRight1,
+	}
+	tortoiseResPackRegistry[userID] = resPack
+}
+
+func LoadAllResources(heroUserID string) {
 	// -------------------------------
 	// load tile resources
 	// -------------------------------
@@ -527,45 +545,45 @@ func loadAllResources() {
 	// -------------------------------
 
 	// hero 0
-	registerFacedResource("assets/hero-0-stand.png", "xwang16", RESOURCE_TYPE_HERO_0_STAND_RIGHT,
+	registerFacedResource("assets/hero-0-stand.png", heroUserID, RESOURCE_TYPE_HERO_0_STAND_RIGHT,
 		hero_0_width, hero_0_height, 40, 50, 5, 0, 5, false, false)
-	registerFacedResource("assets/hero-0-walking.png", "xwang16", RESOURCE_TYPE_HERO_0_WALKING_RIGHT,
+	registerFacedResource("assets/hero-0-walking.png", heroUserID, RESOURCE_TYPE_HERO_0_WALKING_RIGHT,
 		hero_0_width, hero_0_height, 40, 50, 5, 0, -5, false, false)
-	registerFacedResource("assets/hero-0-jump.png", "xwang16", RESOURCE_TYPE_HERO_0_JUMP_RIGHT,
+	registerFacedResource("assets/hero-0-jump.png", heroUserID, RESOURCE_TYPE_HERO_0_JUMP_RIGHT,
 		hero_0_width, hero_0_height, 40, 50, 5, 0, 0, false, false)
-	registerFacedResource("assets/hero-0-stand.png", "xwang16", RESOURCE_TYPE_HERO_0_STAND_LEFT,
+	registerFacedResource("assets/hero-0-stand.png", heroUserID, RESOURCE_TYPE_HERO_0_STAND_LEFT,
 		hero_0_width, hero_0_height, 40, 50, 5, 0, 5, true, false)
-	registerFacedResource("assets/hero-0-walking.png", "xwang16", RESOURCE_TYPE_HERO_0_WALKING_LEFT,
+	registerFacedResource("assets/hero-0-walking.png", heroUserID, RESOURCE_TYPE_HERO_0_WALKING_LEFT,
 		hero_0_width, hero_0_height, 40, 50, 5, 0, -5, true, false)
-	registerFacedResource("assets/hero-0-jump.png", "xwang16", RESOURCE_TYPE_HERO_0_JUMP_LEFT,
+	registerFacedResource("assets/hero-0-jump.png", heroUserID, RESOURCE_TYPE_HERO_0_JUMP_LEFT,
 		hero_0_width, hero_0_height, 40, 50, 5, 0, 0, true, false)
 
 	// hero 1
-	registerFacedResource("assets/hero-1-stand.png", "xwang16", RESOURCE_TYPE_HERO_1_STAND_RIGHT,
+	registerFacedResource("assets/hero-1-stand.png", heroUserID, RESOURCE_TYPE_HERO_1_STAND_RIGHT,
 		hero_1_width, hero_1_height, 45, 55, 5, 0, 5, false, false)
-	registerFacedResource("assets/hero-1-walking.png", "xwang16", RESOURCE_TYPE_HERO_1_WALKING_RIGHT,
+	registerFacedResource("assets/hero-1-walking.png", heroUserID, RESOURCE_TYPE_HERO_1_WALKING_RIGHT,
 		hero_1_width, hero_1_height, 45, 55, 5, 0, -5, false, false)
-	registerFacedResource("assets/hero-1-jump.png", "xwang16", RESOURCE_TYPE_HERO_1_JUMP_RIGHT,
+	registerFacedResource("assets/hero-1-jump.png", heroUserID, RESOURCE_TYPE_HERO_1_JUMP_RIGHT,
 		hero_1_width, hero_1_height, 45, 55, 5, 0, 0, false, false)
-	registerFacedResource("assets/hero-1-stand.png", "xwang16", RESOURCE_TYPE_HERO_1_STAND_LEFT,
+	registerFacedResource("assets/hero-1-stand.png", heroUserID, RESOURCE_TYPE_HERO_1_STAND_LEFT,
 		hero_1_width, hero_1_height, 45, 55, 5, 0, 5, true, false)
-	registerFacedResource("assets/hero-1-walking.png", "xwang16", RESOURCE_TYPE_HERO_1_WALKING_LEFT,
+	registerFacedResource("assets/hero-1-walking.png", heroUserID, RESOURCE_TYPE_HERO_1_WALKING_LEFT,
 		hero_1_width, hero_1_height, 45, 55, 5, 0, -5, true, false)
-	registerFacedResource("assets/hero-1-jump.png", "xwang16", RESOURCE_TYPE_HERO_1_JUMP_LEFT,
+	registerFacedResource("assets/hero-1-jump.png", heroUserID, RESOURCE_TYPE_HERO_1_JUMP_LEFT,
 		hero_1_width, hero_1_height, 45, 55, 5, 0, 0, true, false)
 
 	// hero 2
-	registerFacedResource("assets/hero-2-stand.png", "xwang16", RESOURCE_TYPE_HERO_2_STAND_RIGHT,
+	registerFacedResource("assets/hero-2-stand.png", heroUserID, RESOURCE_TYPE_HERO_2_STAND_RIGHT,
 		hero_2_width, hero_2_height, 45, 55, 5, 0, 5, false, false)
-	registerFacedResource("assets/hero-2-walking.png", "xwang16", RESOURCE_TYPE_HERO_2_WALKING_RIGHT,
+	registerFacedResource("assets/hero-2-walking.png", heroUserID, RESOURCE_TYPE_HERO_2_WALKING_RIGHT,
 		hero_2_width, hero_2_height, 45, 55, 5, 0, -5, false, false)
-	registerFacedResource("assets/hero-2-jump.png", "xwang16", RESOURCE_TYPE_HERO_2_JUMP_RIGHT,
+	registerFacedResource("assets/hero-2-jump.png", heroUserID, RESOURCE_TYPE_HERO_2_JUMP_RIGHT,
 		hero_2_width, hero_2_height, 45, 55, 5, 0, 0, false, false)
-	registerFacedResource("assets/hero-2-stand.png", "xwang16", RESOURCE_TYPE_HERO_2_STAND_LEFT,
+	registerFacedResource("assets/hero-2-stand.png", heroUserID, RESOURCE_TYPE_HERO_2_STAND_LEFT,
 		hero_2_width, hero_2_height, 45, 55, 5, 0, 5, true, false)
-	registerFacedResource("assets/hero-2-walking.png", "xwang16", RESOURCE_TYPE_HERO_2_WALKING_LEFT,
+	registerFacedResource("assets/hero-2-walking.png", heroUserID, RESOURCE_TYPE_HERO_2_WALKING_LEFT,
 		hero_2_width, hero_2_height, 45, 55, 5, 0, -5, true, false)
-	registerFacedResource("assets/hero-2-jump.png", "xwang16", RESOURCE_TYPE_HERO_2_JUMP_LEFT,
+	registerFacedResource("assets/hero-2-jump.png", heroUserID, RESOURCE_TYPE_HERO_2_JUMP_LEFT,
 		hero_2_width, hero_2_height, 45, 55, 5, 0, 0, true, false)
 
 	// decoration: grass
@@ -588,15 +606,7 @@ func loadAllResources() {
 	registerScaledNonTileResource("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT, TILE_SIZE, TILE_SIZE)
 	registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
 
-	// tortoise enemy
-	registerFacedResource("assets/tortoise-red-right-0.png", "chran", RESOURCE_TYPE_TORTOISE_RED_RIGHT_0,
-		tortoise_walking_width, tortoise_walking_height, 30, 45, 15, 0, 5, false, false)
-	registerFacedResource("assets/tortoise-red-right-1.png", "chran", RESOURCE_TYPE_TORTOISE_RED_RIGHT_1,
-		tortoise_walking_width, tortoise_walking_height, 30, 45, 15, 0, -5, false, false)
-	registerFacedResource("assets/tortoise-red-right-0.png", "chran", RESOURCE_TYPE_TORTOISE_RED_LEFT_0,
-		tortoise_walking_width, tortoise_walking_height, 30, 45, 0, 0, 5, true, false)
-	registerFacedResource("assets/tortoise-red-right-1.png", "chran", RESOURCE_TYPE_TORTOISE_RED_LEFT_1,
-		tortoise_walking_width, tortoise_walking_height, 30, 45, 0, 0, -5, true, false)
+	// tortoise enemy res without face
 	registerScaledNonTileResource("assets/tortoise-red-inside.png", RESOURCE_TYPE_TORTOISE_RED_INSIDE, tortoise_inside_width, tortoise_inside_height)
 	registerScaledNonTileResource("assets/tortoise-red-semi-inside.png", RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
 
@@ -648,4 +658,18 @@ func loadAllResources() {
 
 	// black screen
 	registerScaledNonTileResource("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
+
+	// register tortoise faced resource pack
+	files, err := ioutil.ReadDir("assets/faces")
+	println(len(files))
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, f := range files {
+		if f.IsDir() {
+			continue
+		}
+		userID := strings.Split(f.Name(), ".")[0]
+		registerTortoiseResPace(userID)
+	}
 }

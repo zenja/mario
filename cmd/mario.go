@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	"runtime"
 
@@ -26,7 +30,16 @@ func main() {
 	// this will prevent window not responding
 	runtime.LockOSThread()
 
+	// Ask for hero user ID
+	fmt.Println("Please enter your NT username: ")
+	reader := bufio.NewReader(os.Stdin)
+	uid, err := reader.ReadString('\n')
+	uid = strings.TrimSuffix(uid, "\n")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	G = game.NewGame()
-	G.Init()
+	G.Init(uid)
 	G.StartGameLoop()
 }
