@@ -17,6 +17,7 @@ func DrawText(text string, pos vector.Pos, color sdl.Color) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer texture.Destroy()
 
 	width := surface.W
 	height := surface.H
