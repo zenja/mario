@@ -271,7 +271,7 @@ func (h *Hero) Draw(camPos vector.Pos) {
 	}
 	_, rectInCamera := graphic.VisibleRectInCamera(h.levelRect, camPos.X, camPos.Y)
 	if rectInCamera != nil {
-		pos := vector.Pos{rectInCamera.X - 70, rectInCamera.Y - 50}
+		pos := vector.Pos{rectInCamera.X - 50, rectInCamera.Y - 50}
 		color := sdl.Color{34, 138, 230, 0}
 		graphic.DrawTextAbsolute(title, pos, color)
 	}

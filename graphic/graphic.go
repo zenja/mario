@@ -64,7 +64,7 @@ func Init() {
 	}
 
 	// Load font
-	font, err = ttf.OpenFont("assets/fonts/Menlo-Regular.ttf", 18)
+	font, err = ttf.OpenFont("assets/fonts/munro.ttf", 24)
 	if err != nil {
 		log.Fatal(err)
 	}
