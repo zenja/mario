@@ -373,7 +373,7 @@ func (h *Hero) Update(ticks uint32, level *Level) {
 	}
 
 	// special fire
-	if h.oPressed && ticks-h.lastFireTicks > 1000 {
+	if h.oPressed && ticks-h.lastFireTicks > 100 {
 		switch h.grade {
 		case 1:
 			level.AddBullet(NewShitEx(h.levelRect, true, h.upPressed, 50, 650, 15, ticks))
