@@ -827,7 +827,7 @@ func (b *bossA) hitByHero(h *Hero, direction hitDirection, level *Level, ticks u
 
 	default:
 		// hero is hurt
-		hurtHeroIfIntersectEnough(h, b, level)
+		hurtHeroIfIntersectEnoughEx(h, b, level, 0.1)
 	}
 }
 
@@ -929,6 +929,19 @@ func hurtHeroIfIntersectEnough(hero *Hero, emy Enemy, level *Level) {
 	}
 
 	if interRect.W > int32(float64(emyRect.W)*0.3) && interRect.H > int32(float64(emyRect.H)*0.3) {
+		hero.Hurt(level)
+	}
+}
+
+func hurtHeroIfIntersectEnoughEx(hero *Hero, emy Enemy, level *Level, ratio float64) {
+	heroRect := hero.GetRect()
+	emyRect := emy.GetRect()
+	interRect, hasIntersection := heroRect.Intersect(&emyRect)
+	if !hasIntersection {
+		return
+	}
+
+	if interRect.W > int32(float64(emyRect.W)*ratio) && interRect.H > int32(float64(emyRect.H)*ratio) {
 		hero.Hurt(level)
 	}
 }
