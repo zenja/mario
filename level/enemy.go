@@ -785,6 +785,18 @@ var _ Enemy = &coinEnemy{}
 
 const bossAInitHP = 200
 
+var bossSentences []string = []string{
+	"Have you find the bug??",
+	"I really need to fire you...",
+	"An apple a day keeps doctor away",
+	"I have a dream...",
+	"How old are you?",
+	"Don't be shy",
+	"Let's have a meeting",
+	"Your PPT sucks...",
+	"Your code works like a shit...",
+}
+
 type bossA struct {
 	basicEnemy
 
@@ -841,6 +853,18 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 	if rand.Intn(100) == 7 {
 		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
+	}
+
+	// Show random sentences occasionally
+	randColor := sdl.Color{
+		uint8(rand.Intn(256)),
+		uint8(rand.Intn(256)),
+		uint8(rand.Intn(256)),
+		255,
+	}
+	randSentence := bossSentences[rand.Intn(len(bossSentences))]
+	if rand.Intn(100) == 7 {
+		level.AddEffect(NewShowTextEffect(randSentence, randColor, ticks, 1000))
 	}
 
 	b.updateResource(ticks)
