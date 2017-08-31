@@ -25,6 +25,7 @@ const (
 
 const (
 	MUSIC_0 MusicID = iota
+	MUSIC_1
 )
 
 var sounds map[SoundID]*mix.Chunk = make(map[SoundID]*mix.Chunk)
@@ -66,6 +67,7 @@ func loadAllAudios() {
 
 	// music
 	musics[MUSIC_0], err = mix.LoadMUS("assets/audio/music/mario-bg-music-0.wav")
+	musics[MUSIC_1], err = mix.LoadMUS("assets/audio/music/mario-bg-music-1.wav")
 	must(err)
 }
 
@@ -82,12 +84,9 @@ func StopMusic() {
 }
 
 func ReloadMusic(mid MusicID) {
-	if mid == currentMusic {
-		return
-	}
-
 	// stop current music
 	mix.HaltMusic()
+	currentMusic = mid
 	musics[mid].Play(-1)
 }
 

@@ -18,6 +18,7 @@ type Level struct {
 	Spec        *LevelSpec
 	BGRes       graphic.Resource
 	BGColor     sdl.Color
+	BGMusicID   audio.MusicID
 	Decorations []Object
 	TileObjects [][]Object
 	NumTiles    vector.Vec2D // NOTE: X, Y is TID
@@ -39,7 +40,7 @@ type Level struct {
 func (l *Level) Init() {
 	l.fadeIn()
 	l.TheHero.LiveAndResetPos(l.InitHeroPos)
-	audio.PlayMusic()
+	audio.ReloadMusic(l.BGMusicID)
 }
 
 func (l *Level) HandleEvents(events *intsets.Sparse) {

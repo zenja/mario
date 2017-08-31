@@ -11,6 +11,7 @@ import (
 	"github.com/pelletier/go-toml"
 	"github.com/pkg/errors"
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/zenja/mario/audio"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
 )
@@ -20,6 +21,7 @@ type LevelSpec struct {
 	NextLevelNames []string
 	BgFilename     string // file name of background file
 	BgColor        sdl.Color
+	BgMusicID      audio.MusicID
 	LevelArr       [][]byte
 	DecArr         [][]byte // decoration array
 }
@@ -334,6 +336,8 @@ func BuildLevel(spec *LevelSpec) *Level {
 	return &Level{
 		Spec:        spec,
 		BGRes:       bgRes,
+		BGColor:     spec.BgColor,
+		BGMusicID:   spec.BgMusicID,
 		Decorations: decorations,
 		TileObjects: tileObjs,
 		Enemies:     enemies,
@@ -341,7 +345,6 @@ func BuildLevel(spec *LevelSpec) *Level {
 		ObstMngr:    obstMngr,
 		TheHero:     hero,
 		InitHeroPos: vector.Pos{hero.levelRect.X, hero.levelRect.Y},
-		BGColor:     spec.BgColor,
 		NumTiles:    numTiles,
 		effects:     list.New(),
 	}
@@ -360,6 +363,11 @@ func ParseLevelSpec(levelFile string) *LevelSpec {
 	}
 
 	bgFilename := conf.Get("graphic.bg-file").(string)
+
+	bgMusicID, err := parseMusicID(conf.Get("music.bg-music-id").(string))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	bgColor, err := parseRGB(conf.Get("graphic.bg-color-rgb").(string))
 	if err != nil {
@@ -388,6 +396,7 @@ func ParseLevelSpec(levelFile string) *LevelSpec {
 		NextLevelNames: nextLevelNames,
 		BgFilename:     bgFilename,
 		BgColor:        bgColor,
+		BgMusicID:      bgMusicID,
 		LevelArr:       levelDef,
 		DecArr:         levelDecDef,
 	}
@@ -435,4 +444,12 @@ func parseLevelArr(str string) ([][]byte, error) {
 		result = append(result, []byte(l))
 	}
 	return result, nil
+}
+
+func parseMusicID(str string) (audio.MusicID, error) {
+	id, err := strconv.Atoi(str)
+	if err != nil {
+		return audio.MusicID(-1), errors.Wrap(err, "error parsing music ID")
+	}
+	return audio.MusicID(id), nil
 }
