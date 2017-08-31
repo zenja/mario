@@ -3,6 +3,8 @@ package level
 import (
 	"log"
 
+	"math/rand"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/audio"
 	"github.com/zenja/mario/graphic"
@@ -195,6 +197,26 @@ func NewTortoiseEnemy(startPos vector.Pos) Enemy {
 		currRes:       resLeft0,
 		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
 		velocity:      vector.Vec2D{-100, 0},
+	}
+}
+
+func NewTortoiseEnemyRandomSpeed(startPos vector.Pos, faceRight bool, maxSpeedUp int) Enemy {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_LEFT_0)
+	velX := 100 + rand.Intn(maxSpeedUp)
+	if !faceRight {
+		velX = -velX
+	}
+	return &tortoiseEnemy{
+		resLeft0:      resLeft0,
+		resLeft1:      graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_LEFT_1),
+		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_RIGHT_0),
+		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_RIGHT_1),
+		resSemiInside: graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE),
+		resInside:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_INSIDE),
+		currRes:       resLeft0,
+		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
+		velocity:      vector.Vec2D{int32(velX), 0},
+		isFacingRight: faceRight,
 	}
 }
 
@@ -776,6 +798,12 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 		b.isFacingRight = false
 	}
 	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
+
+	// Generate enemies randomly
+	if rand.Intn(500) == 7 {
+		level.AddEnemy(NewTortoiseEnemyRandomSpeed(
+			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
+	}
 
 	b.updateResource(ticks)
 
