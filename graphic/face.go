@@ -17,6 +17,7 @@ func registerFacedResource(
 	mainWidth, mainHeight int32,
 	faceWidth, faceHeight int32,
 	faceX, faceY int32,
+	faceAngle float64,
 	flipHorizontal bool,
 	flipVertical bool) {
 
@@ -38,7 +39,8 @@ func registerFacedResource(
 	faceTexture := resizeAndFlip(faceSurface, faceWidth, faceHeight, flipHorizontal, flipVertical)
 	defer faceTexture.Destroy()
 
-	combined, err := combineTexture(mainTexture, faceTexture, mainWidth, mainHeight, faceWidth, faceHeight, faceX, faceY)
+	combined, err := combineTexture(
+		mainTexture, faceTexture, mainWidth, mainHeight, faceWidth, faceHeight, faceX, faceY, faceAngle)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -89,7 +91,8 @@ func combineTexture(
 	frontTexture *sdl.Texture,
 	backWidth, backHeight int32,
 	frontWidth, frontHeight int32,
-	frontX, frontY int32) (*sdl.Texture, error) {
+	frontX, frontY int32,
+	frontAngle float64) (*sdl.Texture, error) {
 
 	newTexture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_TARGET, int(backWidth), int(backHeight))
 	if err != nil {
@@ -121,6 +124,8 @@ func combineTexture(
 	if err = renderer.Copy(frontTexture, nil, &sdl.Rect{frontX, frontY, frontWidth, frontHeight}); err != nil {
 		return nil, errors.Wrap(err, "failed to render texture")
 	}
+
+	renderer.CopyEx(frontTexture, nil, &sdl.Rect{frontX, frontY, frontWidth, frontHeight}, frontAngle, nil, sdl.FLIP_NONE)
 
 	// reset render target
 	if err = renderer.SetRenderTarget(nil); err != nil {

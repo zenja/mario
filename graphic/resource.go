@@ -528,45 +528,45 @@ func loadAllResources() {
 
 	// hero 0
 	registerFacedResource("assets/hero-0-stand.png", "xwang16", RESOURCE_TYPE_HERO_0_STAND_RIGHT,
-		hero_0_width, hero_0_height, 40, 50, 5, 0, false, false)
+		hero_0_width, hero_0_height, 40, 50, 5, 0, 5, false, false)
 	registerFacedResource("assets/hero-0-walking.png", "xwang16", RESOURCE_TYPE_HERO_0_WALKING_RIGHT,
-		hero_0_width, hero_0_height, 40, 50, 5, 0, false, false)
+		hero_0_width, hero_0_height, 40, 50, 5, 0, -5, false, false)
 	registerFacedResource("assets/hero-0-jump.png", "xwang16", RESOURCE_TYPE_HERO_0_JUMP_RIGHT,
-		hero_0_width, hero_0_height, 40, 50, 5, 0, false, false)
+		hero_0_width, hero_0_height, 40, 50, 5, 0, 0, false, false)
 	registerFacedResource("assets/hero-0-stand.png", "xwang16", RESOURCE_TYPE_HERO_0_STAND_LEFT,
-		hero_0_width, hero_0_height, 40, 50, 5, 0, true, false)
+		hero_0_width, hero_0_height, 40, 50, 5, 0, 5, true, false)
 	registerFacedResource("assets/hero-0-walking.png", "xwang16", RESOURCE_TYPE_HERO_0_WALKING_LEFT,
-		hero_0_width, hero_0_height, 40, 50, 5, 0, true, false)
+		hero_0_width, hero_0_height, 40, 50, 5, 0, -5, true, false)
 	registerFacedResource("assets/hero-0-jump.png", "xwang16", RESOURCE_TYPE_HERO_0_JUMP_LEFT,
-		hero_0_width, hero_0_height, 40, 50, 5, 0, true, false)
+		hero_0_width, hero_0_height, 40, 50, 5, 0, 0, true, false)
 
 	// hero 1
 	registerFacedResource("assets/hero-1-stand.png", "xwang16", RESOURCE_TYPE_HERO_1_STAND_RIGHT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, false, false)
+		hero_1_width, hero_1_height, 45, 55, 5, 0, 5, false, false)
 	registerFacedResource("assets/hero-1-walking.png", "xwang16", RESOURCE_TYPE_HERO_1_WALKING_RIGHT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, false, false)
+		hero_1_width, hero_1_height, 45, 55, 5, 0, -5, false, false)
 	registerFacedResource("assets/hero-1-jump.png", "xwang16", RESOURCE_TYPE_HERO_1_JUMP_RIGHT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, false, false)
+		hero_1_width, hero_1_height, 45, 55, 5, 0, 0, false, false)
 	registerFacedResource("assets/hero-1-stand.png", "xwang16", RESOURCE_TYPE_HERO_1_STAND_LEFT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, true, false)
+		hero_1_width, hero_1_height, 45, 55, 5, 0, 5, true, false)
 	registerFacedResource("assets/hero-1-walking.png", "xwang16", RESOURCE_TYPE_HERO_1_WALKING_LEFT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, true, false)
+		hero_1_width, hero_1_height, 45, 55, 5, 0, -5, true, false)
 	registerFacedResource("assets/hero-1-jump.png", "xwang16", RESOURCE_TYPE_HERO_1_JUMP_LEFT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, true, false)
+		hero_1_width, hero_1_height, 45, 55, 5, 0, 0, true, false)
 
 	// hero 2
 	registerFacedResource("assets/hero-2-stand.png", "xwang16", RESOURCE_TYPE_HERO_2_STAND_RIGHT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, false, false)
+		hero_2_width, hero_2_height, 45, 55, 5, 0, 5, false, false)
 	registerFacedResource("assets/hero-2-walking.png", "xwang16", RESOURCE_TYPE_HERO_2_WALKING_RIGHT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, false, false)
+		hero_2_width, hero_2_height, 45, 55, 5, 0, -5, false, false)
 	registerFacedResource("assets/hero-2-jump.png", "xwang16", RESOURCE_TYPE_HERO_2_JUMP_RIGHT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, false, false)
+		hero_2_width, hero_2_height, 45, 55, 5, 0, 0, false, false)
 	registerFacedResource("assets/hero-2-stand.png", "xwang16", RESOURCE_TYPE_HERO_2_STAND_LEFT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, true, false)
+		hero_2_width, hero_2_height, 45, 55, 5, 0, 5, true, false)
 	registerFacedResource("assets/hero-2-walking.png", "xwang16", RESOURCE_TYPE_HERO_2_WALKING_LEFT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, true, false)
+		hero_2_width, hero_2_height, 45, 55, 5, 0, -5, true, false)
 	registerFacedResource("assets/hero-2-jump.png", "xwang16", RESOURCE_TYPE_HERO_2_JUMP_LEFT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, true, false)
+		hero_2_width, hero_2_height, 45, 55, 5, 0, 0, true, false)
 
 	// decoration: grass
 	registerNonTileResource("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
@@ -590,25 +590,25 @@ func loadAllResources() {
 
 	// tortoise enemy
 	registerFacedResource("assets/tortoise-red-right-0.png", "chran", RESOURCE_TYPE_TORTOISE_RED_RIGHT_0,
-		tortoise_walking_width, tortoise_walking_height, 30, 45, 15, 0, false, false)
+		tortoise_walking_width, tortoise_walking_height, 30, 45, 15, 0, 5, false, false)
 	registerFacedResource("assets/tortoise-red-right-1.png", "chran", RESOURCE_TYPE_TORTOISE_RED_RIGHT_1,
-		tortoise_walking_width, tortoise_walking_height, 30, 45, 15, 0, false, false)
+		tortoise_walking_width, tortoise_walking_height, 30, 45, 15, 0, -5, false, false)
 	registerFacedResource("assets/tortoise-red-right-0.png", "chran", RESOURCE_TYPE_TORTOISE_RED_LEFT_0,
-		tortoise_walking_width, tortoise_walking_height, 30, 45, 0, 0, true, false)
+		tortoise_walking_width, tortoise_walking_height, 30, 45, 0, 0, 5, true, false)
 	registerFacedResource("assets/tortoise-red-right-1.png", "chran", RESOURCE_TYPE_TORTOISE_RED_LEFT_1,
-		tortoise_walking_width, tortoise_walking_height, 30, 45, 0, 0, true, false)
+		tortoise_walking_width, tortoise_walking_height, 30, 45, 0, 0, -5, true, false)
 	registerScaledNonTileResource("assets/tortoise-red-inside.png", RESOURCE_TYPE_TORTOISE_RED_INSIDE, tortoise_inside_width, tortoise_inside_height)
 	registerScaledNonTileResource("assets/tortoise-red-semi-inside.png", RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
 
 	// boss A
 	registerFacedResource("assets/boss-a-right-0.png", "yunfeli", RESOURCE_TYPE_BOSS_A_RIGHT_0,
-		149, 140, 65, 90, 80, 0, false, false)
+		149, 140, 65, 90, 80, 0, 5, false, false)
 	registerFacedResource("assets/boss-a-right-1.png", "yunfeli", RESOURCE_TYPE_BOSS_A_RIGHT_1,
-		149, 140, 65, 90, 80, 0, false, false)
+		149, 140, 65, 90, 80, 0, -5, false, false)
 	registerFacedResource("assets/boss-a-right-0.png", "yunfeli", RESOURCE_TYPE_BOSS_A_LEFT_0,
-		149, 140, 65, 90, 0, 0, true, false)
+		149, 140, 65, 90, 0, 0, 5, true, false)
 	registerFacedResource("assets/boss-a-right-1.png", "yunfeli", RESOURCE_TYPE_BOSS_A_LEFT_1,
-		149, 140, 65, 90, 0, 0, true, false)
+		149, 140, 65, 90, 0, 0, -5, true, false)
 
 	// boss boom
 	registerScaledNonTileResource("assets/boss-boom.png", RESOURCE_TYPE_BOSS_BOOM, 300, 200)
