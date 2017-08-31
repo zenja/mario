@@ -86,6 +86,8 @@ const (
 	RESOURCE_TYPE_BOSS_A_RIGHT_0
 	RESOURCE_TYPE_BOSS_A_RIGHT_1
 
+	RESOURCE_TYPE_BOSS_BOOM
+
 	RESOURCE_TYPE_BANG
 
 	RESOURCE_TYPE_FIREBALL_0
@@ -253,15 +255,26 @@ func VisibleRectInCamera(rect sdl.Rect, xCamStart, yCamStart int32) (rectInTile 
 // Other public utils
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func DrawRect(rect sdl.Rect, camPos vector.Pos) {
-	r, green, b, a, err := renderer.GetDrawColor()
+func DrawRect(rect sdl.Rect, camPos vector.Pos, r, g, b, a uint8) {
+	originR, originG, originB, originA, err := renderer.GetDrawColor()
 	if err != nil {
 		log.Fatalf("failed to get draw color: %s", err)
 	}
-	renderer.SetDrawColor(255, 255, 255, 255)
+	renderer.SetDrawColor(r, g, b, a)
 	_, rectInCam := VisibleRectInCamera(rect, camPos.X, camPos.Y)
 	renderer.DrawRect(rectInCam)
-	renderer.SetDrawColor(r, green, b, a)
+	renderer.SetDrawColor(originR, originG, originB, originA)
+}
+
+func FillRect(rect sdl.Rect, camPos vector.Pos, r, g, b, a uint8) {
+	originR, originG, originB, originA, err := renderer.GetDrawColor()
+	if err != nil {
+		log.Fatalf("failed to get draw color: %s", err)
+	}
+	renderer.SetDrawColor(r, g, b, a)
+	_, rectInCam := VisibleRectInCamera(rect, camPos.X, camPos.Y)
+	renderer.FillRect(rectInCam)
+	renderer.SetDrawColor(originR, originG, originB, originA)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -596,6 +609,9 @@ func loadAllResources() {
 		149, 140, 65, 90, 0, 0, true, false)
 	registerFacedResource("assets/boss-a-right-1.png", "yunfeli", RESOURCE_TYPE_BOSS_A_LEFT_1,
 		149, 140, 65, 90, 0, 0, true, false)
+
+	// boss boom
+	registerScaledNonTileResource("assets/boss-boom.png", RESOURCE_TYPE_BOSS_BOOM, 300, 200)
 
 	// fireball
 	registerScaledNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)

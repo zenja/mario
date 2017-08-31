@@ -723,6 +723,8 @@ func (ce *coinEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
 
 var _ Enemy = &coinEnemy{}
 
+const bossAInitHP = 200
+
 type bossA struct {
 	basicEnemy
 
@@ -735,6 +737,7 @@ type bossA struct {
 	levelRect     sdl.Rect
 	lastTicks     uint32
 	velocity      vector.Vec2D
+	hp            int
 }
 
 func NewBossA(startPos vector.Pos) *bossA {
@@ -748,6 +751,7 @@ func NewBossA(startPos vector.Pos) *bossA {
 		isFacingRight: true,
 		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
 		velocity:      vector.Vec2D{80, 0},
+		hp:            bossAInitHP,
 	}
 }
 
@@ -780,6 +784,22 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 
 func (b *bossA) Draw(camPos vector.Pos) {
 	graphic.DrawResource(b.currRes, b.levelRect, camPos)
+
+	// Draw HP
+	outerBox := sdl.Rect{
+		b.levelRect.X,
+		b.levelRect.Y - 20,
+		b.levelRect.W,
+		10,
+	}
+	innerBox := sdl.Rect{
+		b.levelRect.X + 1,
+		b.levelRect.Y - 19,
+		(b.levelRect.W - 2) * int32(b.hp) / bossAInitHP,
+		8,
+	}
+	graphic.DrawRect(outerBox, camPos, 0, 0, 0, 255)
+	graphic.FillRect(innerBox, camPos, 255, 0, 0, 255)
 }
 
 func (b *bossA) updateResource(ticks uint32) {
@@ -799,15 +819,37 @@ func (b *bossA) updateResource(ticks uint32) {
 }
 
 func (b *bossA) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
-	// DO Nothing
+	switch direction {
+	case HIT_FROM_TOP_W_INTENT:
+		// bounce the hero up
+		h.velocity.Y = -1200
+		audio.PlaySound(audio.SOUND_STOMP)
+
+	default:
+		// hero is hurt
+		hurtHeroIfIntersectEnough(h, b, level)
+	}
 }
 
 func (b *bossA) hitByBottomTile(level *Level, ticks uint32) {
 	// Do Nothing
 }
 
-func (boss *bossA) hitByBullet(b bullet, level *Level, ticks uint32) {
-	// Do nothing
+func (boss *bossA) hitByBullet(blt bullet, level *Level, ticks uint32) {
+	boss.hp -= blt.GetDamage()
+	if boss.hp <= 0 {
+		boss.isDead = true
+		var dieToRight bool
+		if blt.GetRect().X < boss.levelRect.X {
+			dieToRight = true
+		}
+
+		// show effects
+		boomRes := graphic.Res(graphic.RESOURCE_TYPE_BOSS_BOOM)
+		level.AddEffect(NewShowOnceEffect(
+			boomRes, vector.Vec2D{boss.levelRect.X, boss.levelRect.Y}, sdl.GetTicks(), 1000))
+		level.AddEffect(NewDeadDownEffect(boss.currRes, dieToRight, boss.levelRect, ticks))
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
