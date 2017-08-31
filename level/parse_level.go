@@ -325,6 +325,22 @@ func BuildLevel(spec *LevelSpec) *Level {
 					graphic.RESOURCE_TYPE_DEC_HIGH_ENERGY_AHEAD,
 				}
 				addDecoration(NewDecoration(tid, resIds, 1000))
+			case '5':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_PRINCESS_0,
+					graphic.RESOURCE_TYPE_DEC_PRINCESS_1,
+				}
+				addDecoration(NewDecoration(tid, resIds, 1000))
+			case '6':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_PRINCESS_IS_WAITING,
+				}
+				addDecoration(NewDecoration(tid, resIds, 1000))
+			case '7':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_SUPER_MARIO_PAYPAL,
+				}
+				addDecoration(NewDecoration(tid, resIds, 1000))
 			}
 		}
 	}

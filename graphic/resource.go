@@ -53,6 +53,13 @@ const (
 
 	RESOURCE_TYPE_DEC_TREE_0
 
+	RESOURCE_TYPE_DEC_PRINCESS_0
+	RESOURCE_TYPE_DEC_PRINCESS_1
+
+	RESOURCE_TYPE_DEC_PRINCESS_IS_WAITING
+
+	RESOURCE_TYPE_DEC_SUPER_MARIO_PAYPAL
+
 	RESOURCE_TYPE_PAYPAL_IS_NEW_MONEY
 
 	RESOURCE_TYPE_DEC_HIGH_ENERGY_AHEAD
@@ -603,6 +610,16 @@ func LoadAllResources(heroUserID string) {
 
 	// decoration: trees
 	registerNonTileResource("assets/dec-tree-0.png", RESOURCE_TYPE_DEC_TREE_0)
+
+	// decoration: princess
+	registerNonTileResource("assets/princess-0.png", RESOURCE_TYPE_DEC_PRINCESS_0)
+	registerNonTileResource("assets/princess-1.png", RESOURCE_TYPE_DEC_PRINCESS_1)
+
+	// decoration: princess is waiting
+	registerScaledNonTileResource("assets/princess-is-waiting.png", RESOURCE_TYPE_DEC_PRINCESS_IS_WAITING, 150, 200)
+
+	// decoration: super mario paypal
+	registerNonTileResource("assets/super-mario-paypal.png", RESOURCE_TYPE_DEC_SUPER_MARIO_PAYPAL)
 
 	// decoration: paypal is new money
 	registerNonTileResource("assets/paypal-is-new-money.png", RESOURCE_TYPE_PAYPAL_IS_NEW_MONEY)

@@ -26,6 +26,7 @@ const (
 const (
 	MUSIC_0 MusicID = iota
 	MUSIC_1
+	MUSIC_2
 )
 
 var sounds map[SoundID]*mix.Chunk = make(map[SoundID]*mix.Chunk)
@@ -68,6 +69,7 @@ func loadAllAudios() {
 	// music
 	musics[MUSIC_0], err = mix.LoadMUS("assets/audio/music/mario-bg-music-0.wav")
 	musics[MUSIC_1], err = mix.LoadMUS("assets/audio/music/mario-bg-music-1.wav")
+	musics[MUSIC_2], err = mix.LoadMUS("assets/audio/music/mario-bg-music-2.wav")
 	must(err)
 }
 
