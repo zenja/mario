@@ -254,7 +254,7 @@ func NewTortoiseEnemyRandomSpeedUp(startPos vector.Pos, userID string, faceRight
 		resInside:     graphic.Res(graphic.RESOURCE_TYPE_TORTOISE_RED_INSIDE),
 		currRes:       resPack.ResLeft0,
 		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
-		velocity:      vector.Vec2D{int32(velX), 0},
+		velocity:      vector.Vec2D{int32(velX), -800},
 		isFacingRight: faceRight,
 	}
 }
@@ -855,9 +855,31 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
 
 	// Generate enemies randomly
-	if rand.Intn(150) == 7 {
+	if rand.Intn(100) == 7 {
 		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
+		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
+			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
+		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
+			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
+	}
+
+	// Generate new self randomly
+	if rand.Intn(1700) == 7 {
+		pos := vector.Pos{
+			X: b.levelRect.X + 2*b.velocity.X,
+			Y: b.levelRect.Y,
+		}
+		level.AddEnemy(NewBossA(pos))
+	}
+
+	// Generate new boss B randomly
+	if rand.Intn(500) == 7 {
+		pos := vector.Pos{
+			X: b.levelRect.X + 2*b.velocity.X,
+			Y: b.levelRect.Y,
+		}
+		level.AddEnemy(NewBossB(pos))
 	}
 
 	// Keep showing random sentences
