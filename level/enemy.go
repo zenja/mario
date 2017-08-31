@@ -949,11 +949,15 @@ func (boss *bossA) hitByBullet(blt bullet, level *Level, ticks uint32) {
 			dieToRight = true
 		}
 
-		// show effects
+		// if die, show effects & play sound
 		boomRes := graphic.Res(graphic.RESOURCE_TYPE_BOSS_BOOM)
 		level.AddEffect(NewShowOnceEffect(
 			boomRes, vector.Vec2D{boss.levelRect.X, boss.levelRect.Y}, sdl.GetTicks(), 1000))
 		level.AddEffect(NewDeadDownEffect(boss.currRes, dieToRight, boss.levelRect, ticks))
+		// play multiple times for better effect
+		audio.PlaySound(audio.SOUND_KO)
+		audio.PlaySound(audio.SOUND_KO)
+		audio.PlaySound(audio.SOUND_KO)
 	}
 }
 

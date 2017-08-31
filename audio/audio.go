@@ -20,6 +20,7 @@ const (
 	SOUND_PIPE
 	SOUND_STOMP
 	SOUND_BUMP
+	SOUND_KO
 )
 
 const (
@@ -59,6 +60,8 @@ func loadAllAudios() {
 	sounds[SOUND_STOMP], err = mix.LoadWAV("assets/audio/stomp.wav")
 	must(err)
 	sounds[SOUND_BUMP], err = mix.LoadWAV("assets/audio/bump.wav")
+	must(err)
+	sounds[SOUND_KO], err = mix.LoadWAV("assets/audio/ko.wav")
 	must(err)
 
 	// music
