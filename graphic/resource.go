@@ -260,10 +260,12 @@ func DrawRect(rect sdl.Rect, camPos vector.Pos, r, g, b, a uint8) {
 	if err != nil {
 		log.Fatalf("failed to get draw color: %s", err)
 	}
-	renderer.SetDrawColor(r, g, b, a)
 	_, rectInCam := VisibleRectInCamera(rect, camPos.X, camPos.Y)
-	renderer.DrawRect(rectInCam)
-	renderer.SetDrawColor(originR, originG, originB, originA)
+	if rectInCam != nil {
+		renderer.SetDrawColor(r, g, b, a)
+		renderer.DrawRect(rectInCam)
+		renderer.SetDrawColor(originR, originG, originB, originA)
+	}
 }
 
 func FillRect(rect sdl.Rect, camPos vector.Pos, r, g, b, a uint8) {
@@ -271,10 +273,12 @@ func FillRect(rect sdl.Rect, camPos vector.Pos, r, g, b, a uint8) {
 	if err != nil {
 		log.Fatalf("failed to get draw color: %s", err)
 	}
-	renderer.SetDrawColor(r, g, b, a)
 	_, rectInCam := VisibleRectInCamera(rect, camPos.X, camPos.Y)
-	renderer.FillRect(rectInCam)
-	renderer.SetDrawColor(originR, originG, originB, originA)
+	if rectInCam != nil {
+		renderer.SetDrawColor(r, g, b, a)
+		renderer.FillRect(rectInCam)
+		renderer.SetDrawColor(originR, originG, originB, originA)
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -560,31 +564,31 @@ func LoadAllResources(heroUserID string) {
 
 	// hero 1
 	registerFacedResource("assets/hero-1-stand.png", heroUserID, RESOURCE_TYPE_HERO_1_STAND_RIGHT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, 5, false, false)
+		hero_1_width, hero_1_height, 48, 60, 5, 0, 5, false, false)
 	registerFacedResource("assets/hero-1-walking.png", heroUserID, RESOURCE_TYPE_HERO_1_WALKING_RIGHT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, -5, false, false)
+		hero_1_width, hero_1_height, 48, 60, 5, 0, -5, false, false)
 	registerFacedResource("assets/hero-1-jump.png", heroUserID, RESOURCE_TYPE_HERO_1_JUMP_RIGHT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, 0, false, false)
+		hero_1_width, hero_1_height, 48, 60, 5, 0, 0, false, false)
 	registerFacedResource("assets/hero-1-stand.png", heroUserID, RESOURCE_TYPE_HERO_1_STAND_LEFT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, 5, true, false)
+		hero_1_width, hero_1_height, 48, 60, 5, 0, 5, true, false)
 	registerFacedResource("assets/hero-1-walking.png", heroUserID, RESOURCE_TYPE_HERO_1_WALKING_LEFT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, -5, true, false)
+		hero_1_width, hero_1_height, 48, 60, 5, 0, -5, true, false)
 	registerFacedResource("assets/hero-1-jump.png", heroUserID, RESOURCE_TYPE_HERO_1_JUMP_LEFT,
-		hero_1_width, hero_1_height, 45, 55, 5, 0, 0, true, false)
+		hero_1_width, hero_1_height, 48, 60, 5, 0, 0, true, false)
 
 	// hero 2
 	registerFacedResource("assets/hero-2-stand.png", heroUserID, RESOURCE_TYPE_HERO_2_STAND_RIGHT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, 5, false, false)
+		hero_2_width, hero_2_height, 48, 60, 5, 0, 5, false, false)
 	registerFacedResource("assets/hero-2-walking.png", heroUserID, RESOURCE_TYPE_HERO_2_WALKING_RIGHT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, -5, false, false)
+		hero_2_width, hero_2_height, 48, 60, 5, 0, -5, false, false)
 	registerFacedResource("assets/hero-2-jump.png", heroUserID, RESOURCE_TYPE_HERO_2_JUMP_RIGHT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, 0, false, false)
+		hero_2_width, hero_2_height, 48, 60, 5, 0, 0, false, false)
 	registerFacedResource("assets/hero-2-stand.png", heroUserID, RESOURCE_TYPE_HERO_2_STAND_LEFT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, 5, true, false)
+		hero_2_width, hero_2_height, 48, 60, 5, 0, 5, true, false)
 	registerFacedResource("assets/hero-2-walking.png", heroUserID, RESOURCE_TYPE_HERO_2_WALKING_LEFT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, -5, true, false)
+		hero_2_width, hero_2_height, 48, 60, 5, 0, -5, true, false)
 	registerFacedResource("assets/hero-2-jump.png", heroUserID, RESOURCE_TYPE_HERO_2_JUMP_LEFT,
-		hero_2_width, hero_2_height, 45, 55, 5, 0, 0, true, false)
+		hero_2_width, hero_2_height, 48, 60, 5, 0, 0, true, false)
 
 	// decoration: grass
 	registerNonTileResource("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
