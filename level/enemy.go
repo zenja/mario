@@ -784,18 +784,14 @@ func (ce *coinEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
 
 var _ Enemy = &bossA{}
 
-const bossAInitHP = 200
+const bossAInitHP = 1000
 
 var bossASentences []string = []string{
-	"Have you find the bug??",
-	"I really need to fire you...",
-	"An apple a day keeps doctor away",
-	"I have a dream...",
-	"How old are you?",
-	"Don't be shy",
-	"Let's have a meeting",
-	"Your PPT sucks...",
-	"Your code works like a shit...",
+	"I have a dream!",
+	"Red lobster!!",
+	"Let's extend the meeting...",
+	"I will ask Peter to fire you...",
+	"I love my work!!",
 }
 
 type bossA struct {
@@ -866,9 +862,9 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 
 	// Keep showing random sentences
 	randColor := sdl.Color{
-		uint8(rand.Intn(256)),
-		uint8(rand.Intn(256)),
-		uint8(rand.Intn(256)),
+		uint8(rand.Intn(256-100) + 100),
+		uint8(rand.Intn(256-100) + 100),
+		uint8(rand.Intn(256-100) + 100),
 		255,
 	}
 	randSentence := bossASentences[rand.Intn(len(bossASentences))]
@@ -971,13 +967,15 @@ var _ Enemy = &bossB{}
 const bossBInitHP = 200
 
 var bossBSentences []string = []string{
-	"Have you find the bug??",
+	"I am enjoying my sabbatical",
+	"Don't bother me...",
+	"No zuo no die why you try?!",
+	"I have 25 meetings today :D",
+	"My next meeting is in 3 minutes",
+	"Have you found the bug??",
 	"I really need to fire you...",
-	"An apple a day keeps doctor away",
-	"I have a dream...",
-	"How old are you?",
 	"Don't be shy",
-	"Let's have a meeting",
+	"Let's schedule a meeting",
 	"Your PPT sucks...",
 	"Your code works like a shit...",
 }
@@ -1044,15 +1042,15 @@ func (b *bossB) Update(ticks uint32, level *Level) {
 
 	// Generate enemies randomly
 	if rand.Intn(150) == 7 {
-		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
+		level.AddEnemy(NewRandomJupiterTortoiseEnemyEx(
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 150))
 	}
 
 	// Keep showing random sentences
 	randColor := sdl.Color{
-		uint8(rand.Intn(256)),
-		uint8(rand.Intn(256)),
-		uint8(rand.Intn(256)),
+		uint8(rand.Intn(150)),
+		uint8(rand.Intn(150)),
+		uint8(rand.Intn(150)),
 		255,
 	}
 	randSentence := bossBSentences[rand.Intn(len(bossBSentences))]
