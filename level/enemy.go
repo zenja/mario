@@ -781,11 +781,11 @@ func (ce *coinEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
 // Boss A
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var _ Enemy = &coinEnemy{}
+var _ Enemy = &bossA{}
 
 const bossAInitHP = 200
 
-var bossSentences []string = []string{
+var bossASentences []string = []string{
 	"Have you find the bug??",
 	"I really need to fire you...",
 	"An apple a day keeps doctor away",
@@ -858,7 +858,7 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
 
 	// Generate enemies randomly
-	if rand.Intn(300) == 7 {
+	if rand.Intn(150) == 7 {
 		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
 	}
@@ -870,10 +870,16 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 		uint8(rand.Intn(256)),
 		255,
 	}
-	randSentence := bossSentences[rand.Intn(len(bossSentences))]
+	randSentence := bossASentences[rand.Intn(len(bossASentences))]
 	if ticks-b.lastSayTicks > 3000 {
 		level.AddEffect(NewShowTextEffect(randSentence, randColor, b.getSentencePos, ticks, 2000))
 		b.lastSayTicks = ticks
+	}
+
+	// Randomly change direction
+	if rand.Intn(100) == 7 {
+		b.isFacingRight = !b.isFacingRight
+		b.velocity.X = -b.velocity.X
 	}
 
 	b.updateResource(ticks)
