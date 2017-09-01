@@ -855,7 +855,7 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
 
 	// Generate enemies randomly
-	if rand.Intn(100) == 7 {
+	if rand.Intn(130) == 7 {
 		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
 		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
@@ -865,7 +865,7 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 	}
 
 	// Generate new self randomly
-	if rand.Intn(1700) == 7 {
+	if rand.Intn(1900) == 7 {
 		pos := vector.Pos{
 			X: b.levelRect.X + 2*b.velocity.X,
 			Y: b.levelRect.Y,
