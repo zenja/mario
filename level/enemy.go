@@ -924,7 +924,7 @@ func (b *bossA) Draw(camPos vector.Pos) {
 		8,
 	}
 	graphic.DrawRect(outerBox, camPos, 0, 0, 0, 255)
-	graphic.FillRect(innerBox, camPos, 255, 0, 0, 255)
+	graphic.FillRect(innerBox, camPos, 156, 54, 181, 255)
 }
 
 func (b *bossA) updateResource(ticks uint32) {
