@@ -213,7 +213,7 @@ const (
 	shitInitVelY       = 200
 	shitInitVelYUpper  = 50
 	shitGravityY       = 15
-	shitDamage         = 5
+	shitDamage         = 8
 )
 
 func NewShit(
@@ -266,7 +266,7 @@ const (
 	bugInitVelY       = 200
 	bugInitVelYUpper  = 50
 	bugGravityY       = 15
-	bugDamage         = 10
+	bugDamage         = 4
 )
 
 func NewBug(
