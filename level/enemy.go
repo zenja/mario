@@ -199,6 +199,8 @@ var richardLeadershipUserIDs = []string{
 	"fchen5",
 	"xhao",
 	"qingyli",
+	"xinhwang",
+	"wedeng",
 }
 
 func NewRandomJupiterTortoiseEnemy(startPos vector.Pos) Enemy {
