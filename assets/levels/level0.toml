@@ -33,8 +33,8 @@ def = """
 #..............c...........................c...DD.............................................................................2...BBBBBB.....................................DDDDD...D..DD.DDD....DDDDD................................................#
 #.......CCCCM..c.c.c.c.c.c.c.c.c.c.c.c.c.c.c..DD...................................................................2.....cccB.....B......MMMMM....................................................................Y....................................#
 #....................................................()..........2...............................................B.......B..BBBBBBB...............BBB..................................................................................................#
-#....................................................[].............................()...........................BBBBBBBBB.......................BBBBB.................................................................................()..............#
-#..{}..........................1.1.1.................E]..............().............[]..2.2.2.2.2.2.2......()...................................BBBBBBB................................................................................[]..............#
+#....................................................[].............................()...........................BBBBBBBBB.......................BBBBB.................................................................................{}..............#
+#..............................1.1.1.................E]..............().............[]..2.2.2.2.2.2.2......()...................................BBBBBBB................................................................................[]..............#
 GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGR...LGGGGGGGGGGGGGGGGGGGGGGGGGGGGGR.LGGGR..........LGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggrWWWlgggggggggggggggggggggggggggggrWlgggrWWWWWWWWWWggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggrwwwlgggggggggggggggggggggggggggggrwlgggrwwwwwwwwwwggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
@@ -72,4 +72,4 @@ dec-def = """
 """
 
 [transfer]
-next-levels = ["level-2"]
+next-levels = ["level-1"]
