@@ -21,6 +21,7 @@ const (
 	SOUND_STOMP
 	SOUND_BUMP
 	SOUND_KO
+	SOUND_BOSS_LAUGH
 )
 
 const (
@@ -64,6 +65,8 @@ func loadAllAudios() {
 	sounds[SOUND_BUMP], err = mix.LoadWAV("assets/audio/bump.wav")
 	must(err)
 	sounds[SOUND_KO], err = mix.LoadWAV("assets/audio/ko.wav")
+	must(err)
+	sounds[SOUND_BOSS_LAUGH], err = mix.LoadWAV("assets/audio/boss-laugh.wav")
 	must(err)
 
 	// music

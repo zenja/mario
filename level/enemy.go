@@ -871,6 +871,7 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 			Y: b.levelRect.Y,
 		}
 		level.AddEnemy(NewBossA(pos))
+		audio.PlaySound(audio.SOUND_BOSS_LAUGH)
 	}
 
 	// Generate new boss B randomly
