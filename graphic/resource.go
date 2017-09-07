@@ -666,24 +666,24 @@ func LoadAllResources(heroUserID string) {
 	registerScaledResourceFromFile("assets/boss-boom.png", RESOURCE_TYPE_BOSS_BOOM, 300, 200)
 
 	// fireball
-	registerScaledResourceFromFile("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)
-	registerScaledResourceFromFile("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1, 30, 30)
-	registerScaledResourceFromFile("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
-	registerScaledResourceFromFile("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
+	registerResourceFromFileEx("assets/fireball.png", RESOURCE_TYPE_FIREBALL_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/fireball.png", RESOURCE_TYPE_FIREBALL_1, 30, 30, 90, false, false)
+	registerResourceFromFileEx("assets/fireball.png", RESOURCE_TYPE_FIREBALL_2, 30, 30, 180, false, false)
+	registerResourceFromFileEx("assets/fireball.png", RESOURCE_TYPE_FIREBALL_3, 30, 30, 270, false, false)
 	registerScaledResourceFromFile("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 40, 40)
 
 	// shit
-	registerScaledResourceFromFile("assets/shit-0.png", RESOURCE_TYPE_SHIT_0, 30, 30)
-	registerScaledResourceFromFile("assets/shit-1.png", RESOURCE_TYPE_SHIT_1, 30, 30)
-	registerScaledResourceFromFile("assets/shit-2.png", RESOURCE_TYPE_SHIT_2, 30, 30)
-	registerScaledResourceFromFile("assets/shit-3.png", RESOURCE_TYPE_SHIT_3, 30, 30)
+	registerResourceFromFileEx("assets/shit.png", RESOURCE_TYPE_SHIT_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/shit.png", RESOURCE_TYPE_SHIT_1, 30, 30, -90, false, false)
+	registerResourceFromFileEx("assets/shit.png", RESOURCE_TYPE_SHIT_2, 30, 30, -180, false, false)
+	registerResourceFromFileEx("assets/shit.png", RESOURCE_TYPE_SHIT_3, 30, 30, -270, false, false)
 	registerScaledResourceFromFile("assets/shit-boom.png", RESOURCE_TYPE_SHIT_BOOM, 50, 50)
 
 	// bug
-	registerScaledResourceFromFile("assets/bug-0.png", RESOURCE_TYPE_BUG_0, 30, 30)
-	registerScaledResourceFromFile("assets/bug-1.png", RESOURCE_TYPE_BUG_1, 30, 30)
-	registerScaledResourceFromFile("assets/bug-2.png", RESOURCE_TYPE_BUG_2, 30, 30)
-	registerScaledResourceFromFile("assets/bug-3.png", RESOURCE_TYPE_BUG_3, 30, 30)
+	registerResourceFromFileEx("assets/bug.png", RESOURCE_TYPE_BUG_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/bug.png", RESOURCE_TYPE_BUG_1, 30, 30, -90, false, false)
+	registerResourceFromFileEx("assets/bug.png", RESOURCE_TYPE_BUG_2, 30, 30, -180, false, false)
+	registerResourceFromFileEx("assets/bug.png", RESOURCE_TYPE_BUG_3, 30, 30, -270, false, false)
 	registerScaledResourceFromFile("assets/bug-boom.png", RESOURCE_TYPE_BUG_BOOM, 50, 50)
 
 	// eater flower
