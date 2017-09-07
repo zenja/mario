@@ -26,7 +26,10 @@ func getFacedResource(
 	}
 	defer mainSurface.Free()
 
-	mainTexture := resizeAndFlip(mainSurface, mainWidth, mainHeight, flipHorizontal, flipVertical)
+	mainTexture, err := loadTextureFromSurface(mainSurface, mainWidth, mainHeight, 0, flipHorizontal, flipVertical)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer mainTexture.Destroy()
 
 	faceSurface, err := img.Load(fmt.Sprintf("assets/faces/%s.png", faceID))
@@ -35,7 +38,10 @@ func getFacedResource(
 	}
 	defer faceSurface.Free()
 
-	faceTexture := resizeAndFlip(faceSurface, faceWidth, faceHeight, flipHorizontal, flipVertical)
+	faceTexture, err := loadTextureFromSurface(faceSurface, faceWidth, faceHeight, 0, flipHorizontal, flipVertical)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer faceTexture.Destroy()
 
 	combined, err := combineTexture(
@@ -44,7 +50,7 @@ func getFacedResource(
 		log.Fatal(err)
 	}
 
-	return &NonTileResource{texture: combined, w: mainWidth, h: mainHeight}
+	return &BasicResource{texture: combined, w: mainWidth, h: mainHeight}
 }
 
 func registerFacedResource(
@@ -62,44 +68,6 @@ func registerFacedResource(
 		filename, faceID, mainWidth, mainHeight,
 		faceWidth, faceHeight, faceX, faceY, faceAngle, flipHorizontal, flipVertical)
 	resourceRegistry[id] = res
-}
-
-func resizeAndFlip(surface *sdl.Surface, width, height int32, flipHorizontal bool, flipVertical bool) *sdl.Texture {
-	texture, err := renderer.CreateTextureFromSurface(surface)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// make sure the tile is in good shape
-	if surface.W != width || surface.H != height {
-		oldTexture := texture
-		texture, err = clipTexture(oldTexture, &sdl.Rect{0, 0, width, height})
-		if err != nil {
-			log.Fatal(err)
-		}
-		// release original texture
-		oldTexture.Destroy()
-	}
-
-	// flip texture if needed
-	if flipHorizontal {
-		oldTexture := texture
-		texture, err = flipTexture(texture, width, height, true)
-		if err != nil {
-			log.Fatal(err)
-		}
-		oldTexture.Destroy()
-	}
-	if flipVertical {
-		oldTexture := texture
-		texture, err = flipTexture(texture, width, height, false)
-		if err != nil {
-			log.Fatal(err)
-		}
-		oldTexture.Destroy()
-	}
-
-	return texture
 }
 
 func combineTexture(

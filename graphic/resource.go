@@ -7,6 +7,7 @@ import (
 
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/sdl_image"
 	"github.com/zenja/mario/math_utils"
@@ -179,52 +180,28 @@ func Res(id ResourceID) Resource {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// TileResource
+// BasicResource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type TileResource struct {
-	texture *sdl.Texture
-}
-
-func (tr *TileResource) GetTexture() *sdl.Texture {
-	return tr.texture
-}
-
-func (tr *TileResource) GetW() int32 {
-	return TILE_SIZE
-}
-
-func (tr *TileResource) GetH() int32 {
-	return TILE_SIZE
-}
-
-func (tr *TileResource) SetResourceAlpha(alpha uint8) {
-	tr.GetTexture().SetAlphaMod(alpha)
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// NonTileResource
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-type NonTileResource struct {
+type BasicResource struct {
 	texture *sdl.Texture
 	w, h    int32
 }
 
-func (ntr *NonTileResource) GetTexture() *sdl.Texture {
-	return ntr.texture
+func (br *BasicResource) GetTexture() *sdl.Texture {
+	return br.texture
 }
 
-func (ntr *NonTileResource) GetW() int32 {
-	return ntr.w
+func (br *BasicResource) GetW() int32 {
+	return br.w
 }
 
-func (ntr *NonTileResource) GetH() int32 {
-	return ntr.h
+func (br *BasicResource) GetH() int32 {
+	return br.h
 }
 
-func (ntr *NonTileResource) SetResourceAlpha(alpha uint8) {
-	ntr.GetTexture().SetAlphaMod(alpha)
+func (br *BasicResource) SetResourceAlpha(alpha uint8) {
+	br.GetTexture().SetAlphaMod(alpha)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -256,12 +233,6 @@ func VisibleRectInCamera(rect sdl.Rect, xCamStart, yCamStart int32) (rectInTile 
 		xEndInLevel - xStartInLevel,
 		yEndInLevel - yStartInLevel,
 	}
-	//fmt.Printf("Camera: %d, %d\n", xCamStart, yCamStart)
-	//fmt.Printf("Object rect: %d, %d, %d, %d\n", rect.X, rect.Y, rect.W, rect.H)
-	//fmt.Printf("Rect in level: %d, %d, %d, %d\n", xStartInLevel, yStartInLevel, xEndInLevel-xStartInLevel, yEndInLevel-yStartInLevel)
-	//fmt.Printf("Rect in tile: %d, %d, %d, %d\n", rectInTile.X, rectInTile.Y, rectInTile.W, rectInTile.H)
-	//fmt.Printf("Rect in Camera: %d, %d, %d, %d\n", rectInCamera.X, rectInCamera.Y, rectInCamera.W, rectInCamera.H)
-	//fmt.Println()
 	return
 }
 
@@ -296,7 +267,7 @@ func FillRect(rect sdl.Rect, camPos vector.Pos, r, g, b, a uint8) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Graphic functions relative to resource
+// Basic resource related functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func GetResource(resourceID ResourceID) Resource {
@@ -315,46 +286,43 @@ func DrawResource(resource Resource, levelRect sdl.Rect, camPos vector.Pos) {
 	}
 }
 
-// registerTileResource loads a sprite into a TileResource from a file
-func registerTileResource(filename string, id ResourceID) {
-	surface, err := img.Load(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer surface.Free()
-
-	registerTileFromSurface(surface, id)
+func registerResource(texture *sdl.Texture, width, height int32, id ResourceID) {
+	resourceRegistry[id] = &BasicResource{texture: texture, w: width, h: height}
 }
 
-// registerNonTileResource loads a sprite into a NonTileResource from a file
-func registerNonTileResource(filename string, id ResourceID) {
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Register resource from file
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// registerResourceFromFile loads a sprite into a BasicResource from a file
+func registerResourceFromFile(filename string, id ResourceID) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer surface.Free()
 
-	registerNonTileFromSurface(surface, id)
+	registerResourceFromSurface(surface, id, surface.W, surface.H)
 }
 
-func registerScaledNonTileResource(filename string, id ResourceID, dstWidth int32, dstHeight int32) {
+func registerTileResourceFromFile(filename string, id ResourceID) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer surface.Free()
 
-	registerScaledNonTileFromSurface(surface, id, dstWidth, dstHeight)
+	registerResourceFromSurface(surface, id, TILE_SIZE, TILE_SIZE)
 }
 
-func registerFlippedNonTileResource(filename string, id ResourceID, flipHorizontal bool) {
+func registerScaledResourceFromFile(filename string, id ResourceID, dstWidth int32, dstHeight int32) {
 	surface, err := img.Load(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer surface.Free()
 
-	registerFlippedNonTileFromSurface(surface, id, flipHorizontal)
+	registerScaledResourceFromSurface(surface, id, dstWidth, dstHeight)
 }
 
 // RegisterBackgroundResource register a level background resource, scale it to have level's height
@@ -369,15 +337,15 @@ func RegisterBackgroundResource(filename string, id ResourceID, tilesInY int) {
 	dstHeight := int32(tilesInY * TILE_SIZE)
 	dstWidth := surface.W * (dstHeight / surface.H)
 
-	registerScaledNonTileFromSurface(surface, id, dstWidth, dstHeight)
+	registerScaledResourceFromSurface(surface, id, dstWidth, dstHeight)
 }
 
-func registerResourceEx(
+func registerResourceFromFileEx(
 	filename string,
 	id ResourceID,
 	width,
 	height int32,
-	isTile bool,
+	angle float64,
 	flipHorizontal bool,
 	flipVertical bool) {
 
@@ -387,33 +355,21 @@ func registerResourceEx(
 	}
 	defer surface.Free()
 
-	registerResourceFromSurfaceEx(surface, id, width, height, isTile, flipHorizontal, flipVertical)
+	registerResourceFromSurfaceEx(surface, id, width, height, angle, flipHorizontal, flipVertical)
 }
 
-// registerTileFromSurface loads a sprite from a surface into a TileResource object
-// User need to free the surface himself
-func registerTileFromSurface(surface *sdl.Surface, id ResourceID) {
-	registerResourceFromSurface(surface, id, TILE_SIZE, TILE_SIZE, true)
-}
-
-// registerNonTileFromSurface loads a sprite from a surface into a NonTileResource object
-// User need to free the surface himself
-func registerNonTileFromSurface(surface *sdl.Surface, id ResourceID) {
-	registerResourceFromSurface(surface, id, surface.W, surface.H, false)
-}
-
-func registerScaledNonTileFromSurface(surface *sdl.Surface, id ResourceID, dstWidth, dstHeight int32) {
-	registerResourceFromSurface(surface, id, dstWidth, dstHeight, false)
-}
-
-func registerFlippedNonTileFromSurface(surface *sdl.Surface, id ResourceID, flipHorizontal bool) {
-	registerFlippedResourceFromSurface(surface, id, surface.W, surface.H, false, flipHorizontal)
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Register resource from surface
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // registerResourceFromSurface loads a sprite from a surface into a Resource object
 // User need to free the surface himself
-func registerResourceFromSurface(surface *sdl.Surface, id ResourceID, width, height int32, isTile bool) {
-	registerResourceFromSurfaceEx(surface, id, width, height, isTile, false, false)
+func registerResourceFromSurface(surface *sdl.Surface, id ResourceID, width, height int32) {
+	registerResourceFromSurfaceEx(surface, id, width, height, 0, false, false)
+}
+
+func registerScaledResourceFromSurface(surface *sdl.Surface, id ResourceID, dstWidth, dstHeight int32) {
+	registerResourceFromSurface(surface, id, dstWidth, dstHeight)
 }
 
 func registerFlippedResourceFromSurface(
@@ -421,10 +377,9 @@ func registerFlippedResourceFromSurface(
 	id ResourceID,
 	width,
 	height int32,
-	isTile bool,
 	flipHorizontal bool) {
 
-	registerResourceFromSurfaceEx(surface, id, width, height, isTile, flipHorizontal, !flipHorizontal)
+	registerResourceFromSurfaceEx(surface, id, width, height, 0, flipHorizontal, !flipHorizontal)
 }
 
 func registerResourceFromSurfaceEx(
@@ -432,53 +387,99 @@ func registerResourceFromSurfaceEx(
 	id ResourceID,
 	width,
 	height int32,
-	isTile bool,
+	angle float64,
 	flipHorizontal bool,
 	flipVertical bool) {
 
-	if isTile && (width != TILE_SIZE || height != TILE_SIZE) {
-		log.Fatalf("declared to be tile but has wrong width (%d) or height (%d)", width, height)
-	}
-
-	texture, err := renderer.CreateTextureFromSurface(surface)
+	texture, err := loadTextureFromSurface(surface, width, height, angle, flipHorizontal, flipVertical)
 	if err != nil {
 		log.Fatal(err)
 	}
+	registerResource(texture, width, height, id)
+}
 
-	// make sure the tile is in good shape
-	if surface.W != width || surface.H != height {
-		oldTexture := texture
-		texture, err = clipTexture(oldTexture, &sdl.Rect{0, 0, width, height})
-		if err != nil {
-			log.Fatal(err)
-		}
-		// release original texture
-		oldTexture.Destroy()
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Graphic functions relative to texture
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func loadSimpleTextureFromFile(filename string) (*sdl.Texture, error) {
+	surface, err := img.Load(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer surface.Free()
+
+	return loadTextureFromSurface(surface, surface.W, surface.H, 0, false, false)
+}
+
+func loadTextureFromFile(
+	filename string,
+	width, height int32,
+	angle float64,
+	flipHorizontal bool,
+	flipVertical bool) (*sdl.Texture, error) {
+
+	surface, err := img.Load(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer surface.Free()
+
+	return loadTextureFromSurface(surface, width, height, angle, flipHorizontal, flipVertical)
+}
+
+func loadTextureFromSurface(
+	surface *sdl.Surface,
+	width, height int32,
+	angle float64,
+	flipHorizontal bool,
+	flipVertical bool) (*sdl.Texture, error) {
+
+	texture, err := renderer.CreateTextureFromSurface(surface)
+	if err != nil {
+		return nil, err
+	}
+	defer texture.Destroy()
+
+	newTexture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_TARGET, int(width), int(height))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to clip texture")
 	}
 
-	// flip texture if needed
+	// will make pixels with alpha 0 fully transparent
+	if err = newTexture.SetBlendMode(sdl.BLENDMODE_BLEND); err != nil {
+		return nil, errors.Wrap(err, "failed to set blend mode")
+	}
+
+	if err = renderer.SetRenderTarget(newTexture); err != nil {
+		return nil, errors.Wrap(err, "failed to set render target")
+	}
+
+	// this together with blend mode will make transparent area
+	if err = renderer.SetDrawColor(0, 0, 0, 0); err != nil {
+		return nil, errors.Wrap(err, "failed to reset draw color")
+	}
+
+	if err = renderer.Clear(); err != nil {
+		return nil, errors.Wrap(err, "failed to clear renderer")
+	}
+
+	var flipMode sdl.RendererFlip
 	if flipHorizontal {
-		oldTexture := texture
-		texture, err = flipTexture(texture, width, height, true)
-		if err != nil {
-			log.Fatal(err)
-		}
-		oldTexture.Destroy()
+		flipMode = sdl.FLIP_HORIZONTAL
+	} else if flipVertical {
+		flipMode = sdl.FLIP_VERTICAL
+	} else {
+		flipMode = sdl.FLIP_NONE
 	}
-	if flipVertical {
-		oldTexture := texture
-		texture, err = flipTexture(texture, width, height, false)
-		if err != nil {
-			log.Fatal(err)
-		}
-		oldTexture.Destroy()
+	renderer.CopyEx(texture, nil, &sdl.Rect{0, 0, width, height}, angle, nil, flipMode)
+
+	// reset render target
+	if err = renderer.SetRenderTarget(nil); err != nil {
+		return nil, errors.Wrap(err, "failed to reset render target")
 	}
 
-	if isTile {
-		resourceRegistry[id] = &TileResource{texture: texture}
-	} else {
-		resourceRegistry[id] = &NonTileResource{texture: texture, w: width, h: height}
-	}
+	return newTexture, nil
 }
 
 // RenderResource renders a tile (or a part of tile specified by srcRect) to a given position in screen
@@ -510,53 +511,53 @@ func LoadAllResources(heroUserID string) {
 	// -------------------------------
 
 	// brick
-	registerTileResource("assets/brick-red.png", RESOURCE_TYPE_BRICK_RED)
-	registerTileResource("assets/brick-yellow.png", RESOURCE_TYPE_BRICK_YELLOW)
+	registerTileResourceFromFile("assets/brick-red.png", RESOURCE_TYPE_BRICK_RED)
+	registerTileResourceFromFile("assets/brick-yellow.png", RESOURCE_TYPE_BRICK_YELLOW)
 
 	// grass
-	registerTileResource("assets/grass-ground-left.png", RESOURCE_TYPE_GRASS_GROUD_LEFT)
-	registerTileResource("assets/grass-ground-mid.png", RESOURCE_TYPE_GRASS_GROUD_MID)
-	registerTileResource("assets/grass-ground-right.png", RESOURCE_TYPE_GRASS_GROUD_RIGHT)
+	registerTileResourceFromFile("assets/grass-ground-left.png", RESOURCE_TYPE_GRASS_GROUD_LEFT)
+	registerTileResourceFromFile("assets/grass-ground-mid.png", RESOURCE_TYPE_GRASS_GROUD_MID)
+	registerTileResourceFromFile("assets/grass-ground-right.png", RESOURCE_TYPE_GRASS_GROUD_RIGHT)
 
 	// ground
-	registerTileResource("assets/ground-left.png", RESOURCE_TYPE_GROUD_LEFT)
-	registerTileResource("assets/ground-mid.png", RESOURCE_TYPE_GROUD_MID)
-	registerTileResource("assets/ground-right.png", RESOURCE_TYPE_GROUD_RIGHT)
+	registerTileResourceFromFile("assets/ground-left.png", RESOURCE_TYPE_GROUD_LEFT)
+	registerTileResourceFromFile("assets/ground-mid.png", RESOURCE_TYPE_GROUD_MID)
+	registerTileResourceFromFile("assets/ground-right.png", RESOURCE_TYPE_GROUD_RIGHT)
 
 	// myth box
-	registerTileResource("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
-	registerTileResource("assets/myth-box-normal-light.png", RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
-	registerTileResource("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
+	registerTileResourceFromFile("assets/myth-box-normal.png", RESOURCE_TYPE_MYTH_BOX_NORMAL)
+	registerTileResourceFromFile("assets/myth-box-normal-light.png", RESOURCE_TYPE_MYTH_BOX_NORMAL_LIGHT)
+	registerTileResourceFromFile("assets/myth-box-empty.png", RESOURCE_TYPE_MYTH_BOX_EMPTY)
 
 	// pipe
-	registerTileResource("assets/pipe-left-top.png", RESOURCE_TYPE_PIPE_LEFT_TOP)
-	registerTileResource("assets/pipe-right-top.png", RESOURCE_TYPE_PIPE_RIGHT_TOP)
-	registerTileResource("assets/pipe-left-mid.png", RESOURCE_TYPE_PIPE_LEFT_MID)
-	registerTileResource("assets/pipe-right-mid.png", RESOURCE_TYPE_PIPE_RIGHT_MID)
-	registerTileResource("assets/pipe-left-bottom.png", RESOURCE_TYPE_PIPE_LEFT_BOTTOM)
-	registerTileResource("assets/pipe-right-bottom.png", RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
+	registerTileResourceFromFile("assets/pipe-left-top.png", RESOURCE_TYPE_PIPE_LEFT_TOP)
+	registerTileResourceFromFile("assets/pipe-right-top.png", RESOURCE_TYPE_PIPE_RIGHT_TOP)
+	registerTileResourceFromFile("assets/pipe-left-mid.png", RESOURCE_TYPE_PIPE_LEFT_MID)
+	registerTileResourceFromFile("assets/pipe-right-mid.png", RESOURCE_TYPE_PIPE_RIGHT_MID)
+	registerTileResourceFromFile("assets/pipe-left-bottom.png", RESOURCE_TYPE_PIPE_LEFT_BOTTOM)
+	registerTileResourceFromFile("assets/pipe-right-bottom.png", RESOURCE_TYPE_PIPE_RIGHT_BOTTOM)
 
 	// coin
-	registerTileResource("assets/coin-0.png", RESOURCE_TYPE_COIN_0)
-	registerTileResource("assets/coin-1.png", RESOURCE_TYPE_COIN_1)
-	registerTileResource("assets/coin-2.png", RESOURCE_TYPE_COIN_2)
-	registerTileResource("assets/coin-3.png", RESOURCE_TYPE_COIN_3)
+	registerTileResourceFromFile("assets/coin-0.png", RESOURCE_TYPE_COIN_0)
+	registerTileResourceFromFile("assets/coin-1.png", RESOURCE_TYPE_COIN_1)
+	registerTileResourceFromFile("assets/coin-2.png", RESOURCE_TYPE_COIN_2)
+	registerTileResourceFromFile("assets/coin-3.png", RESOURCE_TYPE_COIN_3)
 
 	// good mushroom
-	registerTileResource("assets/mushroom.png", RESOURCE_TYPE_GOOD_MUSHROOM)
+	registerTileResourceFromFile("assets/mushroom.png", RESOURCE_TYPE_GOOD_MUSHROOM)
 
 	// upgrade flower
-	registerTileResource("assets/upgrade-flower.png", RESOURCE_TYPE_UPGRADE_FLOWER)
+	registerTileResourceFromFile("assets/upgrade-flower.png", RESOURCE_TYPE_UPGRADE_FLOWER)
 
 	// water
-	registerTileResource("assets/water-0.png", RESOURCE_TYPE_WATER_0)
-	registerTileResource("assets/water-1.png", RESOURCE_TYPE_WATER_1)
-	registerTileResource("assets/water-2.png", RESOURCE_TYPE_WATER_2)
-	registerTileResource("assets/water-3.png", RESOURCE_TYPE_WATER_3)
-	registerTileResource("assets/water-4.png", RESOURCE_TYPE_WATER_4)
-	registerTileResource("assets/water-5.png", RESOURCE_TYPE_WATER_5)
-	registerTileResource("assets/water-6.png", RESOURCE_TYPE_WATER_6)
-	registerTileResource("assets/water-pixel.png", RESOURCE_TYPE_WATER_FULL)
+	registerTileResourceFromFile("assets/water-0.png", RESOURCE_TYPE_WATER_0)
+	registerTileResourceFromFile("assets/water-1.png", RESOURCE_TYPE_WATER_1)
+	registerTileResourceFromFile("assets/water-2.png", RESOURCE_TYPE_WATER_2)
+	registerTileResourceFromFile("assets/water-3.png", RESOURCE_TYPE_WATER_3)
+	registerTileResourceFromFile("assets/water-4.png", RESOURCE_TYPE_WATER_4)
+	registerTileResourceFromFile("assets/water-5.png", RESOURCE_TYPE_WATER_5)
+	registerTileResourceFromFile("assets/water-6.png", RESOURCE_TYPE_WATER_6)
+	registerTileResourceFromFile("assets/water-pixel.png", RESOURCE_TYPE_WATER_FULL)
 
 	// -------------------------------
 	// Load non-tile resources
@@ -605,41 +606,41 @@ func LoadAllResources(heroUserID string) {
 		hero_2_width, hero_2_height, 48, 60, 5, 0, 0, true, false)
 
 	// decoration: grass
-	registerNonTileResource("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
-	registerNonTileResource("assets/dec-grass-1.png", RESOURCE_TYPE_DEC_GRASS_1)
+	registerResourceFromFile("assets/dec-grass-0.png", RESOURCE_TYPE_DEC_GRASS_0)
+	registerResourceFromFile("assets/dec-grass-1.png", RESOURCE_TYPE_DEC_GRASS_1)
 
 	// decoration: trees
-	registerNonTileResource("assets/dec-tree-0.png", RESOURCE_TYPE_DEC_TREE_0)
+	registerResourceFromFile("assets/dec-tree-0.png", RESOURCE_TYPE_DEC_TREE_0)
 
 	// decoration: princess
-	registerNonTileResource("assets/princess-0.png", RESOURCE_TYPE_DEC_PRINCESS_0)
-	registerNonTileResource("assets/princess-1.png", RESOURCE_TYPE_DEC_PRINCESS_1)
+	registerResourceFromFile("assets/princess-0.png", RESOURCE_TYPE_DEC_PRINCESS_0)
+	registerResourceFromFile("assets/princess-1.png", RESOURCE_TYPE_DEC_PRINCESS_1)
 
 	// decoration: princess is waiting
-	registerScaledNonTileResource("assets/princess-is-waiting.png", RESOURCE_TYPE_DEC_PRINCESS_IS_WAITING, 150, 200)
+	registerScaledResourceFromFile("assets/princess-is-waiting.png", RESOURCE_TYPE_DEC_PRINCESS_IS_WAITING, 150, 200)
 
 	// decoration: super mario paypal
-	registerNonTileResource("assets/super-mario-paypal.png", RESOURCE_TYPE_DEC_SUPER_MARIO_PAYPAL)
+	registerResourceFromFile("assets/super-mario-paypal.png", RESOURCE_TYPE_DEC_SUPER_MARIO_PAYPAL)
 
 	// decoration: paypal is new money
-	registerNonTileResource("assets/paypal-is-new-money.png", RESOURCE_TYPE_PAYPAL_IS_NEW_MONEY)
+	registerResourceFromFile("assets/paypal-is-new-money.png", RESOURCE_TYPE_PAYPAL_IS_NEW_MONEY)
 
 	// decoration: high energy ahead
-	registerScaledNonTileResource("assets/high-energy-ahead.png", RESOURCE_TYPE_DEC_HIGH_ENERGY_AHEAD, 150, 200)
+	registerScaledResourceFromFile("assets/high-energy-ahead.png", RESOURCE_TYPE_DEC_HIGH_ENERGY_AHEAD, 150, 200)
 
 	// broken pieces
-	registerScaledNonTileResource("assets/brick-piece-red.png", RESOURCE_TYPE_BRICK_PIECE_RED, TILE_SIZE/2, TILE_SIZE/2)
-	registerScaledNonTileResource("assets/brick-piece-yellow.png", RESOURCE_TYPE_BRICK_PIECE_YELLOW, TILE_SIZE/2, TILE_SIZE/2)
+	registerScaledResourceFromFile("assets/brick-piece-red.png", RESOURCE_TYPE_BRICK_PIECE_RED, TILE_SIZE/2, TILE_SIZE/2)
+	registerScaledResourceFromFile("assets/brick-piece-yellow.png", RESOURCE_TYPE_BRICK_PIECE_YELLOW, TILE_SIZE/2, TILE_SIZE/2)
 
 	// mushroom enemy
-	registerScaledNonTileResource("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_0, TILE_SIZE, TILE_SIZE)
-	registerScaledNonTileResource("assets/mushroom-enemy-1.png", RESOURCE_TYPE_MUSHROOM_ENEMY_1, TILE_SIZE, TILE_SIZE)
-	registerScaledNonTileResource("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT, TILE_SIZE, TILE_SIZE)
-	registerResourceEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, false, false, true)
+	registerScaledResourceFromFile("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_0, TILE_SIZE, TILE_SIZE)
+	registerScaledResourceFromFile("assets/mushroom-enemy-1.png", RESOURCE_TYPE_MUSHROOM_ENEMY_1, TILE_SIZE, TILE_SIZE)
+	registerScaledResourceFromFile("assets/mushroom-enemy-hit.png", RESOURCE_TYPE_MUSHROOM_ENEMY_HIT, TILE_SIZE, TILE_SIZE)
+	registerResourceFromFileEx("assets/mushroom-enemy-0.png", RESOURCE_TYPE_MUSHROOM_ENEMY_DOWN, TILE_SIZE, TILE_SIZE, 0, false, true)
 
 	// tortoise enemy res without face
-	registerScaledNonTileResource("assets/tortoise-red-inside.png", RESOURCE_TYPE_TORTOISE_RED_INSIDE, tortoise_inside_width, tortoise_inside_height)
-	registerScaledNonTileResource("assets/tortoise-red-semi-inside.png", RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
+	registerScaledResourceFromFile("assets/tortoise-red-inside.png", RESOURCE_TYPE_TORTOISE_RED_INSIDE, tortoise_inside_width, tortoise_inside_height)
+	registerScaledResourceFromFile("assets/tortoise-red-semi-inside.png", RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
 
 	// boss A
 	registerFacedResource("assets/boss-a-right-0.png", "yunfeli", RESOURCE_TYPE_BOSS_A_RIGHT_0,
@@ -662,43 +663,43 @@ func LoadAllResources(heroUserID string) {
 		100, 120, 50, 65, 15, 0, -5, true, false)
 
 	// boss boom
-	registerScaledNonTileResource("assets/boss-boom.png", RESOURCE_TYPE_BOSS_BOOM, 300, 200)
+	registerScaledResourceFromFile("assets/boss-boom.png", RESOURCE_TYPE_BOSS_BOOM, 300, 200)
 
 	// fireball
-	registerScaledNonTileResource("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)
-	registerScaledNonTileResource("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1, 30, 30)
-	registerScaledNonTileResource("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
-	registerScaledNonTileResource("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
-	registerScaledNonTileResource("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 40, 40)
+	registerScaledResourceFromFile("assets/fireball-0.png", RESOURCE_TYPE_FIREBALL_0, 30, 30)
+	registerScaledResourceFromFile("assets/fireball-1.png", RESOURCE_TYPE_FIREBALL_1, 30, 30)
+	registerScaledResourceFromFile("assets/fireball-2.png", RESOURCE_TYPE_FIREBALL_2, 30, 30)
+	registerScaledResourceFromFile("assets/fireball-3.png", RESOURCE_TYPE_FIREBALL_3, 30, 30)
+	registerScaledResourceFromFile("assets/fireball-boom.png", RESOURCE_TYPE_FIREBALL_BOOM, 40, 40)
 
 	// shit
-	registerScaledNonTileResource("assets/shit-0.png", RESOURCE_TYPE_SHIT_0, 30, 30)
-	registerScaledNonTileResource("assets/shit-1.png", RESOURCE_TYPE_SHIT_1, 30, 30)
-	registerScaledNonTileResource("assets/shit-2.png", RESOURCE_TYPE_SHIT_2, 30, 30)
-	registerScaledNonTileResource("assets/shit-3.png", RESOURCE_TYPE_SHIT_3, 30, 30)
-	registerScaledNonTileResource("assets/shit-boom.png", RESOURCE_TYPE_SHIT_BOOM, 50, 50)
+	registerScaledResourceFromFile("assets/shit-0.png", RESOURCE_TYPE_SHIT_0, 30, 30)
+	registerScaledResourceFromFile("assets/shit-1.png", RESOURCE_TYPE_SHIT_1, 30, 30)
+	registerScaledResourceFromFile("assets/shit-2.png", RESOURCE_TYPE_SHIT_2, 30, 30)
+	registerScaledResourceFromFile("assets/shit-3.png", RESOURCE_TYPE_SHIT_3, 30, 30)
+	registerScaledResourceFromFile("assets/shit-boom.png", RESOURCE_TYPE_SHIT_BOOM, 50, 50)
 
 	// bug
-	registerScaledNonTileResource("assets/bug-0.png", RESOURCE_TYPE_BUG_0, 30, 30)
-	registerScaledNonTileResource("assets/bug-1.png", RESOURCE_TYPE_BUG_1, 30, 30)
-	registerScaledNonTileResource("assets/bug-2.png", RESOURCE_TYPE_BUG_2, 30, 30)
-	registerScaledNonTileResource("assets/bug-3.png", RESOURCE_TYPE_BUG_3, 30, 30)
-	registerScaledNonTileResource("assets/bug-boom.png", RESOURCE_TYPE_BUG_BOOM, 50, 50)
+	registerScaledResourceFromFile("assets/bug-0.png", RESOURCE_TYPE_BUG_0, 30, 30)
+	registerScaledResourceFromFile("assets/bug-1.png", RESOURCE_TYPE_BUG_1, 30, 30)
+	registerScaledResourceFromFile("assets/bug-2.png", RESOURCE_TYPE_BUG_2, 30, 30)
+	registerScaledResourceFromFile("assets/bug-3.png", RESOURCE_TYPE_BUG_3, 30, 30)
+	registerScaledResourceFromFile("assets/bug-boom.png", RESOURCE_TYPE_BUG_BOOM, 50, 50)
 
 	// eater flower
-	registerScaledNonTileResource("assets/eater-flower-0.png", RESOURCE_TYPE_EATER_FLOWER_0, 52, 75)
-	registerScaledNonTileResource("assets/eater-flower-1.png", RESOURCE_TYPE_EATER_FLOWER_1, 52, 75)
+	registerScaledResourceFromFile("assets/eater-flower-0.png", RESOURCE_TYPE_EATER_FLOWER_0, 52, 75)
+	registerScaledResourceFromFile("assets/eater-flower-1.png", RESOURCE_TYPE_EATER_FLOWER_1, 52, 75)
 
 	// shine effect
-	registerNonTileResource("assets/shine-0.png", RESOURCE_TYPE_SHINE_0)
-	registerNonTileResource("assets/shine-1.png", RESOURCE_TYPE_SHINE_1)
-	registerNonTileResource("assets/shine-2.png", RESOURCE_TYPE_SHINE_2)
+	registerResourceFromFile("assets/shine-0.png", RESOURCE_TYPE_SHINE_0)
+	registerResourceFromFile("assets/shine-1.png", RESOURCE_TYPE_SHINE_1)
+	registerResourceFromFile("assets/shine-2.png", RESOURCE_TYPE_SHINE_2)
 
 	// bang
-	registerScaledNonTileResource("assets/bang.png", RESOURCE_TYPE_BANG, 50, 50)
+	registerScaledResourceFromFile("assets/bang.png", RESOURCE_TYPE_BANG, 50, 50)
 
 	// black screen
-	registerScaledNonTileResource("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
+	registerScaledResourceFromFile("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
 
 	// register tortoise faced resource pack
 	files, err := ioutil.ReadDir("assets/faces")
