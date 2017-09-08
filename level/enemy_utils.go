@@ -127,6 +127,10 @@ func newCanSay(sentences []string) canSay {
 }
 
 func (cs *canSay) say(ticks uint32, level *Level, minRGB, maxRGB int, getSentencePosFunc func() vector.Pos) {
+	if len(cs.sentences) == 0 {
+		return
+	}
+
 	randColor := sdl.Color{
 		uint8(rand.Intn(maxRGB-minRGB) + minRGB),
 		uint8(rand.Intn(maxRGB-minRGB) + minRGB),

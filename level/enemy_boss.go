@@ -12,14 +12,17 @@ import (
 )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Boss A
+// Basic Boss
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var _ Enemy = &bossA{}
+var _ Enemy = &basicBoss{}
 
-const bossAInitHP = 1000
+var (
+	hpColorRed    = sdl.Color{255, 0, 0, 255}
+	hpColorPurple = sdl.Color{156, 54, 181, 255}
+)
 
-type bossA struct {
+type basicBoss struct {
 	basicEnemy
 	canSay
 
@@ -32,41 +35,54 @@ type bossA struct {
 	levelRect     sdl.Rect
 	lastTicks     uint32
 	velocity      vector.Vec2D
+	maxHP         int
 	hp            int
+	hpColor       sdl.Color
+
+	extraUpdateActions func(b *basicBoss, level *Level, ticks uint32)
 }
 
-func NewBossA(startPos vector.Pos) *bossA {
-	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_0)
-	return &bossA{
-		canSay:        newCanSay(bossASentences),
-		resLeft0:      resLeft0,
-		resLeft1:      graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_1),
-		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_0),
-		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_1),
-		currRes:       resLeft0,
-		isFacingRight: false,
-		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
-		velocity:      vector.Vec2D{-80, 0},
-		hp:            bossAInitHP,
+func NewBasicBoss(
+	startPos vector.Pos,
+	resLeft0, resLeft1, resRight0, resRight1 graphic.Resource,
+	initHP int,
+	hpColor sdl.Color,
+	sentences []string,
+	extraUpdateActions func(*basicBoss, *Level, uint32)) *basicBoss {
+
+	return &basicBoss{
+		canSay:             newCanSay(sentences),
+		resLeft0:           resLeft0,
+		resLeft1:           resLeft1,
+		resRight0:          resRight0,
+		resRight1:          resRight1,
+		currRes:            resLeft0,
+		isFacingRight:      false,
+		levelRect:          sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
+		velocity:           vector.Vec2D{-80, 0},
+		maxHP:              initHP,
+		hp:                 initHP,
+		hpColor:            hpColor,
+		extraUpdateActions: extraUpdateActions,
 	}
 }
 
-func (b *bossA) GetRect() sdl.Rect {
+func (b *basicBoss) GetRect() sdl.Rect {
 	return b.levelRect
 }
 
-func (b *bossA) GetZIndex() int {
+func (b *basicBoss) GetZIndex() int {
 	return ZINDEX_1
 }
 
-func (b *bossA) getSentencePos() vector.Pos {
+func (b *basicBoss) getSentencePos() vector.Pos {
 	return vector.Pos{
 		X: b.levelRect.X - 30,
 		Y: b.levelRect.Y - 70,
 	}
 }
 
-func (b *bossA) Update(ticks uint32, level *Level) {
+func (b *basicBoss) Update(ticks uint32, level *Level) {
 	if b.lastTicks == 0 {
 		b.lastTicks = ticks
 		return
@@ -80,6 +96,124 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 	}
 	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
 
+	// execute extra actions
+	if b.extraUpdateActions != nil {
+		b.extraUpdateActions(b, level, ticks)
+	}
+
+	// Randomly change direction
+	changeDirectionRandomly(100, &b.isFacingRight, &b.velocity.X)
+
+	b.updateResource(ticks)
+
+	b.lastTicks = ticks
+}
+
+func (b *basicBoss) Draw(camPos vector.Pos) {
+	graphic.DrawResource(b.currRes, b.levelRect, camPos)
+
+	// Draw HP
+	outerBox := sdl.Rect{
+		b.levelRect.X,
+		b.levelRect.Y - 20,
+		b.levelRect.W,
+		10,
+	}
+	innerBox := sdl.Rect{
+		b.levelRect.X + 1,
+		b.levelRect.Y - 19,
+		(b.levelRect.W - 2) * int32(b.hp) / int32(b.maxHP),
+		8,
+	}
+	graphic.DrawRect(outerBox, camPos, 0, 0, 0, 255)
+	graphic.FillRect(innerBox, camPos, b.hpColor.R, b.hpColor.G, b.hpColor.B, b.hpColor.A)
+}
+
+func (b *basicBoss) updateResource(ticks uint32) {
+	if ticks%1000 < 500 {
+		if b.isFacingRight {
+			b.currRes = b.resRight0
+		} else {
+			b.currRes = b.resLeft0
+		}
+	} else {
+		if b.isFacingRight {
+			b.currRes = b.resRight1
+		} else {
+			b.currRes = b.resLeft1
+		}
+	}
+}
+
+func (b *basicBoss) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	switch direction {
+	case HIT_FROM_TOP_W_INTENT:
+		// bounce the hero up
+		h.velocity.Y = -1200
+		audio.PlaySound(audio.SOUND_STOMP)
+
+	default:
+		// hero is hurt
+		hurtHeroIfIntersectEnoughEx(h, b, level, 0.1)
+	}
+}
+
+func (b *basicBoss) hitByBottomTile(level *Level, ticks uint32) {
+	// Do Nothing
+}
+
+func (boss *basicBoss) hitByBullet(blt bullet, level *Level, ticks uint32) {
+	boss.hp -= blt.GetDamage()
+	if boss.hp <= 0 {
+		boss.isDead = true
+		var dieToRight bool
+		if blt.GetRect().X < boss.levelRect.X {
+			dieToRight = true
+		}
+
+		// if die, show effects & play sound
+		boomRes := graphic.Res(graphic.RESOURCE_TYPE_BOSS_BOOM)
+		level.AddEffect(NewShowOnceEffect(
+			boomRes, vector.Vec2D{boss.levelRect.X, boss.levelRect.Y}, sdl.GetTicks(), 1000))
+		level.AddEffect(NewDeadDownEffect(boss.currRes, dieToRight, boss.levelRect, ticks))
+		// play multiple times for better effect
+		audio.PlaySound(audio.SOUND_KO)
+		audio.PlaySound(audio.SOUND_KO)
+		audio.PlaySound(audio.SOUND_KO)
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Boss A
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var _ Enemy = &bossA{}
+
+const bossAInitHP = 1000
+
+type bossA struct {
+	*basicBoss
+}
+
+func NewBossA(startPos vector.Pos) *bossA {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_1),
+		bossAInitHP,
+		hpColorPurple,
+		bossASentences,
+		bossAExtraUpdateActions,
+	)
+	return &bossA{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossAExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 	// Generate new self randomly
 	if rand.Intn(1900) == 7 {
 		pos := vector.Pos{
@@ -101,87 +235,6 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
-
-	// Randomly change direction
-	changeDirectionRandomly(100, &b.isFacingRight, &b.velocity.X)
-
-	b.updateResource(ticks)
-
-	b.lastTicks = ticks
-}
-
-func (b *bossA) Draw(camPos vector.Pos) {
-	graphic.DrawResource(b.currRes, b.levelRect, camPos)
-
-	// Draw HP
-	outerBox := sdl.Rect{
-		b.levelRect.X,
-		b.levelRect.Y - 20,
-		b.levelRect.W,
-		10,
-	}
-	innerBox := sdl.Rect{
-		b.levelRect.X + 1,
-		b.levelRect.Y - 19,
-		(b.levelRect.W - 2) * int32(b.hp) / bossAInitHP,
-		8,
-	}
-	graphic.DrawRect(outerBox, camPos, 0, 0, 0, 255)
-	graphic.FillRect(innerBox, camPos, 156, 54, 181, 255)
-}
-
-func (b *bossA) updateResource(ticks uint32) {
-	if ticks%1000 < 500 {
-		if b.isFacingRight {
-			b.currRes = b.resRight0
-		} else {
-			b.currRes = b.resLeft0
-		}
-	} else {
-		if b.isFacingRight {
-			b.currRes = b.resRight1
-		} else {
-			b.currRes = b.resLeft1
-		}
-	}
-}
-
-func (b *bossA) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
-	switch direction {
-	case HIT_FROM_TOP_W_INTENT:
-		// bounce the hero up
-		h.velocity.Y = -1200
-		audio.PlaySound(audio.SOUND_STOMP)
-
-	default:
-		// hero is hurt
-		hurtHeroIfIntersectEnoughEx(h, b, level, 0.1)
-	}
-}
-
-func (b *bossA) hitByBottomTile(level *Level, ticks uint32) {
-	// Do Nothing
-}
-
-func (boss *bossA) hitByBullet(blt bullet, level *Level, ticks uint32) {
-	boss.hp -= blt.GetDamage()
-	if boss.hp <= 0 {
-		boss.isDead = true
-		var dieToRight bool
-		if blt.GetRect().X < boss.levelRect.X {
-			dieToRight = true
-		}
-
-		// if die, show effects & play sound
-		boomRes := graphic.Res(graphic.RESOURCE_TYPE_BOSS_BOOM)
-		level.AddEffect(NewShowOnceEffect(
-			boomRes, vector.Vec2D{boss.levelRect.X, boss.levelRect.Y}, sdl.GetTicks(), 1000))
-		level.AddEffect(NewDeadDownEffect(boss.currRes, dieToRight, boss.levelRect, ticks))
-		// play multiple times for better effect
-		audio.PlaySound(audio.SOUND_KO)
-		audio.PlaySound(audio.SOUND_KO)
-		audio.PlaySound(audio.SOUND_KO)
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,19 +246,7 @@ var _ Enemy = &bossB{}
 const bossBInitHP = 200
 
 type bossB struct {
-	basicEnemy
-	canSay
-
-	resLeft0      graphic.Resource
-	resLeft1      graphic.Resource
-	resRight0     graphic.Resource
-	resRight1     graphic.Resource
-	currRes       graphic.Resource
-	isFacingRight bool
-	levelRect     sdl.Rect
-	lastTicks     uint32
-	velocity      vector.Vec2D
-	hp            int
+	*basicBoss
 }
 
 func NewRandomBossB(startPos vector.Pos) *bossB {
@@ -220,50 +261,23 @@ func NewBossB(startPos vector.Pos, userID string) *bossB {
 	}
 
 	resPack := graphic.GetBossBResPack(userID)
-	resLeft0 := resPack.ResLeft0
+	basicBoss := NewBasicBoss(
+		startPos,
+		resPack.ResLeft0,
+		resPack.ResLeft1,
+		resPack.ResRight0,
+		resPack.ResRight1,
+		bossBInitHP,
+		hpColorRed,
+		sentences,
+		bossBExtraUpdateActions,
+	)
 	return &bossB{
-		canSay:        newCanSay(sentences),
-		resLeft0:      resLeft0,
-		resLeft1:      resPack.ResLeft1,
-		resRight0:     resPack.ResRight0,
-		resRight1:     resPack.ResRight1,
-		currRes:       resLeft0,
-		isFacingRight: false,
-		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
-		velocity:      vector.Vec2D{-80, 0},
-		hp:            bossBInitHP,
+		basicBoss: basicBoss,
 	}
 }
 
-func (b *bossB) GetRect() sdl.Rect {
-	return b.levelRect
-}
-
-func (b *bossB) GetZIndex() int {
-	return ZINDEX_1
-}
-
-func (b *bossB) getSentencePos() vector.Pos {
-	return vector.Pos{
-		X: b.levelRect.X - 30,
-		Y: b.levelRect.Y - 70,
-	}
-}
-
-func (b *bossB) Update(ticks uint32, level *Level) {
-	if b.lastTicks == 0 {
-		b.lastTicks = ticks
-		return
-	}
-
-	onHitLeft := func() {
-		b.isFacingRight = true
-	}
-	onHitRight := func() {
-		b.isFacingRight = false
-	}
-	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
-
+func bossBExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 	// Generate enemies randomly
 	if rand.Intn(150) == 7 {
 		level.AddEnemy(NewRandomJupiterTortoiseEnemyEx(
@@ -272,87 +286,6 @@ func (b *bossB) Update(ticks uint32, level *Level) {
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
-
-	// Randomly change direction
-	changeDirectionRandomly(100, &b.isFacingRight, &b.velocity.X)
-
-	b.updateResource(ticks)
-
-	b.lastTicks = ticks
-}
-
-func (b *bossB) Draw(camPos vector.Pos) {
-	graphic.DrawResource(b.currRes, b.levelRect, camPos)
-
-	// Draw HP
-	outerBox := sdl.Rect{
-		b.levelRect.X,
-		b.levelRect.Y - 20,
-		b.levelRect.W,
-		10,
-	}
-	innerBox := sdl.Rect{
-		b.levelRect.X + 1,
-		b.levelRect.Y - 19,
-		(b.levelRect.W - 2) * int32(b.hp) / bossBInitHP,
-		8,
-	}
-	graphic.DrawRect(outerBox, camPos, 0, 0, 0, 255)
-	graphic.FillRect(innerBox, camPos, 255, 0, 0, 255)
-}
-
-func (b *bossB) updateResource(ticks uint32) {
-	if ticks%1000 < 500 {
-		if b.isFacingRight {
-			b.currRes = b.resRight0
-		} else {
-			b.currRes = b.resLeft0
-		}
-	} else {
-		if b.isFacingRight {
-			b.currRes = b.resRight1
-		} else {
-			b.currRes = b.resLeft1
-		}
-	}
-}
-
-func (b *bossB) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
-	switch direction {
-	case HIT_FROM_TOP_W_INTENT:
-		// bounce the hero up
-		h.velocity.Y = -1200
-		audio.PlaySound(audio.SOUND_STOMP)
-
-	default:
-		// hero is hurt
-		hurtHeroIfIntersectEnoughEx(h, b, level, 0.1)
-	}
-}
-
-func (b *bossB) hitByBottomTile(level *Level, ticks uint32) {
-	// Do Nothing
-}
-
-func (boss *bossB) hitByBullet(blt bullet, level *Level, ticks uint32) {
-	boss.hp -= blt.GetDamage()
-	if boss.hp <= 0 {
-		boss.isDead = true
-		var dieToRight bool
-		if blt.GetRect().X < boss.levelRect.X {
-			dieToRight = true
-		}
-
-		// if die, show effects & play sound
-		boomRes := graphic.Res(graphic.RESOURCE_TYPE_BOSS_BOOM)
-		level.AddEffect(NewShowOnceEffect(
-			boomRes, vector.Vec2D{boss.levelRect.X, boss.levelRect.Y}, sdl.GetTicks(), 1000))
-		level.AddEffect(NewDeadDownEffect(boss.currRes, dieToRight, boss.levelRect, ticks))
-		// play multiple times for better effect
-		audio.PlaySound(audio.SOUND_KO)
-		audio.PlaySound(audio.SOUND_KO)
-		audio.PlaySound(audio.SOUND_KO)
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
