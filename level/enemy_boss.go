@@ -285,7 +285,7 @@ func NewBossB(startPos vector.Pos, userID string) *bossB {
 func bossBExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 	// Generate enemies randomly
 	if rand.Intn(150) == 7 {
-		level.AddEnemy(NewRandomJupiterTortoiseEnemyEx(
+		level.AddEnemy(NewRandomICTortoiseEnemyEx(
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 150))
 	}
 

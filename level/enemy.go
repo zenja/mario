@@ -185,6 +185,35 @@ type tortoiseEnemy struct {
 	bumpStartTicks   uint32 // when tortoise start bumping
 }
 
+var grdsICUserIDs = []string{
+	"xwang16",
+	"yundai",
+	"xchen",
+	"chufang",
+	"kunfu",
+	//"shxia",
+	"nalin",
+	"wzhao3",
+	"shuoyuwang",
+	"metang",
+	"honshi",
+	"lidge",
+	"cchengcheng",
+	"jiaqizhang",
+	"johzhu",
+	"yingyyu",
+	"yuche",
+	"jchen2",
+	// managers
+	"huayin",
+	"chran",
+	"fchen5",
+	"xhao",
+	"qingyli",
+	"xinhwang",
+	"wedeng",
+}
+
 var jupiterUserIDs = []string{
 	"xwang16",
 	"yundai",
@@ -210,6 +239,16 @@ func NewRandomJupiterTortoiseEnemy(startPos vector.Pos) Enemy {
 
 func NewRandomJupiterTortoiseEnemyEx(startPos vector.Pos, faceRight bool, maxSpeedUp int) Enemy {
 	uid := jupiterUserIDs[rand.Intn(len(jupiterUserIDs))]
+	return NewTortoiseEnemyRandomSpeedUp(startPos, uid, faceRight, maxSpeedUp)
+}
+
+func NewRandomICTortoiseEnemy(startPos vector.Pos) Enemy {
+	uid := grdsICUserIDs[rand.Intn(len(grdsICUserIDs))]
+	return NewTortoiseEnemy(startPos, uid)
+}
+
+func NewRandomICTortoiseEnemyEx(startPos vector.Pos, faceRight bool, maxSpeedUp int) Enemy {
+	uid := grdsICUserIDs[rand.Intn(len(grdsICUserIDs))]
 	return NewTortoiseEnemyRandomSpeedUp(startPos, uid, faceRight, maxSpeedUp)
 }
 

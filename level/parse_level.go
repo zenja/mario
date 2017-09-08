@@ -270,7 +270,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 
 			// Enemy 2: tortoise enemy
 			case '2':
-				enemies = append(enemies, NewRandomJupiterTortoiseEnemy(currentPos))
+				enemies = append(enemies, NewRandomICTortoiseEnemy(currentPos))
 
 			// Enemy 3: tortoise enemy: richard direct report
 			case '3':
