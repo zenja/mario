@@ -3,6 +3,8 @@ package level
 import (
 	"math/rand"
 
+	"log"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/audio"
 	"github.com/zenja/mario/graphic"
@@ -16,14 +18,6 @@ import (
 var _ Enemy = &bossA{}
 
 const bossAInitHP = 1000
-
-var bossASentences []string = []string{
-	"I have a dream!",
-	"Red lobster!!",
-	"Let's extend the meeting...",
-	"I will ask Peter to fire you...",
-	"I love my work!!",
-}
 
 type bossA struct {
 	basicEnemy
@@ -86,16 +80,6 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 	}
 	enemySimpleMoveEx(ticks, b.lastTicks, &b.velocity, &b.levelRect, level, onHitLeft, onHitRight)
 
-	// Generate enemies randomly
-	if rand.Intn(130) == 7 {
-		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
-			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
-		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
-			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
-		level.AddEnemy(NewRandomRichardLeadershipTortoiseEnemyEx(
-			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 100))
-	}
-
 	// Generate new self randomly
 	if rand.Intn(1900) == 7 {
 		pos := vector.Pos{
@@ -112,7 +96,7 @@ func (b *bossA) Update(ticks uint32, level *Level) {
 			X: b.levelRect.X + 2*b.velocity.X,
 			Y: b.levelRect.Y,
 		}
-		level.AddEnemy(NewBossB(pos))
+		level.AddEnemy(NewRandomBossB(pos))
 	}
 
 	// Keep showing random sentences
@@ -201,26 +185,12 @@ func (boss *bossA) hitByBullet(blt bullet, level *Level, ticks uint32) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Boss B
+// Boss B: Richard's direct reports
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var _ Enemy = &bossB{}
 
 const bossBInitHP = 200
-
-var bossBSentences []string = []string{
-	"I am enjoying my sabbatical",
-	"Don't bother me...",
-	"No zuo no die why you try?!",
-	"I have 25 meetings today :D",
-	"My next meeting is in 3 minutes",
-	"Have you found the bug??",
-	"I really need to fire you...",
-	"Don't be shy",
-	"Let's schedule a meeting",
-	"Your PPT sucks...",
-	"Your code works like a shit...",
-}
 
 type bossB struct {
 	basicEnemy
@@ -238,14 +208,25 @@ type bossB struct {
 	hp            int
 }
 
-func NewBossB(startPos vector.Pos) *bossB {
-	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_B_LEFT_0)
+func NewRandomBossB(startPos vector.Pos) *bossB {
+	userID := richardLeadershipUserIDs[rand.Intn(len(richardLeadershipUserIDs))]
+	return NewBossB(startPos, userID)
+}
+
+func NewBossB(startPos vector.Pos, userID string) *bossB {
+	sentences, ok := bossBSentenceMap[userID]
+	if !ok {
+		log.Fatalf("Boss B does not support user %s", userID)
+	}
+
+	resPack := graphic.GetBossBResPack(userID)
+	resLeft0 := resPack.ResLeft0
 	return &bossB{
-		canSay:        newCanSay(bossBSentences),
+		canSay:        newCanSay(sentences),
 		resLeft0:      resLeft0,
-		resLeft1:      graphic.Res(graphic.RESOURCE_TYPE_BOSS_B_LEFT_1),
-		resRight0:     graphic.Res(graphic.RESOURCE_TYPE_BOSS_B_RIGHT_0),
-		resRight1:     graphic.Res(graphic.RESOURCE_TYPE_BOSS_B_RIGHT_1),
+		resLeft1:      resPack.ResLeft1,
+		resRight0:     resPack.ResRight0,
+		resRight1:     resPack.ResRight1,
 		currRes:       resLeft0,
 		isFacingRight: false,
 		levelRect:     sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
@@ -372,4 +353,56 @@ func (boss *bossB) hitByBullet(blt bullet, level *Level, ticks uint32) {
 		audio.PlaySound(audio.SOUND_KO)
 		audio.PlaySound(audio.SOUND_KO)
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Boss Sentences
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var bossASentences []string = []string{
+	"I have a dream!",
+	"Red lobster!!",
+	"Let's extend the meeting...",
+	"I will ask Peter to fire you...",
+	"I love my work!!",
+}
+
+var chranSentences []string = []string{
+	"I am enjoying my sabbatical",
+	"Don't bother me...",
+	"I have 25 meetings today :D",
+	"My next meeting is in 3 minutes",
+	"Have you found the bug??",
+	"I really need to fire you...",
+	"Don't be shy",
+	"Let's schedule a meeting",
+	"Your PPT sucks...",
+	"Your code works like a shit...",
+	"Let me help Richard!",
+}
+
+var fchen5Sentences []string = []string{
+	"Oh no, there is a variable shift...",
+	"No worries I will handle it",
+	"Have you tried our variable catalogue?",
+	"Let me help Richard!",
+}
+
+var xhaoSentences []string = []string{
+	"Let me help Richard!",
+	"Talk is cheap, show me the code",
+}
+
+var qingyliSentences []string = []string{
+	"Hope you will enjoy today's pizza!",
+	"I really enjoy this innovation day!",
+	"Let me help Richard!",
+}
+
+// user id -> sentences slide
+var bossBSentenceMap map[string][]string = map[string][]string{
+	"chran":   chranSentences,
+	"fchen5":  fchen5Sentences,
+	"xhao":    xhaoSentences,
+	"qingyli": qingyliSentences,
 }

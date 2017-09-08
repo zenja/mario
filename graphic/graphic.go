@@ -24,18 +24,7 @@ var (
 	window   *sdl.Window
 	renderer *sdl.Renderer
 	font     *ttf.Font
-
-	resourceRegistry map[ResourceID]Resource = make(map[ResourceID]Resource)
 )
-
-var tortoiseResPackRegistry map[string]*TortoiseResPack = make(map[string]*TortoiseResPack)
-
-type TortoiseResPack struct {
-	ResLeft0  Resource
-	ResLeft1  Resource
-	ResRight0 Resource
-	ResRight1 Resource
-}
 
 func Init() {
 	var err error
@@ -68,10 +57,6 @@ func Init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func GetTortoiseResPack(userID string) *TortoiseResPack {
-	return tortoiseResPackRegistry[userID]
 }
 
 func DestroyAndQuit() {

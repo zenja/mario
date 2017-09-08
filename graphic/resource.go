@@ -3,10 +3,6 @@ package graphic
 import (
 	"log"
 
-	"io/ioutil"
-
-	"strings"
-
 	"github.com/pkg/errors"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/sdl_image"
@@ -22,6 +18,8 @@ type Resource interface {
 	GetH() int32
 	SetResourceAlpha(alpha uint8)
 }
+
+var resourceRegistry map[ResourceID]Resource = make(map[ResourceID]Resource)
 
 // Resource IDs
 const (
@@ -487,24 +485,6 @@ func RenderResource(resource Resource, srcRect *sdl.Rect, dstRect *sdl.Rect) {
 	renderer.Copy(resource.GetTexture(), srcRect, dstRect)
 }
 
-func registerTortoiseResPace(userID string) {
-	resRight0 := getFacedResource("assets/tortoise-red-right-0.png", userID,
-		tortoise_walking_width, tortoise_walking_height, 35, 45, 15, 0, 5, false, false)
-	resRight1 := getFacedResource("assets/tortoise-red-right-1.png", userID,
-		tortoise_walking_width, tortoise_walking_height, 35, 45, 15, 0, -5, false, false)
-	resLeft0 := getFacedResource("assets/tortoise-red-right-0.png", userID,
-		tortoise_walking_width, tortoise_walking_height, 35, 45, 0, 0, 5, true, false)
-	resLeft1 := getFacedResource("assets/tortoise-red-right-1.png", userID,
-		tortoise_walking_width, tortoise_walking_height, 35, 45, 0, 0, -5, true, false)
-	resPack := &TortoiseResPack{
-		ResLeft0:  resLeft0,
-		ResLeft1:  resLeft1,
-		ResRight0: resRight0,
-		ResRight1: resRight1,
-	}
-	tortoiseResPackRegistry[userID] = resPack
-}
-
 func LoadAllResources(heroUserID string) {
 	// -------------------------------
 	// load tile resources
@@ -701,17 +681,7 @@ func LoadAllResources(heroUserID string) {
 	// black screen
 	registerScaledResourceFromFile("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-	// register tortoise faced resource pack
-	files, err := ioutil.ReadDir("assets/faces")
-	println(len(files))
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, f := range files {
-		if f.IsDir() {
-			continue
-		}
-		userID := strings.Split(f.Name(), ".")[0]
-		registerTortoiseResPace(userID)
-	}
+	// register resource packs
+	registerAllTortoiseResPack()
+	registerAllBossBResPack()
 }
