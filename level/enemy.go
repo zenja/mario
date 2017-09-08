@@ -478,10 +478,6 @@ func (ef *eaterFlower) GetRect() sdl.Rect {
 	return ef.levelRect
 }
 
-func (ef *eaterFlower) GetZIndex() int {
-	return ZINDEX_1
-}
-
 func (ef *eaterFlower) Update(ticks uint32, level *Level) {
 	if ef.lastTicks == 0 {
 		ef.lastTicks = ticks
@@ -754,10 +750,6 @@ func (ce *coinEnemy) GetRect() sdl.Rect {
 	return ce.levelRect
 }
 
-func (ce *coinEnemy) GetZIndex() int {
-	return ZINDEX_1
-}
-
 func (ce *coinEnemy) Update(ticks uint32, level *Level) {
 	ce.animationTileObj.Update(ticks, level)
 }
@@ -778,4 +770,161 @@ func (ce *coinEnemy) hitByBottomTile(level *Level, ticks uint32) {
 
 func (ce *coinEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
 	// Do nothing
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// bulletEnemy
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var _ Enemy = &bulletEnemy{}
+
+type bulletEnemy struct {
+	*animationTileObj
+	basicEnemy
+
+	velocity   vector.Vec2D
+	gravity    vector.Vec2D
+	durationMs uint32
+
+	lastTicks  uint32
+	startTicks uint32
+}
+
+func NewBulletEnemy(
+	startPos vector.Pos,
+	reses []graphic.ResourceID,
+	initVel vector.Vec2D,
+	gravity vector.Vec2D,
+	durationMs uint32) *bulletEnemy {
+
+	return &bulletEnemy{
+		animationTileObj: NewAnimationObject(startPos, reses, 200, ZINDEX_4),
+		velocity:         initVel,
+		gravity:          gravity,
+		durationMs:       durationMs,
+	}
+}
+
+func NewFireBallEnemy(startPos vector.Pos, initVel vector.Vec2D) *bulletEnemy {
+	reses := []graphic.ResourceID{
+		graphic.RESOURCE_TYPE_FIREBALL_0,
+		graphic.RESOURCE_TYPE_FIREBALL_1,
+		graphic.RESOURCE_TYPE_FIREBALL_2,
+		graphic.RESOURCE_TYPE_FIREBALL_3,
+	}
+	return NewBulletEnemy(startPos, reses, initVel, vector.Vec2D{}, 5000)
+}
+
+func NewSwordEnemy(startPos vector.Pos, initVel vector.Vec2D) *bulletEnemy {
+	reses := []graphic.ResourceID{
+		graphic.RESOURCE_TYPE_SWORD_0,
+		graphic.RESOURCE_TYPE_SWORD_1,
+		graphic.RESOURCE_TYPE_SWORD_2,
+		graphic.RESOURCE_TYPE_SWORD_3,
+	}
+	return NewBulletEnemy(startPos, reses, initVel, vector.Vec2D{}, 5000)
+}
+
+func NewAppleEnemy(startPos vector.Pos, initVel vector.Vec2D) *bulletEnemy {
+	reses := []graphic.ResourceID{
+		graphic.RESOURCE_TYPE_APPLE_0,
+		graphic.RESOURCE_TYPE_APPLE_1,
+		graphic.RESOURCE_TYPE_APPLE_2,
+		graphic.RESOURCE_TYPE_APPLE_3,
+	}
+	return NewBulletEnemy(startPos, reses, initVel, vector.Vec2D{}, 5000)
+}
+
+func NewCherryEnemy(startPos vector.Pos, initVel vector.Vec2D) *bulletEnemy {
+	reses := []graphic.ResourceID{
+		graphic.RESOURCE_TYPE_CHERRY_0,
+		graphic.RESOURCE_TYPE_CHERRY_1,
+		graphic.RESOURCE_TYPE_CHERRY_2,
+		graphic.RESOURCE_TYPE_CHERRY_3,
+	}
+	return NewBulletEnemy(startPos, reses, initVel, vector.Vec2D{}, 5000)
+}
+
+func NewMoonEnemy(startPos vector.Pos, initVel vector.Vec2D) *bulletEnemy {
+	reses := []graphic.ResourceID{
+		graphic.RESOURCE_TYPE_MOON_0,
+		graphic.RESOURCE_TYPE_MOON_1,
+		graphic.RESOURCE_TYPE_MOON_2,
+		graphic.RESOURCE_TYPE_MOON_3,
+	}
+	return NewBulletEnemy(startPos, reses, initVel, vector.Vec2D{}, 5000)
+}
+
+func NewAxeEnemy(startPos vector.Pos, initVel vector.Vec2D) *bulletEnemy {
+	reses := []graphic.ResourceID{
+		graphic.RESOURCE_TYPE_AXE_0,
+		graphic.RESOURCE_TYPE_AXE_1,
+		graphic.RESOURCE_TYPE_AXE_2,
+		graphic.RESOURCE_TYPE_AXE_3,
+	}
+	return NewBulletEnemy(startPos, reses, initVel, vector.Vec2D{}, 5000)
+}
+
+func NewSkullEnemy(startPos vector.Pos, initVel vector.Vec2D) *bulletEnemy {
+	reses := []graphic.ResourceID{
+		graphic.RESOURCE_TYPE_SKULL_0,
+		graphic.RESOURCE_TYPE_SKULL_1,
+		graphic.RESOURCE_TYPE_SKULL_2,
+		graphic.RESOURCE_TYPE_SKULL_3,
+	}
+	return NewBulletEnemy(startPos, reses, initVel, vector.Vec2D{}, 5000)
+}
+
+func (be *bulletEnemy) GetRect() sdl.Rect {
+	return be.levelRect
+}
+
+func (be *bulletEnemy) Update(ticks uint32, level *Level) {
+	if be.lastTicks == 0 {
+		be.lastTicks = ticks
+	}
+
+	if be.startTicks == 0 {
+		be.startTicks = ticks
+	}
+
+	if ticks-be.startTicks >= be.durationMs {
+		be.Kill()
+	}
+
+	be.animationTileObj.Update(ticks, level)
+
+	bulletEnemyMove(ticks, be.lastTicks, &be.velocity, be.gravity, &be.levelRect)
+
+	be.lastTicks = ticks
+}
+
+func (be *bulletEnemy) Draw(camPos vector.Pos) {
+	be.animationTileObj.Draw(camPos)
+}
+
+func (be *bulletEnemy) hitByHero(h *Hero, direction hitDirection, level *Level, ticks uint32) {
+	hurtHeroIfIntersectEnoughEx(h, be, level, 0.5)
+}
+
+func (be *bulletEnemy) hitByBottomTile(level *Level, ticks uint32) {
+	// Do Nothing
+}
+
+func (be *bulletEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
+	// Do nothing
+}
+
+func bulletEnemyMove(
+	ticks uint32,
+	lastTicks uint32,
+	vel *vector.Vec2D,
+	gravity vector.Vec2D,
+	levelRect *sdl.Rect) {
+
+	vel.Add(gravity)
+	maxVel := vector.Vec2D{int32(graphic.TILE_SIZE * 30 / 100), int32(graphic.TILE_SIZE * 30 / 100)}
+	velocityStep := CalcVelocityStep(*vel, ticks, lastTicks, &maxVel)
+	levelRect.X += velocityStep.X
+	levelRect.Y += velocityStep.Y
 }

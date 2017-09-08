@@ -150,6 +150,41 @@ const (
 	RESOURCE_TYPE_SHINE_1
 	RESOURCE_TYPE_SHINE_2
 
+	RESOURCE_TYPE_SWORD_0
+	RESOURCE_TYPE_SWORD_1
+	RESOURCE_TYPE_SWORD_2
+	RESOURCE_TYPE_SWORD_3
+
+	RESOURCE_TYPE_ICEBALL_0
+	RESOURCE_TYPE_ICEBALL_1
+	RESOURCE_TYPE_ICEBALL_2
+	RESOURCE_TYPE_ICEBALL_3
+
+	RESOURCE_TYPE_APPLE_0
+	RESOURCE_TYPE_APPLE_1
+	RESOURCE_TYPE_APPLE_2
+	RESOURCE_TYPE_APPLE_3
+
+	RESOURCE_TYPE_CHERRY_0
+	RESOURCE_TYPE_CHERRY_1
+	RESOURCE_TYPE_CHERRY_2
+	RESOURCE_TYPE_CHERRY_3
+
+	RESOURCE_TYPE_MOON_0
+	RESOURCE_TYPE_MOON_1
+	RESOURCE_TYPE_MOON_2
+	RESOURCE_TYPE_MOON_3
+
+	RESOURCE_TYPE_AXE_0
+	RESOURCE_TYPE_AXE_1
+	RESOURCE_TYPE_AXE_2
+	RESOURCE_TYPE_AXE_3
+
+	RESOURCE_TYPE_SKULL_0
+	RESOURCE_TYPE_SKULL_1
+	RESOURCE_TYPE_SKULL_2
+	RESOURCE_TYPE_SKULL_3
+
 	RESOURCE_TYPE_UPGRADE_FLOWER
 
 	RESOURCE_TYPE_EATER_FLOWER_0
@@ -755,6 +790,48 @@ func LoadAllResources(heroUserID string) {
 
 	// black screen
 	registerScaledResourceFromFile("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
+
+	// sword
+	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_1, 30, 30, 90, false, false)
+	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_2, 30, 30, 180, false, false)
+	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_3, 30, 30, 270, false, false)
+
+	// iceball
+	registerResourceFromFileEx("assets/iceball.png", RESOURCE_TYPE_ICEBALL_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/iceball.png", RESOURCE_TYPE_ICEBALL_1, 30, 30, 90, false, false)
+	registerResourceFromFileEx("assets/iceball.png", RESOURCE_TYPE_ICEBALL_2, 30, 30, 180, false, false)
+	registerResourceFromFileEx("assets/iceball.png", RESOURCE_TYPE_ICEBALL_3, 30, 30, 270, false, false)
+
+	// apple
+	registerResourceFromFileEx("assets/apple.png", RESOURCE_TYPE_APPLE_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/apple.png", RESOURCE_TYPE_APPLE_1, 30, 30, 90, false, false)
+	registerResourceFromFileEx("assets/apple.png", RESOURCE_TYPE_APPLE_2, 30, 30, 180, false, false)
+	registerResourceFromFileEx("assets/apple.png", RESOURCE_TYPE_APPLE_3, 30, 30, 270, false, false)
+
+	// cherry
+	registerResourceFromFileEx("assets/cherry.png", RESOURCE_TYPE_CHERRY_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/cherry.png", RESOURCE_TYPE_CHERRY_1, 30, 30, 90, false, false)
+	registerResourceFromFileEx("assets/cherry.png", RESOURCE_TYPE_CHERRY_2, 30, 30, 180, false, false)
+	registerResourceFromFileEx("assets/cherry.png", RESOURCE_TYPE_CHERRY_3, 30, 30, 270, false, false)
+
+	// moon
+	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_1, 30, 30, 90, false, false)
+	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_2, 30, 30, 180, false, false)
+	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_3, 30, 30, 270, false, false)
+
+	// axe
+	registerResourceFromFileEx("assets/axe.png", RESOURCE_TYPE_AXE_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/axe.png", RESOURCE_TYPE_AXE_1, 30, 30, 90, false, false)
+	registerResourceFromFileEx("assets/axe.png", RESOURCE_TYPE_AXE_2, 30, 30, 180, false, false)
+	registerResourceFromFileEx("assets/axe.png", RESOURCE_TYPE_AXE_3, 30, 30, 270, false, false)
+
+	// skull
+	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_0, 30, 30, 0, false, false)
+	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_1, 30, 30, 90, false, false)
+	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_2, 30, 30, 180, false, false)
+	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_3, 30, 30, 270, false, false)
 
 	// register resource packs
 	registerAllTortoiseResPack()

@@ -1,6 +1,7 @@
 package level
 
 import (
+	"math"
 	"math/rand"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -110,6 +111,78 @@ func changeDirectionRandomly(randomness int, isFacingRight *bool, velX *int32) {
 	if rand.Intn(randomness) == 7 {
 		*isFacingRight = !(*isFacingRight)
 		*velX = -(*velX)
+	}
+}
+
+type bulletEnemyType int
+
+const (
+	BULLET_ENEMY_FIREBALL bulletEnemyType = iota
+	BULLET_ENEMY_SWORD
+	BULLET_ENEMY_APPLE
+	BULLET_ENEMY_CHERRY
+	BULLET_ENEMY_MOON
+	BULLET_ENEMY_AXE
+	BULLET_ENEMY_SKULL
+)
+
+func fireToHeroRandomly(randomness int, level *Level, self Enemy, t bulletEnemyType) {
+	if rand.Intn(randomness) != 7 {
+		return
+	}
+
+	pos := vector.Pos{
+		X: self.GetRect().X + self.GetRect().W/2,
+		Y: self.GetRect().Y + self.GetRect().H/2,
+	}
+
+	switch t {
+	case BULLET_ENEMY_FIREBALL:
+		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
+		e := NewFireBallEnemy(pos, vel)
+		level.AddEnemy(e)
+
+	case BULLET_ENEMY_SWORD:
+		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
+		e := NewSwordEnemy(pos, vel)
+		level.AddEnemy(e)
+
+	case BULLET_ENEMY_APPLE:
+		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
+		e := NewAppleEnemy(pos, vel)
+		level.AddEnemy(e)
+
+	case BULLET_ENEMY_CHERRY:
+		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
+		e := NewCherryEnemy(pos, vel)
+		level.AddEnemy(e)
+
+	case BULLET_ENEMY_MOON:
+		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
+		e := NewMoonEnemy(pos, vel)
+		level.AddEnemy(e)
+
+	case BULLET_ENEMY_AXE:
+		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
+		e := NewAxeEnemy(pos, vel)
+		level.AddEnemy(e)
+
+	case BULLET_ENEMY_SKULL:
+		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
+		e := NewSkullEnemy(pos, vel)
+		level.AddEnemy(e)
+	}
+}
+
+func calcBulletEnemyVel(heroRect sdl.Rect, bulletPos vector.Pos, finalVel float64) vector.Vec2D {
+	heroX := heroRect.X
+	heroY := heroRect.Y
+	deltaX := heroX - bulletPos.X
+	deltaY := heroY - bulletPos.Y
+	var scale float64 = finalVel / math.Sqrt(math.Pow(float64(deltaX), 2)+math.Pow(float64(deltaY), 2))
+	return vector.Vec2D{
+		X: int32(float64(deltaX) * scale),
+		Y: int32(float64(deltaY) * scale),
 	}
 }
 
