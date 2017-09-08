@@ -284,6 +284,30 @@ func BuildLevel(spec *LevelSpec) *Level {
 			case 'Y':
 				enemies = append(enemies, NewRandomBossB(currentPos))
 
+			// Boss C
+			case 'Z':
+				enemies = append(enemies, NewBossC(currentPos))
+
+			// Boss D
+			case 'x':
+				enemies = append(enemies, NewBossD(currentPos))
+
+			// Boss E
+			case 'y':
+				enemies = append(enemies, NewBossE(currentPos))
+
+			// Boss F
+			case 'z':
+				enemies = append(enemies, NewBossF(currentPos))
+
+			// Boss G
+			case 'S':
+				enemies = append(enemies, NewBossG(currentPos))
+
+			// Boss H
+			case 'T':
+				enemies = append(enemies, NewBossH(currentPos))
+
 			// Hero
 			case 'H':
 				if hero != nil {

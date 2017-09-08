@@ -196,8 +196,6 @@ func (boss *basicBoss) die(dieToRight bool, level *Level, ticks uint32) {
 // Boss A
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var _ Enemy = &bossA{}
-
 const bossAInitHP = 1000
 
 type bossA struct {
@@ -250,8 +248,6 @@ func bossAExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // Boss B: Richard's direct reports
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var _ Enemy = &bossB{}
-
 const bossBInitHP = 200
 
 type bossB struct {
@@ -293,6 +289,204 @@ func bossBExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 150))
 	}
 
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossC
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossCInitHP = 200
+
+type bossC struct {
+	*basicBoss
+}
+
+func NewBossC(startPos vector.Pos) *bossC {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_RIGHT_1),
+		bossCInitHP,
+		hpColorPurple,
+		bossCSentences,
+		bossCExtraUpdateActions,
+	)
+	return &bossC{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossCExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossD
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossDInitHP = 200
+
+type bossD struct {
+	*basicBoss
+}
+
+func NewBossD(startPos vector.Pos) *bossD {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_RIGHT_1),
+		bossDInitHP,
+		hpColorPurple,
+		bossDSentences,
+		bossDExtraUpdateActions,
+	)
+	return &bossD{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossDExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossE
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossEInitHP = 200
+
+type bossE struct {
+	*basicBoss
+}
+
+func NewBossE(startPos vector.Pos) *bossE {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_RIGHT_1),
+		bossEInitHP,
+		hpColorPurple,
+		bossESentences,
+		bossEExtraUpdateActions,
+	)
+	return &bossE{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossEExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossF
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossFInitHP = 200
+
+type bossF struct {
+	*basicBoss
+}
+
+func NewBossF(startPos vector.Pos) *bossF {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_RIGHT_1),
+		bossFInitHP,
+		hpColorPurple,
+		bossFSentences,
+		bossFExtraUpdateActions,
+	)
+	return &bossF{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossFExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossG
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossGInitHP = 200
+
+type bossG struct {
+	*basicBoss
+}
+
+func NewBossG(startPos vector.Pos) *bossG {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_RIGHT_1),
+		bossGInitHP,
+		hpColorPurple,
+		bossGSentences,
+		bossGExtraUpdateActions,
+	)
+	return &bossG{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossGExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossH
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossHInitHP = 200
+
+type bossH struct {
+	*basicBoss
+}
+
+func NewBossH(startPos vector.Pos) *bossH {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_RIGHT_1),
+		bossHInitHP,
+		hpColorPurple,
+		bossHSentences,
+		bossHExtraUpdateActions,
+	)
+	return &bossH{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossHExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
 }
@@ -348,3 +542,10 @@ var bossBSentenceMap map[string][]string = map[string][]string{
 	"xhao":    xhaoSentences,
 	"qingyli": qingyliSentences,
 }
+
+var bossCSentences []string = []string{}
+var bossDSentences []string = []string{}
+var bossESentences []string = []string{}
+var bossFSentences []string = []string{}
+var bossGSentences []string = []string{}
+var bossHSentences []string = []string{}
