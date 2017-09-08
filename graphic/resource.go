@@ -94,11 +94,6 @@ const (
 	RESOURCE_TYPE_BOSS_A_RIGHT_0
 	RESOURCE_TYPE_BOSS_A_RIGHT_1
 
-	RESOURCE_TYPE_BOSS_B_LEFT_0
-	RESOURCE_TYPE_BOSS_B_LEFT_1
-	RESOURCE_TYPE_BOSS_B_RIGHT_0
-	RESOURCE_TYPE_BOSS_B_RIGHT_1
-
 	RESOURCE_TYPE_BOSS_BOOM
 
 	RESOURCE_TYPE_BANG
@@ -631,16 +626,6 @@ func LoadAllResources(heroUserID string) {
 		149, 140, 65, 90, 0, 0, 5, true, false)
 	registerFacedResource("assets/boss-a-right-1.png", "yunfeli", RESOURCE_TYPE_BOSS_A_LEFT_1,
 		149, 140, 65, 90, 0, 0, -5, true, false)
-
-	// boss B
-	registerFacedResource("assets/boss-b-right-0.png", "chran", RESOURCE_TYPE_BOSS_B_RIGHT_0,
-		100, 120, 50, 65, 20, 0, 5, false, false)
-	registerFacedResource("assets/boss-b-right-1.png", "chran", RESOURCE_TYPE_BOSS_B_RIGHT_1,
-		100, 120, 50, 65, 20, 0, -5, false, false)
-	registerFacedResource("assets/boss-b-right-0.png", "chran", RESOURCE_TYPE_BOSS_B_LEFT_0,
-		100, 120, 50, 65, 15, 0, 5, true, false)
-	registerFacedResource("assets/boss-b-right-1.png", "chran", RESOURCE_TYPE_BOSS_B_LEFT_1,
-		100, 120, 50, 65, 15, 0, -5, true, false)
 
 	// boss boom
 	registerScaledResourceFromFile("assets/boss-boom.png", RESOURCE_TYPE_BOSS_BOOM, 300, 200)
