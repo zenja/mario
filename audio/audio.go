@@ -11,7 +11,8 @@ type SoundID int
 type MusicID int
 
 const (
-	SOUND_COIN SoundID = iota
+	SOUND_NO_SOUND SoundID = iota
+	SOUND_COIN
 	SOUND_KICK
 	SOUND_FIREBALL
 	SOUND_POWERUP
@@ -111,5 +112,7 @@ func must(err error) {
 }
 
 func PlaySound(id SoundID) {
-	sounds[id].Play(-1, 0)
+	if id != SOUND_NO_SOUND {
+		sounds[id].Play(-1, 0)
+	}
 }
