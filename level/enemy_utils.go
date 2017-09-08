@@ -140,9 +140,6 @@ func (cs *canSay) say(ticks uint32, level *Level, minRGB, maxRGB int, getSentenc
 	randSentence := cs.sentences[rand.Intn(len(cs.sentences))]
 	if ticks-cs.lastSayTicks > 3000 {
 		level.AddEffect(NewShowTextEffect(randSentence, randColor, getSentencePosFunc, ticks, 2000))
-		println("---")
-		println(ticks)
-		println(cs.lastSayTicks)
 		cs.lastSayTicks = ticks
 	}
 }

@@ -151,6 +151,11 @@ func (b *basicBoss) hitByHero(h *Hero, direction hitDirection, level *Level, tic
 		// bounce the hero up
 		h.velocity.Y = -1200
 		audio.PlaySound(audio.SOUND_STOMP)
+		// reduce some HP from boss
+		b.hp -= 20
+		if b.hp <= 0 {
+			b.die(true, level, ticks)
+		}
 
 	default:
 		// hero is hurt
@@ -164,23 +169,27 @@ func (b *basicBoss) hitByBottomTile(level *Level, ticks uint32) {
 
 func (boss *basicBoss) hitByBullet(blt bullet, level *Level, ticks uint32) {
 	boss.hp -= blt.GetDamage()
-	if boss.hp <= 0 {
-		boss.isDead = true
-		var dieToRight bool
-		if blt.GetRect().X < boss.levelRect.X {
-			dieToRight = true
-		}
-
-		// if die, show effects & play sound
-		boomRes := graphic.Res(graphic.RESOURCE_TYPE_BOSS_BOOM)
-		level.AddEffect(NewShowOnceEffect(
-			boomRes, vector.Vec2D{boss.levelRect.X, boss.levelRect.Y}, sdl.GetTicks(), 1000))
-		level.AddEffect(NewDeadDownEffect(boss.currRes, dieToRight, boss.levelRect, ticks))
-		// play multiple times for better effect
-		audio.PlaySound(audio.SOUND_KO)
-		audio.PlaySound(audio.SOUND_KO)
-		audio.PlaySound(audio.SOUND_KO)
+	var dieToRight bool
+	if blt.GetRect().X < boss.levelRect.X {
+		dieToRight = true
 	}
+	if boss.hp <= 0 {
+		boss.die(dieToRight, level, ticks)
+	}
+}
+
+func (boss *basicBoss) die(dieToRight bool, level *Level, ticks uint32) {
+	boss.isDead = true
+
+	// if die, show effects & play sound
+	boomRes := graphic.Res(graphic.RESOURCE_TYPE_BOSS_BOOM)
+	level.AddEffect(NewShowOnceEffect(
+		boomRes, vector.Vec2D{boss.levelRect.X, boss.levelRect.Y}, sdl.GetTicks(), 1000))
+	level.AddEffect(NewDeadDownEffect(boss.currRes, dieToRight, boss.levelRect, ticks))
+	// play multiple times for better effect
+	audio.PlaySound(audio.SOUND_KO)
+	audio.PlaySound(audio.SOUND_KO)
+	audio.PlaySound(audio.SOUND_KO)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
