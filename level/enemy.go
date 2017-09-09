@@ -962,7 +962,8 @@ func (be *bulletEnemy) hitByBottomTile(level *Level, ticks uint32) {
 }
 
 func (be *bulletEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
-	// Do nothing
+	// bullet enemy can be destroyed by hero bullet
+	be.Kill()
 }
 
 func (be *bulletEnemy) boom(level *Level, ticks uint32) {
