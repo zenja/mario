@@ -98,7 +98,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 				addAsNormalObstTile(tid, NewInvisibleTileObject(tid))
 
 			// Invisible block only to enemies
-			case '"':
+			case '\'':
 				addAsEnemyOnlyObstTile(tid, NewInvisibleTileObject(tid))
 
 			// Brick: yellow
@@ -413,7 +413,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 func ParseLevelSpec(levelFile string) *LevelSpec {
 	conf, err := toml.LoadFile(levelFile)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to load level file %s: %v", levelFile, err)
 	}
 
 	name := conf.Get("basic.name").(string)

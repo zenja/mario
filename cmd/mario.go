@@ -27,6 +27,8 @@ func must(err error) {
 func main() {
 	defer quit()
 
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	// this will prevent window not responding
 	runtime.LockOSThread()
 
