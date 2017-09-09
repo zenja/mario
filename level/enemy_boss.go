@@ -322,7 +322,7 @@ func NewBossC(startPos vector.Pos) *bossC {
 }
 
 func bossCExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(100, level, b, BULLET_ENEMY_SWORD)
+	fireAroundRandomly(300, level, b, BULLET_ENEMY_SWORD)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -357,7 +357,7 @@ func NewBossD(startPos vector.Pos) *bossD {
 }
 
 func bossDExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(100, level, b, BULLET_ENEMY_MOON)
+	fireAroundRandomly(300, level, b, BULLET_ENEMY_MOON)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -392,7 +392,7 @@ func NewBossE(startPos vector.Pos) *bossE {
 }
 
 func bossEExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(100, level, b, BULLET_ENEMY_AXE)
+	fireToHeroRandomly(100, level, b, BULLET_ENEMY_AXE, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -427,7 +427,7 @@ func NewBossF(startPos vector.Pos) *bossF {
 }
 
 func bossFExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(100, level, b, BULLET_ENEMY_CHERRY)
+	fireToHeroRandomly(100, level, b, BULLET_ENEMY_CHERRY, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -462,7 +462,7 @@ func NewBossG(startPos vector.Pos) *bossG {
 }
 
 func bossGExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(100, level, b, BULLET_ENEMY_SKULL)
+	fireToHeroRandomly(100, level, b, BULLET_ENEMY_SKULL, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -497,7 +497,7 @@ func NewBossH(startPos vector.Pos) *bossH {
 }
 
 func bossHExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(100, level, b, BULLET_ENEMY_APPLE)
+	fireAroundRandomly(300, level, b, BULLET_ENEMY_APPLE)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)

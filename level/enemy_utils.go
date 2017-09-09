@@ -4,6 +4,8 @@ import (
 	"math"
 	"math/rand"
 
+	"log"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/zenja/mario/graphic"
 	"github.com/zenja/mario/vector"
@@ -126,7 +128,7 @@ const (
 	BULLET_ENEMY_SKULL
 )
 
-func fireToHeroRandomly(randomness int, level *Level, self Enemy, t bulletEnemyType) {
+func fireToHeroRandomly(randomness int, level *Level, self Enemy, t bulletEnemyType, finalVel float64) {
 	if rand.Intn(randomness) != 7 {
 		return
 	}
@@ -136,40 +138,72 @@ func fireToHeroRandomly(randomness int, level *Level, self Enemy, t bulletEnemyT
 		Y: self.GetRect().Y + self.GetRect().H/2,
 	}
 
+	vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, finalVel)
+	var e *bulletEnemy
+
 	switch t {
 	case BULLET_ENEMY_FIREBALL:
-		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
-		e := NewFireBallEnemy(pos, vel)
-		level.AddEnemy(e)
-
+		e = NewFireBallEnemy(pos, vel)
 	case BULLET_ENEMY_SWORD:
-		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
-		e := NewSwordEnemy(pos, vel)
-		level.AddEnemy(e)
-
+		e = NewSwordEnemy(pos, vel)
 	case BULLET_ENEMY_APPLE:
-		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
-		e := NewAppleEnemy(pos, vel)
-		level.AddEnemy(e)
-
+		e = NewAppleEnemy(pos, vel)
 	case BULLET_ENEMY_CHERRY:
-		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
-		e := NewCherryEnemy(pos, vel)
-		level.AddEnemy(e)
-
+		e = NewCherryEnemy(pos, vel)
 	case BULLET_ENEMY_MOON:
-		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
-		e := NewMoonEnemy(pos, vel)
-		level.AddEnemy(e)
-
+		e = NewMoonEnemy(pos, vel)
 	case BULLET_ENEMY_AXE:
-		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
-		e := NewAxeEnemy(pos, vel)
-		level.AddEnemy(e)
-
+		e = NewAxeEnemy(pos, vel)
 	case BULLET_ENEMY_SKULL:
-		vel := calcBulletEnemyVel(level.TheHero.levelRect, pos, 400)
-		e := NewSkullEnemy(pos, vel)
+		e = NewSkullEnemy(pos, vel)
+	default:
+		log.Fatalf("not supported bullet enemy type: %d", t)
+	}
+
+	level.AddEnemy(e)
+}
+
+func fireAroundRandomly(randomness int, level *Level, self Enemy, t bulletEnemyType) {
+	if rand.Intn(randomness) != 7 {
+		return
+	}
+
+	pos := vector.Pos{
+		X: self.GetRect().X + self.GetRect().W/2,
+		Y: self.GetRect().Y + self.GetRect().H/2,
+	}
+
+	type bulletEnemyMaker func(startPos vector.Pos, initVel vector.Vec2D) *bulletEnemy
+	var maker bulletEnemyMaker
+
+	switch t {
+	case BULLET_ENEMY_FIREBALL:
+		maker = NewFireBallEnemy
+	case BULLET_ENEMY_SWORD:
+		maker = NewSwordEnemy
+	case BULLET_ENEMY_APPLE:
+		maker = NewAppleEnemy
+	case BULLET_ENEMY_CHERRY:
+		maker = NewCherryEnemy
+	case BULLET_ENEMY_MOON:
+		maker = NewMoonEnemy
+	case BULLET_ENEMY_AXE:
+		maker = NewAxeEnemy
+	case BULLET_ENEMY_SKULL:
+		maker = NewSkullEnemy
+	default:
+		log.Fatalf("not supported bullet enemy type: %d", t)
+	}
+
+	vels := []vector.Vec2D{
+		{-200, 0},
+		{200, 0},
+		{0, -200},
+		{-130, -130},
+		{130, -130},
+	}
+	for _, v := range vels {
+		e := maker(pos, v)
 		level.AddEnemy(e)
 	}
 }

@@ -801,10 +801,10 @@ func LoadAllResources(heroUserID string) {
 	registerScaledResourceFromFile("assets/black-pixel.png", RESOURCE_TYPE_BLACK_SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
 
 	// sword
-	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_0, 30, 30, 0, false, false)
-	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_1, 30, 30, 90, false, false)
-	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_2, 30, 30, 180, false, false)
-	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_3, 30, 30, 270, false, false)
+	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_0, 45, 45, 0, false, false)
+	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_1, 45, 45, 90, false, false)
+	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_2, 45, 45, 180, false, false)
+	registerResourceFromFileEx("assets/sword.png", RESOURCE_TYPE_SWORD_3, 45, 45, 270, false, false)
 
 	// iceball
 	registerResourceFromFileEx("assets/iceball.png", RESOURCE_TYPE_ICEBALL_0, 30, 30, 0, false, false)
@@ -825,10 +825,10 @@ func LoadAllResources(heroUserID string) {
 	registerResourceFromFileEx("assets/cherry.png", RESOURCE_TYPE_CHERRY_3, 30, 30, 270, false, false)
 
 	// moon
-	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_0, 30, 30, 0, false, false)
-	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_1, 30, 30, 90, false, false)
-	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_2, 30, 30, 180, false, false)
-	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_3, 30, 30, 270, false, false)
+	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_0, 45, 45, 0, false, false)
+	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_1, 45, 45, 90, false, false)
+	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_2, 45, 45, 180, false, false)
+	registerResourceFromFileEx("assets/moon.png", RESOURCE_TYPE_MOON_3, 45, 45, 270, false, false)
 
 	// axe
 	registerResourceFromFileEx("assets/axe.png", RESOURCE_TYPE_AXE_0, 30, 30, 0, false, false)
@@ -837,10 +837,10 @@ func LoadAllResources(heroUserID string) {
 	registerResourceFromFileEx("assets/axe.png", RESOURCE_TYPE_AXE_3, 30, 30, 270, false, false)
 
 	// skull
-	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_0, 30, 30, 0, false, false)
-	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_1, 30, 30, 90, false, false)
-	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_2, 30, 30, 180, false, false)
-	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_3, 30, 30, 270, false, false)
+	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_0, 45, 45, 0, false, false)
+	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_1, 45, 45, 90, false, false)
+	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_2, 45, 45, 180, false, false)
+	registerResourceFromFileEx("assets/skull.png", RESOURCE_TYPE_SKULL_3, 45, 45, 270, false, false)
 
 	// register resource packs
 	registerAllTortoiseResPack()
