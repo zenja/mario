@@ -821,6 +821,8 @@ type bulletEnemy struct {
 	*animationTileObj
 	basicEnemy
 
+	resBoom graphic.Resource
+
 	velocity   vector.Vec2D
 	gravity    vector.Vec2D
 	durationMs uint32
@@ -838,6 +840,7 @@ func NewBulletEnemy(
 
 	return &bulletEnemy{
 		animationTileObj: NewAnimationObject(startPos, reses, 200, ZINDEX_4),
+		resBoom:          graphic.Res(graphic.RESOURCE_TYPE_FIREBALL_BOOM),
 		velocity:         initVel,
 		gravity:          gravity,
 		durationMs:       durationMs,
@@ -935,6 +938,14 @@ func (be *bulletEnemy) Update(ticks uint32, level *Level) {
 
 	bulletEnemyMove(ticks, be.lastTicks, &be.velocity, be.gravity, &be.levelRect)
 
+	hitTop, hitRight, hitBottom, hitLeft, _ := level.ObstMngr.SolveCollision(&be.levelRect, SOLVE_COLLISION_NORMAL)
+
+	// if hit top/right/left, boom
+	if hitTop || hitBottom || hitRight || hitLeft {
+		be.boom(level, ticks)
+		return
+	}
+
 	be.lastTicks = ticks
 }
 
@@ -952,6 +963,15 @@ func (be *bulletEnemy) hitByBottomTile(level *Level, ticks uint32) {
 
 func (be *bulletEnemy) hitByBullet(b bullet, level *Level, ticks uint32) {
 	// Do nothing
+}
+
+func (be *bulletEnemy) boom(level *Level, ticks uint32) {
+	be.Kill()
+	boomStartPos := vector.Vec2D{
+		X: be.levelRect.X,
+		Y: be.levelRect.Y,
+	}
+	level.AddEffect(NewShowOnceEffect(be.resBoom, boomStartPos, ticks, 100))
 }
 
 func bulletEnemyMove(
