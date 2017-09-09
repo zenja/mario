@@ -52,6 +52,11 @@ const (
 
 	RESOURCE_TYPE_DEC_TREE_0
 
+	RESOURCE_TYPE_DEC_FAT_TREE_GREEN
+	RESOURCE_TYPE_DEC_FAT_TREE_RED
+	RESOURCE_TYPE_DEC_FAT_TREE_PINK
+	RESOURCE_TYPE_DEC_FAT_TREE_WHITE
+
 	RESOURCE_TYPE_DEC_PRINCESS_0
 	RESOURCE_TYPE_DEC_PRINCESS_1
 
@@ -651,6 +656,10 @@ func LoadAllResources(heroUserID string) {
 
 	// decoration: trees
 	registerResourceFromFile("assets/dec-tree-0.png", RESOURCE_TYPE_DEC_TREE_0)
+	registerScaledResourceFromFile("assets/dec-fat-tree-green.png", RESOURCE_TYPE_DEC_FAT_TREE_GREEN, 200, 220)
+	registerScaledResourceFromFile("assets/dec-fat-tree-red.png", RESOURCE_TYPE_DEC_FAT_TREE_RED, 200, 220)
+	registerScaledResourceFromFile("assets/dec-fat-tree-pink.png", RESOURCE_TYPE_DEC_FAT_TREE_PINK, 200, 220)
+	registerScaledResourceFromFile("assets/dec-fat-tree-white.png", RESOURCE_TYPE_DEC_FAT_TREE_WHITE, 200, 220)
 
 	// decoration: princess
 	registerResourceFromFile("assets/princess-0.png", RESOURCE_TYPE_DEC_PRINCESS_0)

@@ -365,6 +365,26 @@ func BuildLevel(spec *LevelSpec) *Level {
 					graphic.RESOURCE_TYPE_DEC_SUPER_MARIO_PAYPAL,
 				}
 				addDecoration(NewDecoration(tid, resIds, 1000))
+			case 'a':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_FAT_TREE_GREEN,
+				}
+				addDecoration(NewDecoration(tid, resIds, 1000))
+			case 'b':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_FAT_TREE_RED,
+				}
+				addDecoration(NewDecoration(tid, resIds, 1000))
+			case 'c':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_FAT_TREE_PINK,
+				}
+				addDecoration(NewDecoration(tid, resIds, 1000))
+			case 'd':
+				resIds := []graphic.ResourceID{
+					graphic.RESOURCE_TYPE_DEC_FAT_TREE_WHITE,
+				}
+				addDecoration(NewDecoration(tid, resIds, 1000))
 			}
 		}
 	}
