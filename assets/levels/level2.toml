@@ -6,7 +6,7 @@ bg-file = "assets/bg-1.png"
 bg-color-rgb = "0, 0, 0"
 
 [music]
-bg-music-id = "2"
+bg-music-id = "3"
 
 [level]
 def = """
