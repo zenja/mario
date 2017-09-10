@@ -83,6 +83,9 @@ func BuildLevel(spec *LevelSpec) *Level {
 	addDecoration := func(d *decoration) {
 		decorations = append(decorations, d)
 	}
+	addTextDecoration := func(d *textDecoration) {
+		decorations = append(decorations, d)
+	}
 
 	// parse level
 	var currentPos vector.Pos
@@ -385,6 +388,8 @@ func BuildLevel(spec *LevelSpec) *Level {
 					graphic.RESOURCE_TYPE_DEC_FAT_TREE_WHITE,
 				}
 				addDecoration(NewDecoration(tid, resIds, 1000))
+			case 'e':
+				addTextDecoration(NewPrincessTextDecoration(tid))
 			}
 		}
 	}
