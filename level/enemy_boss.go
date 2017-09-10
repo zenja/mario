@@ -222,7 +222,7 @@ func NewBossA(startPos vector.Pos) *bossA {
 
 func bossAExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 	// Generate new self randomly
-	if rand.Intn(1900) == 7 {
+	if rand.Intn(2200) == 7 {
 		pos := vector.Pos{
 			X: b.levelRect.X + 2*b.velocity.X,
 			Y: b.levelRect.Y,
@@ -284,7 +284,7 @@ func NewBossB(startPos vector.Pos, userID string) *bossB {
 
 func bossBExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 	// Generate enemies randomly
-	if rand.Intn(150) == 7 {
+	if rand.Intn(250) == 7 {
 		level.AddEnemy(NewRandomICTortoiseEnemyEx(
 			vector.Pos{b.levelRect.X, b.levelRect.Y}, b.isFacingRight, 150))
 	}
