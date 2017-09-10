@@ -555,9 +555,56 @@ var bossBSentenceMap map[string][]string = map[string][]string{
 	"qingyli": qingyliSentences,
 }
 
-var bossCSentences []string = []string{}
-var bossDSentences []string = []string{}
-var bossESentences []string = []string{}
-var bossFSentences []string = []string{}
-var bossGSentences []string = []string{}
-var bossHSentences []string = []string{}
+// minwu
+var bossCSentences []string = []string{
+	"Where am I?",
+	"I don't know this place...",
+	"Interesting...",
+	"Where is Matan?",
+	"I need to go back to work...",
+}
+
+// huiwang
+var bossDSentences []string = []string{
+	"Where am I?",
+	"I don't know this place...",
+	"Interesting...",
+	"Where is Matan?",
+	"I need to go back to work...",
+}
+
+// pregev
+var bossESentences []string = []string{
+	"Where am I?",
+	"I don't know this place...",
+	"Interesting...",
+	"Where is Matan?",
+	"I need to go back to work...",
+}
+
+// uarad
+var bossFSentences []string = []string{
+	"Where am I?",
+	"I don't know this place...",
+	"Interesting...",
+	"Where is Matan?",
+	"I need to go back to work...",
+}
+
+// gronen
+var bossGSentences []string = []string{
+	"Where am I?",
+	"I don't know this place...",
+	"Interesting...",
+	"Where is Matan?",
+	"I need to go back to work...",
+}
+
+// mparnes
+var bossHSentences []string = []string{
+	"Where am I?",
+	"I don't know this place...",
+	"Interesting...",
+	"Where is Matan?",
+	"I need to go back to work...",
+}
