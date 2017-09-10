@@ -196,7 +196,7 @@ func (boss *basicBoss) die(dieToRight bool, level *Level, ticks uint32) {
 // Boss A
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossAInitHP = 1000
+const bossAInitHP = 700
 
 type bossA struct {
 	*basicBoss
@@ -248,7 +248,7 @@ func bossAExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // Boss B: Richard's direct reports
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossBInitHP = 200
+const bossBInitHP = 150
 
 type bossB struct {
 	*basicBoss
@@ -297,7 +297,7 @@ func bossBExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossC
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossCInitHP = 200
+const bossCInitHP = 400
 
 type bossC struct {
 	*basicBoss
@@ -322,7 +322,7 @@ func NewBossC(startPos vector.Pos) *bossC {
 }
 
 func bossCExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireAroundRandomly(300, level, b, BULLET_ENEMY_SWORD)
+	fireAroundRandomly(200, level, b, BULLET_ENEMY_SWORD)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -332,7 +332,7 @@ func bossCExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossD
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossDInitHP = 200
+const bossDInitHP = 400
 
 type bossD struct {
 	*basicBoss
@@ -357,7 +357,7 @@ func NewBossD(startPos vector.Pos) *bossD {
 }
 
 func bossDExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireAroundRandomly(300, level, b, BULLET_ENEMY_MOON)
+	fireAroundRandomly(200, level, b, BULLET_ENEMY_MOON)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -367,7 +367,7 @@ func bossDExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossEInitHP = 200
+const bossEInitHP = 400
 
 type bossE struct {
 	*basicBoss
@@ -392,7 +392,7 @@ func NewBossE(startPos vector.Pos) *bossE {
 }
 
 func bossEExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(100, level, b, BULLET_ENEMY_AXE, 350)
+	fireToHeroRandomly(70, level, b, BULLET_ENEMY_AXE, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -402,7 +402,7 @@ func bossEExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossF
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossFInitHP = 200
+const bossFInitHP = 400
 
 type bossF struct {
 	*basicBoss
@@ -427,7 +427,7 @@ func NewBossF(startPos vector.Pos) *bossF {
 }
 
 func bossFExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(100, level, b, BULLET_ENEMY_CHERRY, 350)
+	fireToHeroRandomly(70, level, b, BULLET_ENEMY_CHERRY, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -437,7 +437,7 @@ func bossFExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossG
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossGInitHP = 200
+const bossGInitHP = 400
 
 type bossG struct {
 	*basicBoss
@@ -462,7 +462,7 @@ func NewBossG(startPos vector.Pos) *bossG {
 }
 
 func bossGExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(100, level, b, BULLET_ENEMY_SKULL, 350)
+	fireToHeroRandomly(70, level, b, BULLET_ENEMY_SKULL, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -472,7 +472,7 @@ func bossGExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossH
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossHInitHP = 200
+const bossHInitHP = 400
 
 type bossH struct {
 	*basicBoss
@@ -497,7 +497,7 @@ func NewBossH(startPos vector.Pos) *bossH {
 }
 
 func bossHExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireAroundRandomly(300, level, b, BULLET_ENEMY_APPLE)
+	fireAroundRandomly(200, level, b, BULLET_ENEMY_APPLE)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
