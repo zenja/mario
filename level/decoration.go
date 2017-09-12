@@ -73,7 +73,10 @@ type textDecoration struct {
 func NewPrincessTextDecoration(tid vector.TileID) *textDecoration {
 	sentences := []string{
 		"    Congratulations, you are fired!!",
-		"                hahaha...",
+		"         Welcome to Shanghai!",
+		"           We love PayPal!",
+		"      Hope you enjoy the journey!",
+		"              Surprise!",
 	}
 	return NewTextDecoration(tid, sentences)
 }

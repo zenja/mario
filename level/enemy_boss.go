@@ -708,10 +708,14 @@ func bossNExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 
 var bossASentences []string = []string{
 	"I have a dream!",
-	"Red lobster!!",
-	"Let's extend the meeting...",
-	"I will ask Peter to fire you...",
+	"U are fired!",
 	"I love my work!!",
+	"Where am I?",
+	"I can't remember my name...",
+	"Where is this place?",
+	"Don't attack me...",
+	"Fire!!",
+	"You hurt me...",
 }
 
 var chranSentences []string = []string{
