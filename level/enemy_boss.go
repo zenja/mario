@@ -45,6 +45,7 @@ type basicBoss struct {
 func NewBasicBoss(
 	startPos vector.Pos,
 	resLeft0, resLeft1, resRight0, resRight1 graphic.Resource,
+	initVel vector.Vec2D,
 	initHP int,
 	hpColor sdl.Color,
 	sentences []string,
@@ -59,7 +60,7 @@ func NewBasicBoss(
 		currRes:            resLeft0,
 		isFacingRight:      false,
 		levelRect:          sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
-		velocity:           vector.Vec2D{-80, 0},
+		velocity:           initVel,
 		maxHP:              initHP,
 		hp:                 initHP,
 		hpColor:            hpColor,
@@ -198,11 +199,34 @@ func (boss *basicBoss) die(dieToRight bool, level *Level, ticks uint32) {
 
 const bossAInitHP = 700
 
+// FIXME temporary solution
+var (
+	subBossGenMap    [](func(vector.Pos, vector.Vec2D) Enemy)
+	subBossIdx       int
+	lastGenBossTicks uint32
+)
+
 type bossA struct {
 	*basicBoss
 }
 
 func NewBossA(startPos vector.Pos) *bossA {
+	subBossGenMap = [](func(vector.Pos, vector.Vec2D) Enemy){
+		NewBossC,
+		NewBossD,
+		NewBossE,
+		NewBossF,
+		NewBossG,
+		NewBossH,
+		NewBossI,
+		NewBossJ,
+		NewBossK,
+		NewBossL,
+		NewBossM,
+		NewBossN,
+	}
+	subBossIdx = 0
+
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -210,6 +234,7 @@ func NewBossA(startPos vector.Pos) *bossA {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_1),
+		vector.Vec2D{-80, 0},
 		bossAInitHP,
 		hpColorPurple,
 		bossASentences,
@@ -221,23 +246,28 @@ func NewBossA(startPos vector.Pos) *bossA {
 }
 
 func bossAExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	// Generate new self randomly
-	if rand.Intn(2200) == 7 {
-		pos := vector.Pos{
-			X: b.levelRect.X + 2*b.velocity.X,
-			Y: b.levelRect.Y,
+	if subBossIdx >= len(subBossGenMap) {
+		fireAroundRandomly(800, level, b, BULLET_ENEMY_SKULL)
+		fireAroundRandomly(800, level, b, BULLET_ENEMY_SKULL)
+		fireAroundRandomly(800, level, b, BULLET_ENEMY_CHERRY)
+		fireToHeroRandomly(1200, level, b, BULLET_ENEMY_MOON, 400)
+		fireToHeroRandomly(1200, level, b, BULLET_ENEMY_SWORD, 400)
+		fireToHeroRandomly(1200, level, b, BULLET_ENEMY_APPLE, 400)
+		fireToHeroRandomly(1200, level, b, BULLET_ENEMY_AXE, 400)
+	} else {
+		if ticks-lastGenBossTicks >= 15000 {
+			lastGenBossTicks = ticks
+			pos := vector.Pos{
+				b.GetRect().X,
+				b.GetRect().Y,
+			}
+			vel := vector.Vec2D{-120, 700}
+			if b.isFacingRight {
+				vel.X = -vel.X
+			}
+			level.AddEnemy(subBossGenMap[subBossIdx](pos, vel))
+			subBossIdx++
 		}
-		level.AddEnemy(NewBossA(pos))
-		audio.PlaySound(audio.SOUND_BOSS_LAUGH)
-	}
-
-	// Generate new boss B randomly
-	if rand.Intn(500) == 7 {
-		pos := vector.Pos{
-			X: b.levelRect.X + 2*b.velocity.X,
-			Y: b.levelRect.Y,
-		}
-		level.AddEnemy(NewRandomBossB(pos))
 	}
 
 	// Keep showing random sentences
@@ -272,6 +302,7 @@ func NewBossB(startPos vector.Pos, userID string) *bossB {
 		resPack.ResLeft1,
 		resPack.ResRight0,
 		resPack.ResRight1,
+		vector.Vec2D{-80, 0},
 		bossBInitHP,
 		hpColorRed,
 		sentences,
@@ -297,13 +328,13 @@ func bossBExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossC
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossCInitHP = 400
+const bossCInitHP = 100
 
 type bossC struct {
 	*basicBoss
 }
 
-func NewBossC(startPos vector.Pos) *bossC {
+func NewBossC(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -311,6 +342,7 @@ func NewBossC(startPos vector.Pos) *bossC {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_RIGHT_1),
+		initVel,
 		bossCInitHP,
 		hpColorPurple,
 		bossCSentences,
@@ -322,7 +354,7 @@ func NewBossC(startPos vector.Pos) *bossC {
 }
 
 func bossCExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireAroundRandomly(200, level, b, BULLET_ENEMY_SWORD)
+	fireAroundRandomly(400, level, b, BULLET_ENEMY_SWORD)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -332,13 +364,13 @@ func bossCExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossD
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossDInitHP = 400
+const bossDInitHP = 100
 
 type bossD struct {
 	*basicBoss
 }
 
-func NewBossD(startPos vector.Pos) *bossD {
+func NewBossD(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -346,6 +378,7 @@ func NewBossD(startPos vector.Pos) *bossD {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_RIGHT_1),
+		initVel,
 		bossDInitHP,
 		hpColorPurple,
 		bossDSentences,
@@ -357,7 +390,7 @@ func NewBossD(startPos vector.Pos) *bossD {
 }
 
 func bossDExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireAroundRandomly(200, level, b, BULLET_ENEMY_MOON)
+	fireAroundRandomly(400, level, b, BULLET_ENEMY_MOON)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -367,13 +400,13 @@ func bossDExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossEInitHP = 400
+const bossEInitHP = 100
 
 type bossE struct {
 	*basicBoss
 }
 
-func NewBossE(startPos vector.Pos) *bossE {
+func NewBossE(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -381,6 +414,7 @@ func NewBossE(startPos vector.Pos) *bossE {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_RIGHT_1),
+		initVel,
 		bossEInitHP,
 		hpColorPurple,
 		bossESentences,
@@ -392,7 +426,7 @@ func NewBossE(startPos vector.Pos) *bossE {
 }
 
 func bossEExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(70, level, b, BULLET_ENEMY_AXE, 350)
+	fireToHeroRandomly(140, level, b, BULLET_ENEMY_AXE, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -402,13 +436,13 @@ func bossEExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossF
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossFInitHP = 400
+const bossFInitHP = 100
 
 type bossF struct {
 	*basicBoss
 }
 
-func NewBossF(startPos vector.Pos) *bossF {
+func NewBossF(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -416,6 +450,7 @@ func NewBossF(startPos vector.Pos) *bossF {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_RIGHT_1),
+		initVel,
 		bossFInitHP,
 		hpColorPurple,
 		bossFSentences,
@@ -427,7 +462,7 @@ func NewBossF(startPos vector.Pos) *bossF {
 }
 
 func bossFExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(70, level, b, BULLET_ENEMY_CHERRY, 350)
+	fireToHeroRandomly(140, level, b, BULLET_ENEMY_CHERRY, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -437,13 +472,13 @@ func bossFExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossG
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossGInitHP = 400
+const bossGInitHP = 100
 
 type bossG struct {
 	*basicBoss
 }
 
-func NewBossG(startPos vector.Pos) *bossG {
+func NewBossG(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -451,6 +486,7 @@ func NewBossG(startPos vector.Pos) *bossG {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_RIGHT_1),
+		initVel,
 		bossGInitHP,
 		hpColorPurple,
 		bossGSentences,
@@ -462,7 +498,7 @@ func NewBossG(startPos vector.Pos) *bossG {
 }
 
 func bossGExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireToHeroRandomly(70, level, b, BULLET_ENEMY_SKULL, 350)
+	fireToHeroRandomly(140, level, b, BULLET_ENEMY_SKULL, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -472,13 +508,13 @@ func bossGExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
 // BossH
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const bossHInitHP = 400
+const bossHInitHP = 100
 
 type bossH struct {
 	*basicBoss
 }
 
-func NewBossH(startPos vector.Pos) *bossH {
+func NewBossH(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -486,6 +522,7 @@ func NewBossH(startPos vector.Pos) *bossH {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_RIGHT_1),
+		initVel,
 		bossHInitHP,
 		hpColorPurple,
 		bossHSentences,
@@ -497,7 +534,223 @@ func NewBossH(startPos vector.Pos) *bossH {
 }
 
 func bossHExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	fireAroundRandomly(200, level, b, BULLET_ENEMY_APPLE)
+	fireAroundRandomly(400, level, b, BULLET_ENEMY_APPLE)
+
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossI
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossIInitHP = 100
+
+type bossI struct {
+	*basicBoss
+}
+
+func NewBossI(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_I_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_I_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_I_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_I_RIGHT_1),
+		initVel,
+		bossIInitHP,
+		hpColorPurple,
+		bossISentences,
+		bossIExtraUpdateActions,
+	)
+	return &bossI{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossIExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	fireAroundRandomly(400, level, b, BULLET_ENEMY_SWORD)
+
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossJ
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossJInitHP = 100
+
+type bossJ struct {
+	*basicBoss
+}
+
+func NewBossJ(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_J_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_J_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_J_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_J_RIGHT_1),
+		initVel,
+		bossJInitHP,
+		hpColorPurple,
+		bossJSentences,
+		bossJExtraUpdateActions,
+	)
+	return &bossJ{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossJExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	fireAroundRandomly(400, level, b, BULLET_ENEMY_MOON)
+
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossK
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossKInitHP = 100
+
+type bossK struct {
+	*basicBoss
+}
+
+func NewBossK(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_K_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_K_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_K_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_K_RIGHT_1),
+		initVel,
+		bossKInitHP,
+		hpColorPurple,
+		bossKSentences,
+		bossKExtraUpdateActions,
+	)
+	return &bossK{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossKExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	fireToHeroRandomly(140, level, b, BULLET_ENEMY_AXE, 350)
+
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossL
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossLInitHP = 100
+
+type bossL struct {
+	*basicBoss
+}
+
+func NewBossL(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_L_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_L_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_L_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_L_RIGHT_1),
+		initVel,
+		bossLInitHP,
+		hpColorPurple,
+		bossLSentences,
+		bossLExtraUpdateActions,
+	)
+	return &bossL{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossLExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	fireToHeroRandomly(140, level, b, BULLET_ENEMY_CHERRY, 350)
+
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossM
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossMInitHP = 100
+
+type bossM struct {
+	*basicBoss
+}
+
+func NewBossM(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_M_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_M_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_M_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_M_RIGHT_1),
+		initVel,
+		bossMInitHP,
+		hpColorPurple,
+		bossMSentences,
+		bossMExtraUpdateActions,
+	)
+	return &bossM{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossMExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	fireToHeroRandomly(140, level, b, BULLET_ENEMY_SKULL, 350)
+
+	// Keep showing random sentences
+	b.say(ticks, level, 100, 256, b.getSentencePos)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BossN
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const bossNInitHP = 100
+
+type bossN struct {
+	*basicBoss
+}
+
+func NewBossN(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_N_LEFT_0)
+	basicBoss := NewBasicBoss(
+		startPos,
+		resLeft0,
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_N_LEFT_1),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_N_RIGHT_0),
+		graphic.Res(graphic.RESOURCE_TYPE_BOSS_N_RIGHT_1),
+		initVel,
+		bossNInitHP,
+		hpColorPurple,
+		bossNSentences,
+		bossNExtraUpdateActions,
+	)
+	return &bossN{
+		basicBoss: basicBoss,
+	}
+}
+
+func bossNExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
+	fireToHeroRandomly(140, level, b, BULLET_ENEMY_SKULL, 350)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -555,56 +808,26 @@ var bossBSentenceMap map[string][]string = map[string][]string{
 	"qingyli": qingyliSentences,
 }
 
-// minwu
-var bossCSentences []string = []string{
-	"Where am I?",
-	"I don't know this place...",
-	"Interesting...",
-	"Where is Matan?",
-	"I need to go back to work...",
-}
+var bossCSentences []string = []string{}
 
-// huiwang
-var bossDSentences []string = []string{
-	"Where am I?",
-	"I don't know this place...",
-	"Interesting...",
-	"Where is Matan?",
-	"I need to go back to work...",
-}
+var bossDSentences []string = []string{}
 
-// pregev
-var bossESentences []string = []string{
-	"Where am I?",
-	"I don't know this place...",
-	"Interesting...",
-	"Where is Matan?",
-	"I need to go back to work...",
-}
+var bossESentences []string = []string{}
 
-// uarad
-var bossFSentences []string = []string{
-	"Where am I?",
-	"I don't know this place...",
-	"Interesting...",
-	"Where is Matan?",
-	"I need to go back to work...",
-}
+var bossFSentences []string = []string{}
 
-// gronen
-var bossGSentences []string = []string{
-	"Where am I?",
-	"I don't know this place...",
-	"Interesting...",
-	"Where is Matan?",
-	"I need to go back to work...",
-}
+var bossGSentences []string = []string{}
 
-// mparnes
-var bossHSentences []string = []string{
-	"Where am I?",
-	"I don't know this place...",
-	"Interesting...",
-	"Where is Matan?",
-	"I need to go back to work...",
-}
+var bossHSentences []string = []string{}
+
+var bossISentences []string = []string{}
+
+var bossJSentences []string = []string{}
+
+var bossKSentences []string = []string{}
+
+var bossLSentences []string = []string{}
+
+var bossMSentences []string = []string{}
+
+var bossNSentences []string = []string{}

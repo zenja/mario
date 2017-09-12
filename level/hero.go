@@ -263,15 +263,15 @@ func (h *Hero) Draw(camPos vector.Pos) {
 	var title string
 	switch h.grade {
 	case 0:
-		title = "    Engineer    "
+		title = "          VP         "
 	case 1:
-		title = " MTS 1 Engineer "
+		title = "         CXO         "
 	case 2:
-		title = "MTS 100 Engineer"
+		title = "Chairman of the board"
 	}
 	_, rectInCamera := graphic.VisibleRectInCamera(h.levelRect, camPos.X, camPos.Y)
 	if rectInCamera != nil {
-		pos := vector.Pos{rectInCamera.X - 50, rectInCamera.Y - 50}
+		pos := vector.Pos{rectInCamera.X - 60, rectInCamera.Y - 50}
 		color := sdl.Color{34, 138, 230, 0}
 		graphic.DrawTextAbsolute(title, pos, color)
 	}

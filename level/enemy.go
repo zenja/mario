@@ -232,6 +232,23 @@ var richardLeadershipUserIDs = []string{
 	//"wedeng",
 }
 
+var tomerLeadershipUserIDs = []string{
+	"alex",
+	"angie",
+	"brad",
+	"clay",
+	"ellie",
+	"jeff",
+	"mark",
+	"matan",
+	"mike",
+	"sarah",
+	"stephanie",
+	"swati",
+	"tushar",
+	"yonat",
+}
+
 func NewRandomJupiterTortoiseEnemy(startPos vector.Pos) Enemy {
 	uid := jupiterUserIDs[rand.Intn(len(jupiterUserIDs))]
 	return NewTortoiseEnemy(startPos, uid)
@@ -240,11 +257,6 @@ func NewRandomJupiterTortoiseEnemy(startPos vector.Pos) Enemy {
 func NewRandomJupiterTortoiseEnemyEx(startPos vector.Pos, faceRight bool, maxSpeedUp int) Enemy {
 	uid := jupiterUserIDs[rand.Intn(len(jupiterUserIDs))]
 	return NewTortoiseEnemyRandomSpeedUp(startPos, uid, faceRight, maxSpeedUp)
-}
-
-func NewRandomICTortoiseEnemy(startPos vector.Pos) Enemy {
-	uid := grdsICUserIDs[rand.Intn(len(grdsICUserIDs))]
-	return NewTortoiseEnemy(startPos, uid)
 }
 
 func NewRandomICTortoiseEnemyEx(startPos vector.Pos, faceRight bool, maxSpeedUp int) Enemy {
@@ -260,6 +272,11 @@ func NewRandomRichardLeadershipTortoiseEnemy(startPos vector.Pos) Enemy {
 func NewRandomRichardLeadershipTortoiseEnemyEx(startPos vector.Pos, faceRight bool, maxSpeedUp int) Enemy {
 	uid := richardLeadershipUserIDs[rand.Intn(len(richardLeadershipUserIDs))]
 	return NewTortoiseEnemyRandomSpeedUp(startPos, uid, faceRight, maxSpeedUp)
+}
+
+func NewRandomTomerLeadershipTortoiseEnemy(startPos vector.Pos) Enemy {
+	uid := tomerLeadershipUserIDs[rand.Intn(len(tomerLeadershipUserIDs))]
+	return NewTortoiseEnemy(startPos, uid)
 }
 
 func NewTortoiseEnemy(startPos vector.Pos, userID string) Enemy {

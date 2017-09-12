@@ -273,7 +273,7 @@ func BuildLevel(spec *LevelSpec) *Level {
 
 			// Enemy 2: tortoise enemy
 			case '2':
-				enemies = append(enemies, NewRandomICTortoiseEnemy(currentPos))
+				enemies = append(enemies, NewRandomTomerLeadershipTortoiseEnemy(currentPos))
 
 			// Enemy 3: tortoise enemy: richard direct report
 			case '3':
@@ -283,33 +283,57 @@ func BuildLevel(spec *LevelSpec) *Level {
 			case 'X':
 				enemies = append(enemies, NewBossA(currentPos))
 
-			// Boss B
-			case 'Y':
-				enemies = append(enemies, NewRandomBossB(currentPos))
-
-			// Boss C
-			case 'Z':
-				enemies = append(enemies, NewBossC(currentPos))
-
-			// Boss D
-			case 'x':
-				enemies = append(enemies, NewBossD(currentPos))
-
-			// Boss E
-			case 'y':
-				enemies = append(enemies, NewBossE(currentPos))
-
-			// Boss F
-			case 'z':
-				enemies = append(enemies, NewBossF(currentPos))
-
-			// Boss G
-			case 'S':
-				enemies = append(enemies, NewBossG(currentPos))
-
-			// Boss H
-			case 'T':
-				enemies = append(enemies, NewBossH(currentPos))
+			//// Boss B
+			//case 'Y':
+			//	enemies = append(enemies, NewRandomBossB(currentPos))
+			//
+			//// Boss C
+			//case 'Z':
+			//	enemies = append(enemies, NewBossC(currentPos))
+			//
+			//// Boss D
+			//case 'x':
+			//	enemies = append(enemies, NewBossD(currentPos))
+			//
+			//// Boss E
+			//case 'y':
+			//	enemies = append(enemies, NewBossE(currentPos))
+			//
+			//// Boss F
+			//case 'z':
+			//	enemies = append(enemies, NewBossF(currentPos))
+			//
+			//// Boss G
+			//case 'S':
+			//	enemies = append(enemies, NewBossG(currentPos))
+			//
+			//// Boss H
+			//case 'T':
+			//	enemies = append(enemies, NewBossH(currentPos))
+			//
+			//// Boss I
+			//case 's':
+			//	enemies = append(enemies, NewBossI(currentPos))
+			//
+			//// Boss J
+			//case 't':
+			//	enemies = append(enemies, NewBossJ(currentPos))
+			//
+			//// Boss K
+			//case 'P':
+			//	enemies = append(enemies, NewBossK(currentPos))
+			//
+			//// Boss L
+			//case 'Q':
+			//	enemies = append(enemies, NewBossL(currentPos))
+			//
+			//// Boss M
+			//case 'p':
+			//	enemies = append(enemies, NewBossM(currentPos))
+			//
+			//// Boss N
+			//case 'q':
+			//	enemies = append(enemies, NewBossN(currentPos))
 
 			// Hero
 			case 'H':

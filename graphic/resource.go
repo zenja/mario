@@ -129,6 +129,36 @@ const (
 	RESOURCE_TYPE_BOSS_H_RIGHT_0
 	RESOURCE_TYPE_BOSS_H_RIGHT_1
 
+	RESOURCE_TYPE_BOSS_I_LEFT_0
+	RESOURCE_TYPE_BOSS_I_LEFT_1
+	RESOURCE_TYPE_BOSS_I_RIGHT_0
+	RESOURCE_TYPE_BOSS_I_RIGHT_1
+
+	RESOURCE_TYPE_BOSS_J_LEFT_0
+	RESOURCE_TYPE_BOSS_J_LEFT_1
+	RESOURCE_TYPE_BOSS_J_RIGHT_0
+	RESOURCE_TYPE_BOSS_J_RIGHT_1
+
+	RESOURCE_TYPE_BOSS_K_LEFT_0
+	RESOURCE_TYPE_BOSS_K_LEFT_1
+	RESOURCE_TYPE_BOSS_K_RIGHT_0
+	RESOURCE_TYPE_BOSS_K_RIGHT_1
+
+	RESOURCE_TYPE_BOSS_L_LEFT_0
+	RESOURCE_TYPE_BOSS_L_LEFT_1
+	RESOURCE_TYPE_BOSS_L_RIGHT_0
+	RESOURCE_TYPE_BOSS_L_RIGHT_1
+
+	RESOURCE_TYPE_BOSS_M_LEFT_0
+	RESOURCE_TYPE_BOSS_M_LEFT_1
+	RESOURCE_TYPE_BOSS_M_RIGHT_0
+	RESOURCE_TYPE_BOSS_M_RIGHT_1
+
+	RESOURCE_TYPE_BOSS_N_LEFT_0
+	RESOURCE_TYPE_BOSS_N_LEFT_1
+	RESOURCE_TYPE_BOSS_N_RIGHT_0
+	RESOURCE_TYPE_BOSS_N_RIGHT_1
+
 	RESOURCE_TYPE_BOSS_BOOM
 
 	RESOURCE_TYPE_BANG
@@ -692,74 +722,134 @@ func LoadAllResources(heroUserID string) {
 	registerScaledResourceFromFile("assets/tortoise-red-semi-inside.png", RESOURCE_TYPE_TORTOISE_RED_SEMI_INSIDE, tortoise_inside_width, tortoise_inside_height)
 
 	// boss A
-	registerFacedResource("assets/boss-a-right-0.png", "yunfeli", RESOURCE_TYPE_BOSS_A_RIGHT_0,
+	registerFacedResource("assets/boss-a-right-0.png", "tomer", RESOURCE_TYPE_BOSS_A_RIGHT_0,
 		149, 140, 65, 90, 80, 0, 5, false, false)
-	registerFacedResource("assets/boss-a-right-1.png", "yunfeli", RESOURCE_TYPE_BOSS_A_RIGHT_1,
+	registerFacedResource("assets/boss-a-right-1.png", "tomer", RESOURCE_TYPE_BOSS_A_RIGHT_1,
 		149, 140, 65, 90, 80, 0, -5, false, false)
-	registerFacedResource("assets/boss-a-right-0.png", "yunfeli", RESOURCE_TYPE_BOSS_A_LEFT_0,
+	registerFacedResource("assets/boss-a-right-0.png", "tomer", RESOURCE_TYPE_BOSS_A_LEFT_0,
 		149, 140, 65, 90, 0, 0, 5, true, false)
-	registerFacedResource("assets/boss-a-right-1.png", "yunfeli", RESOURCE_TYPE_BOSS_A_LEFT_1,
+	registerFacedResource("assets/boss-a-right-1.png", "tomer", RESOURCE_TYPE_BOSS_A_LEFT_1,
 		149, 140, 65, 90, 0, 0, -5, true, false)
 
 	// boss C
-	registerFacedResource("assets/knight-a-left-0.png", "minwu", RESOURCE_TYPE_BOSS_C_RIGHT_0,
+	registerFacedResource("assets/knight-a-left-0.png", "alex", RESOURCE_TYPE_BOSS_C_RIGHT_0,
 		149, 140, 50, 65, 45, 0, 5, true, false)
-	registerFacedResource("assets/knight-a-left-1.png", "minwu", RESOURCE_TYPE_BOSS_C_RIGHT_1,
+	registerFacedResource("assets/knight-a-left-1.png", "alex", RESOURCE_TYPE_BOSS_C_RIGHT_1,
 		149, 140, 50, 65, 45, 0, -5, true, false)
-	registerFacedResource("assets/knight-a-left-0.png", "minwu", RESOURCE_TYPE_BOSS_C_LEFT_0,
+	registerFacedResource("assets/knight-a-left-0.png", "alex", RESOURCE_TYPE_BOSS_C_LEFT_0,
 		149, 140, 50, 65, 55, 0, 5, false, false)
-	registerFacedResource("assets/knight-a-left-1.png", "minwu", RESOURCE_TYPE_BOSS_C_LEFT_1,
+	registerFacedResource("assets/knight-a-left-1.png", "alex", RESOURCE_TYPE_BOSS_C_LEFT_1,
 		149, 140, 50, 65, 55, 0, -5, false, false)
 
 	// boss D
-	registerFacedResource("assets/soldier-0.png", "huiwang", RESOURCE_TYPE_BOSS_D_RIGHT_0,
+	registerFacedResource("assets/soldier-0.png", "angie", RESOURCE_TYPE_BOSS_D_RIGHT_0,
 		149, 140, 50, 65, 50, 0, 2, false, false)
-	registerFacedResource("assets/soldier-1.png", "huiwang", RESOURCE_TYPE_BOSS_D_RIGHT_1,
+	registerFacedResource("assets/soldier-1.png", "angie", RESOURCE_TYPE_BOSS_D_RIGHT_1,
 		149, 140, 50, 65, 50, 0, -2, false, false)
-	registerFacedResource("assets/soldier-0.png", "huiwang", RESOURCE_TYPE_BOSS_D_LEFT_0,
+	registerFacedResource("assets/soldier-0.png", "angie", RESOURCE_TYPE_BOSS_D_LEFT_0,
 		149, 140, 50, 65, 50, 0, 2, true, false)
-	registerFacedResource("assets/soldier-1.png", "huiwang", RESOURCE_TYPE_BOSS_D_LEFT_1,
+	registerFacedResource("assets/soldier-1.png", "angie", RESOURCE_TYPE_BOSS_D_LEFT_1,
 		149, 140, 50, 65, 50, 0, -2, true, false)
 
 	// boss E
-	registerFacedResource("assets/ox-right-0.png", "pregev", RESOURCE_TYPE_BOSS_E_RIGHT_0,
+	registerFacedResource("assets/ox-right-0.png", "brad", RESOURCE_TYPE_BOSS_E_RIGHT_0,
 		100, 140, 50, 65, 30, 0, 5, false, false)
-	registerFacedResource("assets/ox-right-1.png", "pregev", RESOURCE_TYPE_BOSS_E_RIGHT_1,
+	registerFacedResource("assets/ox-right-1.png", "brad", RESOURCE_TYPE_BOSS_E_RIGHT_1,
 		100, 140, 50, 65, 30, 0, -5, false, false)
-	registerFacedResource("assets/ox-right-0.png", "pregev", RESOURCE_TYPE_BOSS_E_LEFT_0,
+	registerFacedResource("assets/ox-right-0.png", "brad", RESOURCE_TYPE_BOSS_E_LEFT_0,
 		100, 140, 50, 65, 15, 0, 5, true, false)
-	registerFacedResource("assets/ox-right-1.png", "pregev", RESOURCE_TYPE_BOSS_E_LEFT_1,
+	registerFacedResource("assets/ox-right-1.png", "brad", RESOURCE_TYPE_BOSS_E_LEFT_1,
 		100, 140, 50, 65, 15, 0, -5, true, false)
 
 	// boss F
-	registerFacedResource("assets/fire-sonic-right-0.png", "uarad", RESOURCE_TYPE_BOSS_F_RIGHT_0,
+	registerFacedResource("assets/fire-sonic-right-0.png", "clay", RESOURCE_TYPE_BOSS_F_RIGHT_0,
 		100, 140, 50, 65, 30, 0, 5, false, false)
-	registerFacedResource("assets/fire-sonic-right-1.png", "uarad", RESOURCE_TYPE_BOSS_F_RIGHT_1,
+	registerFacedResource("assets/fire-sonic-right-1.png", "clay", RESOURCE_TYPE_BOSS_F_RIGHT_1,
 		100, 140, 50, 65, 30, 0, -5, false, false)
-	registerFacedResource("assets/fire-sonic-right-0.png", "uarad", RESOURCE_TYPE_BOSS_F_LEFT_0,
+	registerFacedResource("assets/fire-sonic-right-0.png", "clay", RESOURCE_TYPE_BOSS_F_LEFT_0,
 		100, 140, 50, 65, 10, 0, 5, true, false)
-	registerFacedResource("assets/fire-sonic-right-1.png", "uarad", RESOURCE_TYPE_BOSS_F_LEFT_1,
+	registerFacedResource("assets/fire-sonic-right-1.png", "clay", RESOURCE_TYPE_BOSS_F_LEFT_1,
 		100, 140, 50, 65, 10, 0, -5, true, false)
 
 	// boss G
-	registerFacedResource("assets/ghost-right-0.png", "gronen", RESOURCE_TYPE_BOSS_G_RIGHT_0,
+	registerFacedResource("assets/ghost-right-0.png", "ellie", RESOURCE_TYPE_BOSS_G_RIGHT_0,
 		120, 140, 50, 65, 53, 0, 5, false, false)
-	registerFacedResource("assets/ghost-right-1.png", "gronen", RESOURCE_TYPE_BOSS_G_RIGHT_1,
+	registerFacedResource("assets/ghost-right-1.png", "ellie", RESOURCE_TYPE_BOSS_G_RIGHT_1,
 		120, 140, 50, 65, 53, 0, -5, false, false)
-	registerFacedResource("assets/ghost-right-0.png", "gronen", RESOURCE_TYPE_BOSS_G_LEFT_0,
+	registerFacedResource("assets/ghost-right-0.png", "ellie", RESOURCE_TYPE_BOSS_G_LEFT_0,
 		120, 140, 50, 65, 15, 0, 5, true, false)
-	registerFacedResource("assets/ghost-right-1.png", "gronen", RESOURCE_TYPE_BOSS_G_LEFT_1,
+	registerFacedResource("assets/ghost-right-1.png", "ellie", RESOURCE_TYPE_BOSS_G_LEFT_1,
 		120, 140, 50, 65, 15, 0, -5, true, false)
 
 	// boss H
-	registerFacedResource("assets/ghost-right-0.png", "mparnes", RESOURCE_TYPE_BOSS_H_RIGHT_0,
+	registerFacedResource("assets/ghost-right-0.png", "jeff", RESOURCE_TYPE_BOSS_H_RIGHT_0,
 		149, 140, 65, 90, 80, 0, 5, false, false)
-	registerFacedResource("assets/ghost-right-1.png", "mparnes", RESOURCE_TYPE_BOSS_H_RIGHT_1,
+	registerFacedResource("assets/ghost-right-1.png", "jeff", RESOURCE_TYPE_BOSS_H_RIGHT_1,
 		149, 140, 65, 90, 80, 0, -5, false, false)
-	registerFacedResource("assets/ghost-right-0.png", "mparnes", RESOURCE_TYPE_BOSS_H_LEFT_0,
+	registerFacedResource("assets/ghost-right-0.png", "jeff", RESOURCE_TYPE_BOSS_H_LEFT_0,
 		149, 140, 65, 90, 0, 0, 5, true, false)
-	registerFacedResource("assets/ghost-right-1.png", "mparnes", RESOURCE_TYPE_BOSS_H_LEFT_1,
+	registerFacedResource("assets/ghost-right-1.png", "jeff", RESOURCE_TYPE_BOSS_H_LEFT_1,
 		149, 140, 65, 90, 0, 0, -5, true, false)
+
+	// boss I
+	registerFacedResource("assets/knight-a-left-0.png", "mark", RESOURCE_TYPE_BOSS_I_RIGHT_0,
+		149, 140, 50, 65, 45, 0, 5, true, false)
+	registerFacedResource("assets/knight-a-left-1.png", "mark", RESOURCE_TYPE_BOSS_I_RIGHT_1,
+		149, 140, 50, 65, 45, 0, -5, true, false)
+	registerFacedResource("assets/knight-a-left-0.png", "mark", RESOURCE_TYPE_BOSS_I_LEFT_0,
+		149, 140, 50, 65, 55, 0, 5, false, false)
+	registerFacedResource("assets/knight-a-left-1.png", "mark", RESOURCE_TYPE_BOSS_I_LEFT_1,
+		149, 140, 50, 65, 55, 0, -5, false, false)
+
+	// boss J
+	registerFacedResource("assets/soldier-0.png", "mike", RESOURCE_TYPE_BOSS_J_RIGHT_0,
+		149, 140, 50, 65, 50, 0, 2, false, false)
+	registerFacedResource("assets/soldier-1.png", "mike", RESOURCE_TYPE_BOSS_J_RIGHT_1,
+		149, 140, 50, 65, 50, 0, -2, false, false)
+	registerFacedResource("assets/soldier-0.png", "mike", RESOURCE_TYPE_BOSS_J_LEFT_0,
+		149, 140, 50, 65, 50, 0, 2, true, false)
+	registerFacedResource("assets/soldier-1.png", "mike", RESOURCE_TYPE_BOSS_J_LEFT_1,
+		149, 140, 50, 65, 50, 0, -2, true, false)
+
+	// boss K
+	registerFacedResource("assets/ox-right-0.png", "sarah", RESOURCE_TYPE_BOSS_K_RIGHT_0,
+		100, 140, 50, 65, 30, 0, 5, false, false)
+	registerFacedResource("assets/ox-right-1.png", "sarah", RESOURCE_TYPE_BOSS_K_RIGHT_1,
+		100, 140, 50, 65, 30, 0, -5, false, false)
+	registerFacedResource("assets/ox-right-0.png", "sarah", RESOURCE_TYPE_BOSS_K_LEFT_0,
+		100, 140, 50, 65, 15, 0, 5, true, false)
+	registerFacedResource("assets/ox-right-1.png", "sarah", RESOURCE_TYPE_BOSS_K_LEFT_1,
+		100, 140, 50, 65, 15, 0, -5, true, false)
+
+	// boss L
+	registerFacedResource("assets/fire-sonic-right-0.png", "stephanie", RESOURCE_TYPE_BOSS_L_RIGHT_0,
+		100, 140, 50, 65, 30, 0, 5, false, false)
+	registerFacedResource("assets/fire-sonic-right-1.png", "stephanie", RESOURCE_TYPE_BOSS_L_RIGHT_1,
+		100, 140, 50, 65, 30, 0, -5, false, false)
+	registerFacedResource("assets/fire-sonic-right-0.png", "stephanie", RESOURCE_TYPE_BOSS_L_LEFT_0,
+		100, 140, 50, 65, 10, 0, 5, true, false)
+	registerFacedResource("assets/fire-sonic-right-1.png", "stephanie", RESOURCE_TYPE_BOSS_L_LEFT_1,
+		100, 140, 50, 65, 10, 0, -5, true, false)
+
+	// boss M
+	registerFacedResource("assets/ghost-right-0.png", "swati", RESOURCE_TYPE_BOSS_M_RIGHT_0,
+		120, 140, 50, 65, 53, 0, 5, false, false)
+	registerFacedResource("assets/ghost-right-1.png", "swati", RESOURCE_TYPE_BOSS_M_RIGHT_1,
+		120, 140, 50, 65, 53, 0, -5, false, false)
+	registerFacedResource("assets/ghost-right-0.png", "swati", RESOURCE_TYPE_BOSS_M_LEFT_0,
+		120, 140, 50, 65, 15, 0, 5, true, false)
+	registerFacedResource("assets/ghost-right-1.png", "swati", RESOURCE_TYPE_BOSS_M_LEFT_1,
+		120, 140, 50, 65, 15, 0, -5, true, false)
+
+	// boss N
+	registerFacedResource("assets/knight-a-left-0.png", "matan", RESOURCE_TYPE_BOSS_N_RIGHT_0,
+		149, 140, 50, 65, 45, 0, 5, true, false)
+	registerFacedResource("assets/knight-a-left-1.png", "matan", RESOURCE_TYPE_BOSS_N_RIGHT_1,
+		149, 140, 50, 65, 45, 0, -5, true, false)
+	registerFacedResource("assets/knight-a-left-0.png", "matan", RESOURCE_TYPE_BOSS_N_LEFT_0,
+		149, 140, 50, 65, 55, 0, 5, false, false)
+	registerFacedResource("assets/knight-a-left-1.png", "matan", RESOURCE_TYPE_BOSS_N_LEFT_1,
+		149, 140, 50, 65, 55, 0, -5, false, false)
 
 	// boss boom
 	registerScaledResourceFromFile("assets/boss-boom.png", RESOURCE_TYPE_BOSS_BOOM, 300, 200)
