@@ -45,7 +45,6 @@ type basicBoss struct {
 func NewBasicBoss(
 	startPos vector.Pos,
 	resLeft0, resLeft1, resRight0, resRight1 graphic.Resource,
-	initVel vector.Vec2D,
 	initHP int,
 	hpColor sdl.Color,
 	sentences []string,
@@ -60,7 +59,7 @@ func NewBasicBoss(
 		currRes:            resLeft0,
 		isFacingRight:      false,
 		levelRect:          sdl.Rect{startPos.X, startPos.Y, resLeft0.GetW(), resLeft0.GetH()},
-		velocity:           initVel,
+		velocity:           vector.Vec2D{-120, 0},
 		maxHP:              initHP,
 		hp:                 initHP,
 		hpColor:            hpColor,
@@ -199,34 +198,11 @@ func (boss *basicBoss) die(dieToRight bool, level *Level, ticks uint32) {
 
 const bossAInitHP = 700
 
-// FIXME temporary solution
-var (
-	subBossGenMap    [](func(vector.Pos, vector.Vec2D) Enemy)
-	subBossIdx       int
-	lastGenBossTicks uint32
-)
-
 type bossA struct {
 	*basicBoss
 }
 
 func NewBossA(startPos vector.Pos) *bossA {
-	subBossGenMap = [](func(vector.Pos, vector.Vec2D) Enemy){
-		NewBossC,
-		NewBossD,
-		NewBossE,
-		NewBossF,
-		NewBossG,
-		NewBossH,
-		NewBossI,
-		NewBossJ,
-		NewBossK,
-		NewBossL,
-		NewBossM,
-		NewBossN,
-	}
-	subBossIdx = 0
-
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -234,7 +210,6 @@ func NewBossA(startPos vector.Pos) *bossA {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_A_RIGHT_1),
-		vector.Vec2D{-80, 0},
 		bossAInitHP,
 		hpColorPurple,
 		bossASentences,
@@ -246,29 +221,13 @@ func NewBossA(startPos vector.Pos) *bossA {
 }
 
 func bossAExtraUpdateActions(b *basicBoss, level *Level, ticks uint32) {
-	if subBossIdx >= len(subBossGenMap) {
-		fireAroundRandomly(800, level, b, BULLET_ENEMY_SKULL)
-		fireAroundRandomly(800, level, b, BULLET_ENEMY_SKULL)
-		fireAroundRandomly(800, level, b, BULLET_ENEMY_CHERRY)
-		fireToHeroRandomly(1200, level, b, BULLET_ENEMY_MOON, 400)
-		fireToHeroRandomly(1200, level, b, BULLET_ENEMY_SWORD, 400)
-		fireToHeroRandomly(1200, level, b, BULLET_ENEMY_APPLE, 400)
-		fireToHeroRandomly(1200, level, b, BULLET_ENEMY_AXE, 400)
-	} else {
-		if ticks-lastGenBossTicks >= 15000 {
-			lastGenBossTicks = ticks
-			pos := vector.Pos{
-				b.GetRect().X,
-				b.GetRect().Y,
-			}
-			vel := vector.Vec2D{-120, 700}
-			if b.isFacingRight {
-				vel.X = -vel.X
-			}
-			level.AddEnemy(subBossGenMap[subBossIdx](pos, vel))
-			subBossIdx++
-		}
-	}
+	fireAroundRandomly(400, level, b, BULLET_ENEMY_SKULL)
+	fireAroundRandomly(400, level, b, BULLET_ENEMY_SKULL)
+	fireAroundRandomly(400, level, b, BULLET_ENEMY_CHERRY)
+	fireToHeroRandomly(600, level, b, BULLET_ENEMY_MOON, 400)
+	fireToHeroRandomly(600, level, b, BULLET_ENEMY_SWORD, 400)
+	fireToHeroRandomly(600, level, b, BULLET_ENEMY_APPLE, 400)
+	fireToHeroRandomly(600, level, b, BULLET_ENEMY_AXE, 400)
 
 	// Keep showing random sentences
 	b.say(ticks, level, 100, 256, b.getSentencePos)
@@ -302,7 +261,6 @@ func NewBossB(startPos vector.Pos, userID string) *bossB {
 		resPack.ResLeft1,
 		resPack.ResRight0,
 		resPack.ResRight1,
-		vector.Vec2D{-80, 0},
 		bossBInitHP,
 		hpColorRed,
 		sentences,
@@ -334,7 +292,7 @@ type bossC struct {
 	*basicBoss
 }
 
-func NewBossC(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossC(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -342,7 +300,6 @@ func NewBossC(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_C_RIGHT_1),
-		initVel,
 		bossCInitHP,
 		hpColorPurple,
 		bossCSentences,
@@ -370,7 +327,7 @@ type bossD struct {
 	*basicBoss
 }
 
-func NewBossD(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossD(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -378,7 +335,6 @@ func NewBossD(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_D_RIGHT_1),
-		initVel,
 		bossDInitHP,
 		hpColorPurple,
 		bossDSentences,
@@ -406,7 +362,7 @@ type bossE struct {
 	*basicBoss
 }
 
-func NewBossE(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossE(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -414,7 +370,6 @@ func NewBossE(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_E_RIGHT_1),
-		initVel,
 		bossEInitHP,
 		hpColorPurple,
 		bossESentences,
@@ -442,7 +397,7 @@ type bossF struct {
 	*basicBoss
 }
 
-func NewBossF(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossF(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -450,7 +405,6 @@ func NewBossF(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_F_RIGHT_1),
-		initVel,
 		bossFInitHP,
 		hpColorPurple,
 		bossFSentences,
@@ -478,7 +432,7 @@ type bossG struct {
 	*basicBoss
 }
 
-func NewBossG(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossG(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -486,7 +440,6 @@ func NewBossG(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_G_RIGHT_1),
-		initVel,
 		bossGInitHP,
 		hpColorPurple,
 		bossGSentences,
@@ -514,7 +467,7 @@ type bossH struct {
 	*basicBoss
 }
 
-func NewBossH(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossH(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -522,7 +475,6 @@ func NewBossH(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_H_RIGHT_1),
-		initVel,
 		bossHInitHP,
 		hpColorPurple,
 		bossHSentences,
@@ -550,7 +502,7 @@ type bossI struct {
 	*basicBoss
 }
 
-func NewBossI(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossI(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_I_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -558,7 +510,6 @@ func NewBossI(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_I_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_I_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_I_RIGHT_1),
-		initVel,
 		bossIInitHP,
 		hpColorPurple,
 		bossISentences,
@@ -586,7 +537,7 @@ type bossJ struct {
 	*basicBoss
 }
 
-func NewBossJ(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossJ(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_J_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -594,7 +545,6 @@ func NewBossJ(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_J_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_J_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_J_RIGHT_1),
-		initVel,
 		bossJInitHP,
 		hpColorPurple,
 		bossJSentences,
@@ -622,7 +572,7 @@ type bossK struct {
 	*basicBoss
 }
 
-func NewBossK(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossK(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_K_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -630,7 +580,6 @@ func NewBossK(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_K_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_K_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_K_RIGHT_1),
-		initVel,
 		bossKInitHP,
 		hpColorPurple,
 		bossKSentences,
@@ -658,7 +607,7 @@ type bossL struct {
 	*basicBoss
 }
 
-func NewBossL(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossL(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_L_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -666,7 +615,6 @@ func NewBossL(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_L_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_L_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_L_RIGHT_1),
-		initVel,
 		bossLInitHP,
 		hpColorPurple,
 		bossLSentences,
@@ -694,7 +642,7 @@ type bossM struct {
 	*basicBoss
 }
 
-func NewBossM(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossM(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_M_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -702,7 +650,6 @@ func NewBossM(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_M_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_M_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_M_RIGHT_1),
-		initVel,
 		bossMInitHP,
 		hpColorPurple,
 		bossMSentences,
@@ -730,7 +677,7 @@ type bossN struct {
 	*basicBoss
 }
 
-func NewBossN(startPos vector.Pos, initVel vector.Vec2D) Enemy {
+func NewBossN(startPos vector.Pos) Enemy {
 	resLeft0 := graphic.Res(graphic.RESOURCE_TYPE_BOSS_N_LEFT_0)
 	basicBoss := NewBasicBoss(
 		startPos,
@@ -738,7 +685,6 @@ func NewBossN(startPos vector.Pos, initVel vector.Vec2D) Enemy {
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_N_LEFT_1),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_N_RIGHT_0),
 		graphic.Res(graphic.RESOURCE_TYPE_BOSS_N_RIGHT_1),
-		initVel,
 		bossNInitHP,
 		hpColorPurple,
 		bossNSentences,
