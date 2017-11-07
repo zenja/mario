@@ -712,13 +712,13 @@ func LoadAllResources(heroUserID string) {
 		149, 140, 50, 65, 55, 0, -5, false, false)
 
 	// boss D
-	registerFacedResource("assets/soldier-0.png", "huiwang", RESOURCE_TYPE_BOSS_D_RIGHT_0,
+	registerFacedResource("assets/soldier-0.png", "dgibribashi", RESOURCE_TYPE_BOSS_D_RIGHT_0,
 		149, 140, 50, 65, 50, 0, 2, false, false)
-	registerFacedResource("assets/soldier-1.png", "huiwang", RESOURCE_TYPE_BOSS_D_RIGHT_1,
+	registerFacedResource("assets/soldier-1.png", "dgibribashi", RESOURCE_TYPE_BOSS_D_RIGHT_1,
 		149, 140, 50, 65, 50, 0, -2, false, false)
-	registerFacedResource("assets/soldier-0.png", "huiwang", RESOURCE_TYPE_BOSS_D_LEFT_0,
+	registerFacedResource("assets/soldier-0.png", "dgibribashi", RESOURCE_TYPE_BOSS_D_LEFT_0,
 		149, 140, 50, 65, 50, 0, 2, true, false)
-	registerFacedResource("assets/soldier-1.png", "huiwang", RESOURCE_TYPE_BOSS_D_LEFT_1,
+	registerFacedResource("assets/soldier-1.png", "dgibribashi", RESOURCE_TYPE_BOSS_D_LEFT_1,
 		149, 140, 50, 65, 50, 0, -2, true, false)
 
 	// boss E
